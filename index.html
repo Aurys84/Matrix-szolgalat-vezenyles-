@@ -126,19 +126,18 @@
         }
         th.name-col { z-index: 4; }
 
-        /* Heti elválasztó vonal */
         .week-separator {
             border-right: 2px solid #58a6ff !important;
         }
 
-        /* Alapértelmezett cella (világos / üres) */
+        /* Alapértelmezett cella (világos) */
         td.cell-default {
             background-color: #f0f3f6;
             color: #24292e;
             cursor: pointer;
         }
 
-        /* Pozíció / Szolgálat színek (ha ki van töltve) */
+        /* Szolgálat színek */
         .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; cursor: pointer; }
@@ -166,7 +165,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Biztonsági szűrővel & Dinamikus cellaszínezéssel</div>
+    <div class="subtitle">Javított biztonsági szűrő & Havi óraszám összesítő</div>
 
     <div class="controls">
         <div>
@@ -291,7 +290,7 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
-            // Törzs generálása (alaphelyzetben világos cellák)
+            // Törzs generálása
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
@@ -303,7 +302,7 @@
                     tbodyHtml += `<td class="cell-default ${prevWeekCheck}" onclick="selectCell(this)" data-type="empty">${defaultVal}</td>`;
                 });
 
-                tbodyHtml += `<td><b>0h</b></td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
 
@@ -322,24 +321,40 @@
                 return;
             }
 
-            // 1. Biztonsági szűrő: Éjjeles (Ép) UTÁN nem lehet Nappalos (Np)
+            // BIZTONSÁGI SZŰRŐ: Éjjeles (Ép) UTÁN NEM LEHET NAPPALOS (Np)
             let prevCell = activeCell.previousElementSibling;
+            // Figyelembe vesszük, hogy a név oszlop utáni első nap-cellát vizsgáljuk-e
             if(type === 'np' && prevCell && prevCell.dataset && prevCell.dataset.type === 'ep') {
-                alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Nappalos (Np) poszt közvetlenül Éjjeles (Ép) után! Pihenőidő szükséges!');
+                alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Nappalos (Np) poszt közvetlenül Éjjeles (Ép) után! Pihenőidő kötelező!');
                 return;
             }
 
-            // 2. Biztonsági szűrő: Nappalos (Np) UTÁN nem lehet Éjjeles (Ép)
-            if(type === 'ep' && prevCell && prevCell.dataset && prevCell.dataset.type === 'np') {
-                alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) poszt közvetlenül Nappalos (Np) után!');
-                return;
-            }
-
-            // Osztályok frissítése (megőrizve a heti elválasztást ha van)
             let hasSeparator = activeCell.classList.contains('week-separator') ? 'week-separator' : '';
             activeCell.className = className + ' ' + hasSeparator + ' selected-cell';
             activeCell.innerText = text;
             activeCell.dataset.type = type;
+
+            // Óraszámok újraszámolása az adott sorban
+            calculateRowHours(activeCell.closest('tr'));
+        }
+
+        function calculateRowHours(row) {
+            let cells = row.querySelectorAll('td');
+            let totalHours = 0;
+
+            // Végigmegyünk a cellákon (kivéve az elsőt a nevet és az utolsót az óraszámot)
+            for(let i = 1; i < cells.length - 1; i++) {
+                let type = cells[i].dataset.type;
+                if(type === 'np' || type === 'ep' || type === 'szb') {
+                    totalHours += 12; // 12 órás szolgálatok és szabadság
+                } else if(type === 'nep') {
+                    totalHours += 24; // 24 órás szolgálat
+                }
+            }
+
+            // Kiírás az utolsó előtti/utolsó cellába
+            let hoursCell = cells[cells.length - 1];
+            hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
         function saveData() {
