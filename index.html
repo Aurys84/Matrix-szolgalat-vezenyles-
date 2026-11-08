@@ -152,7 +152,7 @@
             min-width: 26px;
         }
 
-        /* Áthozott üres cellák kék színe */
+        /* Áthozott üres cellák alap kék színe */
         td.cell-locked {
             background-color: #1f6feb !important;
             color: white !important;
@@ -239,7 +239,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Fejlécekhez) */
+        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Fejlécekhez és Cellákhoz) */
         .day-saturday {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -255,7 +255,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Hétvégi Színek & Ünnepnap Számláló</div>
+    <div class="subtitle">Kék Áthozott Napok & Hétvégi Színek & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -423,7 +423,7 @@
                 let dayClass = "";
                 if (isHoliday(d)) {
                     dayClass = "day-sunday-holiday";
-                    holidayCount++;
+                    if (!item.isExtra) holidayCount++;
                 } else if (dayIndex === 6) {
                     dayClass = "day-saturday";
                 } else if (dayIndex === 0) {
@@ -472,7 +472,13 @@
                             if (oldData && oldData.text) {
                                 cellInfo = { text: oldData.text, className: oldData.className, type: oldData.type };
                             } else {
-                                cellInfo = { text: '', className: 'cell-locked', type: 'locked' };
+                                // Ha üres az áthozott cella, nézzük meg, hogy hétvége/ünnep-e, ha az, kapja azt, különben a kék alapszínt
+                                let dayIndex = item.date.getDay();
+                                let defaultExtraClass = 'cell-locked';
+                                if (isHoliday(item.date) || dayIndex === 0) defaultExtraClass = 'day-sunday-holiday';
+                                else if (dayIndex === 6) defaultExtraClass = 'day-saturday';
+
+                                cellInfo = { text: '', className: defaultExtraClass, type: 'locked' };
                             }
                         }
                     } else {
@@ -518,7 +524,10 @@
         }
 
         function selectCell(cell) {
-            if(cell.classList.contains('cell-locked')) return;
+            if(cell.classList.contains('cell-locked') && !cell.classList.contains('day-saturday') && !cell.classList.contains('day-sunday-holiday')) return;
+            // Ha van benne poszt, ne lehessen felülírni, de ha üres hétvégi/ünnepi vagy kék cella, az maradhat zárolt
+            if(cell.innerText.trim() !== '' && cell.classList.contains('cell-locked')) return;
+            
             if(activeCell) activeCell.classList.remove('selected-cell');
             activeCell = cell;
             activeCell.classList.add('selected-cell');
@@ -531,8 +540,8 @@
         }
 
         function applyService(text, className, type) {
-            if(!activeCell || activeCell.classList.contains('cell-locked')) {
-                alert('⚠️ Először kattints rá egy szerkeszthető cellára a tárgyhónapban!');
+            if(!activeCell || (activeCell.classList.contains('cell-locked') && activeCell.innerText.trim() !== '')) {
+                alert('⚠️ Először kattints rá egy szerkeszthető cellára!');
                 return;
             }
 
@@ -549,8 +558,10 @@
 
             let dKey = activeCell.dataset.date;
             let gIndex = activeCell.dataset.guard;
-            let cellDataToSave = { text: text, className: className, type: type };
-            localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellDataToSave));
+            if(dKey && gIndex !== undefined) {
+                let cellDataToSave = { text: text, className: className, type: type };
+                localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellDataToSave));
+            }
 
             calculateRowHours(activeCell.closest('tr'));
             autoSave();
