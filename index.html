@@ -131,16 +131,23 @@
             border-right: 2px solid #58a6ff !important;
         }
 
-        /* Pozíció / Szolgálat színek */
-        .pos-np { background-color: rgba(35, 134, 54, 0.35); color: #7ee787; font-weight: bold; cursor: pointer; }
-        .pos-ep { background-color: rgba(218, 54, 51, 0.35); color: #ffa198; font-weight: bold; cursor: pointer; }
-        .pos-nep { background-color: rgba(137, 87, 229, 0.35); color: #d2a8ff; font-weight: bold; cursor: pointer; }
-        .pos-szb { background-color: rgba(158, 106, 3, 0.35); color: #e3b341; font-weight: bold; cursor: pointer; }
-        .pos-szab { background-color: rgba(31, 111, 235, 0.2); color: #79c0ff; cursor: pointer; }
+        /* Alapértelmezett cella (világos / üres) */
+        td.cell-default {
+            background-color: #f0f3f6;
+            color: #24292e;
+            cursor: pointer;
+        }
+
+        /* Pozíció / Szolgálat színek (ha ki van töltve) */
+        .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; cursor: pointer; }
+        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; cursor: pointer; }
+        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; cursor: pointer; }
+        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; cursor: pointer; }
+        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; cursor: pointer; }
         
         td.selected-cell {
-            outline: 2px solid #58a6ff;
-            outline-offset: -2px;
+            outline: 3px solid #ff7b72;
+            outline-offset: -3px;
         }
 
         .legend {
@@ -159,14 +166,13 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">10-éves modul & Kattintós Szolgálat-beillesztő</div>
+    <div class="subtitle">Biztonsági szűrővel & Dinamikus cellaszínezéssel</div>
 
     <div class="controls">
         <div>
             <label for="yearSelect">Év (10 év):</label>
             <select id="yearSelect" onchange="generateCalendar()">
                 <script>
-                    const currentYear = new Date().getFullYear();
                     for(let y = 2026; y <= 2035; y++) {
                         document.write(`<option value="${y}" ${y === 2027 ? 'selected' : ''}>${y}</option>`);
                     }
@@ -201,7 +207,7 @@
         <button class="p-btn btn-nep" onclick="applyService('NÉp1', 'pos-nep', 'nep')">24h (NÉp)</button>
         <button class="p-btn btn-szb" onclick="applyService('SZB', 'pos-szb', 'szb')">Szabadság (SZB)</button>
         <button class="p-btn btn-szab" onclick="applyService('SZ', 'pos-szab', 'szab')">Szabadnap (SZ)</button>
-        <button class="p-btn btn-clear" onclick="applyService('-', 'pos-szab', 'clear')Törlés</button>
+        <button class="p-btn btn-clear" onclick="applyService('-', 'cell-default', 'clear')">Törlés</button>
     </div>
 
     <div class="table-container">
@@ -272,7 +278,6 @@
                 let weekNum = getWeekNumber(d);
                 let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
                 
-                // Heti elválasztás detektálása
                 let isNewWeek = (weekNum !== prevWeek && index > 0);
                 let sepClass = isNewWeek ? 'week-separator' : '';
                 prevWeek = weekNum;
@@ -286,17 +291,16 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
-            // Törzs generálása
+            // Törzs generálása (alaphelyzetben világos cellák)
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
                 tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold;"></td>`;
                 
                 days.forEach((item, dIndex) => {
-                    let defaultVal = item.isExtra ? '-' : 'SZ';
-                    let cssClass = 'pos-szab';
+                    let defaultVal = item.isExtra ? '-' : '';
                     let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
-                    tbodyHtml += `<td class="${cssClass} ${prevWeekCheck}" onclick="selectCell(this)" data-type="szab">${defaultVal}</td>`;
+                    tbodyHtml += `<td class="cell-default ${prevWeekCheck}" onclick="selectCell(this)" data-type="empty">${defaultVal}</td>`;
                 });
 
                 tbodyHtml += `<td><b>0h</b></td>`;
@@ -318,16 +322,22 @@
                 return;
             }
 
-            // Biztonsági ellenőrzés Éjjeles (Ép) esetén: nem lehet Nappalos (Np) után
-            if(type === 'ep') {
-                let prevCell = activeCell.previousElementSibling;
-                if(prevCell && prevCell.dataset && prevCell.dataset.type === 'np') {
-                    alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) közvetlenül Nappalos (Np) poszt után!');
-                    return;
-                }
+            // 1. Biztonsági szűrő: Éjjeles (Ép) UTÁN nem lehet Nappalos (Np)
+            let prevCell = activeCell.previousElementSibling;
+            if(type === 'np' && prevCell && prevCell.dataset && prevCell.dataset.type === 'ep') {
+                alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Nappalos (Np) poszt közvetlenül Éjjeles (Ép) után! Pihenőidő szükséges!');
+                return;
             }
 
-            activeCell.className = activeCell.className.split(' ')[0] + ' ' + className + ' ' + (activeCell.classList.contains('week-separator') ? 'week-separator' : '') + ' selected-cell';
+            // 2. Biztonsági szűrő: Nappalos (Np) UTÁN nem lehet Éjjeles (Ép)
+            if(type === 'ep' && prevCell && prevCell.dataset && prevCell.dataset.type === 'np') {
+                alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) poszt közvetlenül Nappalos (Np) után!');
+                return;
+            }
+
+            // Osztályok frissítése (megőrizve a heti elválasztást ha van)
+            let hasSeparator = activeCell.classList.contains('week-separator') ? 'week-separator' : '';
+            activeCell.className = className + ' ' + hasSeparator + ' selected-cell';
             activeCell.innerText = text;
             activeCell.dataset.type = type;
         }
