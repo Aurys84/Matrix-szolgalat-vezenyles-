@@ -164,7 +164,7 @@
         }
 
         .week-separator {
-            border-right: 2px solid #58a6ff !important;
+            border-left: 2px solid #58a6ff !important;
         }
 
         td.cell-default {
@@ -428,7 +428,7 @@
 <body id="mainBody">
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Egyedi Szabadságkeretek & Hivatalos Vezetőségi PDF Jelentés</div>
+    <div class="subtitle">Hétfői Hétkezdési Elválasztás & Egyedi Szabadságkeretek</div>
 
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -533,12 +533,13 @@
             return fixedHolidays.includes(`${m}-${d}`);
         }
 
-        function getWeekNumber(d) {
-            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
-            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
-            var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
-            return weekNo;
+        // Hétfőtől induló európai hét sorszámító (ISO hét)
+        function getISOWeekNumber(d) {
+            let date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            let dayNum = date.getUTCDay() || 7;
+            date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+            let yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
+            return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
         }
 
         function getDateKey(d) {
@@ -577,21 +578,20 @@
             let reqRowHtml = '<tr class="req-row"><th class="name-col">Elvárt Létszám</th>';
             let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
 
-            let prevWeek = -1;
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             let holidayCount = 0;
 
             days.forEach((item, index) => {
                 let d = item.date;
-                let dayIndex = d.getDay();
+                let dayIndex = d.getDay(); // 0: Vasárnap, 1: Hétfő ... 6: Szombat
                 let dayLetter = dayNames[dayIndex];
-                let weekNum = getWeekNumber(d);
+                let weekNum = getISOWeekNumber(d);
                 let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
                 let dKey = getDateKey(d);
                 
-                let isNewWeek = (weekNum !== prevWeek && index > 0);
-                let sepClass = isNewWeek ? 'week-separator' : '';
-                prevWeek = weekNum;
+                // Elválasztás: Akkor húzunk kék vonalat, ha HÉTFŐ van (dayIndex === 1) és ez nem az első oszlop
+                let isMonday = (dayIndex === 1);
+                let sepClass = (isMonday && index > 0) ? 'week-separator' : '';
 
                 weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
                 
@@ -634,7 +634,9 @@
                 tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
-                    let dKey = getDateKey(item.date);
+                    let d = item.date;
+                    let dayIndex = d.getDay();
+                    let dKey = getDateKey(d);
                     let cellKey = `g_${gIndex}_d_${dIndex}`;
                     let globalKey = `global_cell_${dKey}_g_${gIndex}`;
                     
@@ -663,7 +665,8 @@
                         }
                     }
                     
-                    let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
+                    let isMonday = (dayIndex === 1);
+                    let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
                     
                     if (item.isExtra) {
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}">${cellInfo.text || ''}</td>`;
@@ -679,7 +682,10 @@
             tbodyHtml += `<tr class="total-row">`;
             tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
-                let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
+                let d = item.date;
+                let dayIndex = d.getDay();
+                let isMonday = (dayIndex === 1);
+                let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
                 tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
             });
             tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
