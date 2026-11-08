@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mátrix Labor — Vezénylési Rendszer & Figyelőmotor</title>
+    <title>Mátrix Labor — Vezénylési Rendszer</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -85,11 +85,11 @@
         .btn-clear { background: #21262d; color: #c9d1d9; border: 1px solid var(--border-color); }
 
         .table-container {
-            overflow-x: auto;
+            overflow: auto;
             background: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            max-height: 62vh;
+            max-height: 65vh;
             margin-bottom: 12px;
         }
         table {
@@ -103,11 +103,12 @@
             padding: 4px 3px;
             white-space: nowrap;
         }
+        
+        /* Fix pozíciók a gördülési töréshez */
         th {
             background: #21262d;
             color: #58a6ff;
             position: sticky;
-            top: 0;
             z-index: 2;
         }
         .week-row th {
@@ -115,13 +116,17 @@
             background: #1f242c;
             color: #58a6ff;
             font-weight: bold;
-            font-size: 0.8rem;
-            border-bottom: 2px solid #58a6ff;
-            z-index: 3;
+            z-index: 4;
+        }
+        .req-row th {
+            top: 25px;
+            background: #161b22;
+            z-index: 4;
         }
         .day-row th {
-            top: 25px;
-            z-index: 2;
+            top: 50px;
+            background: #21262d;
+            z-index: 4;
         }
         .name-col {
             text-align: left;
@@ -129,11 +134,14 @@
             position: sticky;
             left: 0;
             background: #161b22;
-            z-index: 4;
+            z-index: 3;
             min-width: 120px;
             font-size: 0.8rem;
         }
-        th.name-col { z-index: 5; }
+        /* A bal felső sarok (Név / Dátum kereszteződés) legfelül úszik */
+        th.name-col {
+            z-index: 5 !important;
+        }
 
         .week-separator {
             border-right: 2px solid #58a6ff !important;
@@ -206,7 +214,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kétirányú Létszámfigyelő (Hiány & Többlet Elemzés)</div>
+    <div class="subtitle">Kétirányú Létszámfigyelő & Fix Gördülési Törés</div>
 
     <div class="controls">
         <div>
@@ -239,7 +247,6 @@
         <button onclick="manualSave()">Adatok Mentése</button>
     </div>
 
-    <!-- Univerzális Poszt Választó Sáv 1-20 legördülővel -->
     <div class="palette">
         <span>Gyorskitöltés:</span>
         <button class="p-btn btn-np" onclick="applyServiceWithPos('Np', 'pos-np', 'np')">Nappal:</button>
@@ -334,7 +341,7 @@
             }
 
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
-            let reqRowHtml = '<tr class="req-row"><th class="name-col" style="background:#21262d; color:#e6edf3;">Elvárt Létszám</th>';
+            let reqRowHtml = '<tr class="req-row"><th class="name-col">Elvárt Létszám</th>';
             let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
 
             let prevWeek = -1;
@@ -359,9 +366,9 @@
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass}" style="${item.isExtra ? 'background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
-            weekRowHtml += '<th>Össz. Óra</th></tr>';
-            reqRowHtml += '<th>Cél</th></tr>';
-            dayRowHtml += '<th>Órakeret</th></tr>';
+            weekRowHtml += '<th class="name-col">Össz. Óra</th></tr>';
+            reqRowHtml += '<th class="name-col">Cél</th></tr>';
+            dayRowHtml += '<th class="name-col">Órakeret</th></tr>';
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
 
@@ -400,8 +407,8 @@
         }
 
         function updateRequired(input) {
-            const year = document.getElementById('yearSelect').value;
-            const month = document.getElementById('monthSelect').value;
+            const year = document.getElementById('yearSelect'].value;
+            const month = document.getElementById('monthSelect'].value;
             let dKey = input.dataset.date;
             
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
@@ -467,7 +474,6 @@
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
-        // --- KÉTIRÁNYÚ FIGYELŐMOTOR (HIÁNY ÉS TÖBBLET ÉSZLELÉSE) ---
         function runAuditEngine(days) {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
@@ -493,7 +499,7 @@
                 }
 
                 if (actualCount < requiredCount) {
-                    if (thElement) thElement.classList.add('th-alert'); // Piros: hiány
+                    if (thElement) thElement.classList.add('th-alert');
                     issues.push({
                         date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
                         required: requiredCount,
@@ -502,7 +508,7 @@
                         diff: requiredCount - actualCount
                     });
                 } else if (actualCount > requiredCount) {
-                    if (thElement) thElement.classList.add('th-warning'); // Narancs: többlet (elírás gyanú)
+                    if (thElement) thElement.classList.add('th-warning');
                     issues.push({
                         date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
                         required: requiredCount,
