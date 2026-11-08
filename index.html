@@ -162,7 +162,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kijavított átvezetés + Auto-mentés</div>
+    <div class="subtitle">Hibajavítva + Átvezetés + Auto-mentés</div>
 
     <div class="controls">
         <div>
@@ -244,8 +244,8 @@
 
             let days = [];
             
-            // 1. ELŐZŐ HÓNAP UTOLSÓ 3 NAPJA (Biztos JS Hónapkezeléssel)
-            let prevMonthLastDate = new Date(year, month, 0); // Az aktuális hónap 0. napja az előző hónap utolsó napja!
+            // Előző hónap utolsó 3 napja átvezetésként
+            let prevMonthLastDate = new Date(year, month, 0);
             let pYear = prevMonthLastDate.getFullYear();
             let pMonth = prevMonthLastDate.getMonth();
             let pLastDayNum = prevMonthLastDate.getDate();
@@ -256,7 +256,7 @@
                 days.push({ date: d, isExtra: true });
             }
 
-            // 2. AKTUÁLIS HÓNAP NAPJAI
+            // Aktuális hónap napjai
             let currentMonthDays = new Date(year, month + 1, 0).getDate();
             for(let i = 1; i <= currentMonthDays; i++) {
                 let d = new Date(year, month, i);
@@ -358,13 +358,13 @@
         }
 
         function autoSave() {
-            const year = document.getElementById('yearSelect'].value;
+            const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
             let dataToSave = {};
 
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
                         let cellKey = cell.dataset.key;
                         if(cellKey) {
                             dataToSave[cellKey] = {
