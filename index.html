@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mátrix Labor — Vezénylési Rendszer</title>
+    <title>Mátrix Labor — Vezénylési Rendszer & Figyelőmotor</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -87,7 +87,8 @@
             background: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            max-height: 70vh;
+            max-height: 65vh;
+            margin-bottom: 15px;
         }
         table {
             width: 100%;
@@ -152,6 +153,35 @@
             outline-offset: -3px;
         }
 
+        /* Figyelőmotor & Eltérés stílusok */
+        .audit-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 15px;
+        }
+        .audit-panel h3 {
+            margin-top: 0;
+            color: #58a6ff;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        .alert-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+        .alert-ok { background: var(--green); color: white; }
+        .alert-error { background: var(--red); color: white; }
+
+        .th-alert {
+            background-color: rgba(218, 54, 51, 0.3) !important;
+            border: 2px solid var(--red) !important;
+        }
+
         .legend {
             display: flex;
             gap: 12px;
@@ -167,8 +197,8 @@
 </head>
 <body>
 
-    <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Véglegesített Dátum-alapú Átvezetés + Fix Heti Számozás</div>
+    <h1>Mátrix Labor — Vezénylési Rendszer & Figyelőmotor</h1>
+    <div class="subtitle">Automatikus Létszámfigyelő & Eltérés Elemző</div>
 
     <div class="controls">
         <div>
@@ -218,10 +248,16 @@
         </table>
     </div>
 
+    <!-- Figyelőmotor Elemző Panel -->
+    <div class="audit-panel">
+        <h3>🔍 Mátrix Labor Biztonsági & Létszám Figyelőmotor</h3>
+        <div id="auditReport">A rendszer elemzi a létszámokat...</div>
+    </div>
+
     <div class="legend">
-        <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np 1-10) [12h]</div>
-        <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép 1-10) [12h]</div>
-        <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp 1-10) [24h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp) [24h]</div>
         <div class="legend-item"><div class="color-box" style="background: var(--yellow);"></div> Szabadság (SZB) [12h]</div>
         <div class="legend-item"><div class="color-box" style="background: var(--blue);"></div> Szabadnap (SZ)</div>
     </div>
@@ -234,7 +270,6 @@
         ];
 
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
-
         let activeCell = null;
 
         function getWeekNumber(d) {
@@ -252,36 +287,12 @@
             return `${y}-${m}-${day}`;
         }
 
-        // Segédfüggvény bármely dátum adatainak lekérésére a localStorage-ból
-        function getSavedCellData(dateObj, gIndex) {
-            let y = dateObj.getFullYear();
-            let m = dateObj.getMonth();
-            let monthData = JSON.parse(localStorage.getItem(`matrix_schedule_${y}_${m}`)) || {};
-            
-            // Megkeressük az adott hónap napjai között, hogy melyik indexű
-            let daysInMonth = new Date(y, m + 1, 0).getDate();
-            // Az első 3 nap átvezetés vagy aktuális nap? Számoljuk ki a nap sorszámát a hónapban
-            let dayNum = dateObj.getDate();
-            // A napok tömb generálásakor az indexeket így képezzük:
-            // Ha ez az előző hónap utolsó 3 napja:
-            let targetKey = "";
-            // Egyszerűen keressük meg a mentett adatokban a dátumot kulcsként vagy mentett cellainfóként
-            for (let key in monthData) {
-                if (key.startsWith(`g_${gIndex}_d_`)) {
-                    // Ha a mentett adatban tároljuk a dátumot is, vagy visszakeressük
-                }
-            }
-            // Biztosabb megoldás: kérjük le közvetlenül a dátum kulcs alapján, ha a mentésben eltároljuk a dátumot is!
-            return monthData[`date_${getDateKey(dateObj)}_g_${gIndex}`];
-        }
-
         function generateCalendar() {
             const year = parseInt(document.getElementById('yearSelect').value);
             const month = parseInt(document.getElementById('monthSelect').value);
 
             let days = [];
             
-            // 1. Előző hónap utolsó 3 napja
             let pYear = year;
             let pMonth = month - 1;
             if(pMonth < 0) {
@@ -296,7 +307,6 @@
                 days.push({ date: d, isExtra: true });
             }
 
-            // 2. Aktuális hónap napjai
             let currentMonthDays = new Date(year, month + 1, 0).getDate();
             for(let i = 1; i <= currentMonthDays; i++) {
                 let d = new Date(year, month, i);
@@ -304,30 +314,37 @@
             }
 
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
+            let reqRowHtml = '<tr class="req-row"><th class="name-col" style="background:#21262d; color:#e6edf3;">Megbízói Elvárt Létszám</th>';
             let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
 
             let prevWeek = -1;
+            let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
 
             days.forEach((item, index) => {
                 let d = item.date;
                 let dayLetter = dayNames[d.getDay()];
                 let weekNum = getWeekNumber(d);
                 let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
+                let dKey = getDateKey(d);
                 
                 let isNewWeek = (weekNum !== prevWeek && index > 0);
                 let sepClass = isNewWeek ? 'week-separator' : '';
                 prevWeek = weekNum;
 
                 weekRowHtml += `<th class="${sepClass}">${weekNum}. hét</th>`;
-                dayRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'background:#1f2937; opacity: 0.8;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+                
+                let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2; // alapértelmezett elvárt létszám: 2 fő
+                reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:35px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:4px; font-weight:bold;"></th>`;
+
+                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass}" style="${item.isExtra ? 'background:#1f2937; opacity: 0.8;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
             weekRowHtml += '<th>Össz. Óra</th></tr>';
+            reqRowHtml += '<th>Elvárt összes</th></tr>';
             dayRowHtml += '<th>Órakeret</th></tr>';
 
-            document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
+            document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
 
-            // Havi adatok betöltése
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
 
             let tbodyHtml = '';
@@ -338,19 +355,9 @@
                 days.forEach((item, dIndex) => {
                     let dKey = getDateKey(item.date);
                     let cellKey = `g_${gIndex}_d_${dIndex}`;
-                    
-                    let cellInfo = null;
-
-                    // Globális kulcs keresése (minden hónapból átviszi a dátum alapján!)
                     let globalKey = `global_cell_${dKey}_g_${gIndex}`;
-                    let globalData = JSON.parse(localStorage.getItem(globalKey));
-
-                    if (globalData) {
-                        cellInfo = globalData;
-                    } else if (!item.isExtra) {
-                        cellInfo = savedData[cellKey];
-                    }
-
+                    
+                    let cellInfo = JSON.parse(localStorage.getItem(globalKey)) || savedData[cellKey];
                     if (!cellInfo) {
                         cellInfo = { text: '', className: 'cell-default', type: 'empty' };
                     }
@@ -368,6 +375,21 @@
             document.querySelectorAll('#scheduleTable tbody tr').forEach(row => {
                 calculateRowHours(row);
             });
+
+            runAuditEngine(days);
+        }
+
+        function updateRequired(input) {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            let dKey = input.dataset.date;
+            
+            let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
+            savedRequired[dKey] = parseInt(input.value) || 0;
+            localStorage.setItem(`matrix_required_${year}_${month}`, JSON.stringify(savedRequired));
+
+            // Újrafuttatjuk az auditmotort
+            generateCalendar();
         }
 
         function selectCell(cell) {
@@ -393,18 +415,14 @@
             activeCell.innerText = text;
             activeCell.dataset.type = type;
 
-            // Globális mentés dátum szerint is, hogy bármelyik hónapban látszódjon az átvezetés!
             let dKey = activeCell.dataset.date;
             let gIndex = activeCell.dataset.guard;
-            let cellDataToSave = {
-                text: text,
-                className: className,
-                type: type
-            };
+            let cellDataToSave = { text: text, className: className, type: type };
             localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellDataToSave));
 
             calculateRowHours(activeCell.closest('tr'));
             autoSave();
+            generateCalendar(); // Frissíti a figyelőmotort azonnal
         }
 
         function calculateRowHours(row) {
@@ -424,6 +442,64 @@
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
+        // --- FIGYELŐMOTOR & AUDIT LOGIKA ---
+        function runAuditEngine(days) {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
+            
+            let discrepancies = [];
+            let totalDaysChecked = 0;
+
+            days.forEach(item => {
+                let dKey = getDateKey(item.date);
+                let requiredCount = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
+                
+                // Megszámoljuk hány őr dolgozik az adott napon (aki nem üres, nem szab, nem szabadnap)
+                let actualCount = 0;
+                guards.forEach((_, gIndex) => {
+                    let globalData = JSON.parse(localStorage.getItem(`global_cell_${dKey}_g_${gIndex}`));
+                    if (globalData && globalData.type && globalData.type !== 'empty' && globalData.type !== 'szab') {
+                        actualCount++;
+                    }
+                });
+
+                let thElement = document.getElementById(`th-day-${dKey}`);
+                if (actualCount < requiredCount) {
+                    if (thElement) thElement.classList.add('th-alert');
+                    discrepancies.push({
+                        date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
+                        required: requiredCount,
+                        actual: actualCount,
+                        diff: requiredCount - actualCount
+                    });
+                } else {
+                    if (thElement) thElement.classList.remove('th-alert');
+                }
+                totalDaysChecked++;
+            });
+
+            let reportHtml = '';
+            if (discrepancies.length === 0) {
+                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN RENDBEN</span> A megbízói létszámkeret a hónap minden napján teljesül. Nincs eltérés!</p>`;
+            } else {
+                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${discrepancies.length} NAPON ELTÉRÉS / LÉTSZÁMHIÁNY VAN!</span></p>`;
+                reportHtml += `<table style="width:100%; margin-top:8px; font-size:0.75rem;">`;
+                reportHtml += `<tr><th>Dátum</th><th>Elvárt Létszám</th><th>Tényleges Létszám</th><th>Hiány / Eltérés</th></tr>`;
+                discrepancies.forEach(d => {
+                    reportHtml += `<tr>
+                        <td><b>${d.date}</b></td>
+                        <td>${d.required} fő</td>
+                        <td>${d.actual} fő</td>
+                        <td style="color: var(--red); font-weight:bold;">-${d.diff} fő hiány</td>
+                    </tr>`;
+                });
+                reportHtml += `</table>`;
+            }
+
+            document.getElementById('auditReport').innerHTML = reportHtml;
+        }
+
         function autoSave() {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
@@ -441,7 +517,6 @@
                                 type: cell.dataset.type
                             };
                             dataToSave[cellKey] = cellInfo;
-                            // Globális szinkron mentés is
                             if(dKey) {
                                 localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellInfo));
                             }
@@ -455,7 +530,7 @@
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai és az átvezetések sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai, létszámok és figyelőmotor adatai sikeresen mentve!');
         }
 
         window.onload = generateCalendar;
