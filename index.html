@@ -323,9 +323,10 @@
             color: #f0f6fc !important;
         }
 
+        /* NYOMTATÁSI MÓD: BIZTOSÍTJA, HOGY AZ ÓRA OSZLOP IS RÁFÉRJEN */
         @page {
             size: A4 landscape;
-            margin: 10mm;
+            margin: 6mm;
         }
 
         body.print-schedule-only .controls,
@@ -362,18 +363,19 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 8.5px !important;
+                font-size: 7.5px !important; /* Picit optimalizálva, hogy az óra oszlop is garantáltan beférjen */
             }
             body.print-schedule-only th, 
             body.print-schedule-only td {
                 border: 1px solid #333333 !important;
-                padding: 3px 2px !important;
+                padding: 2px 1px !important;
             }
             body.print-schedule-only .name-col {
                 position: static !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: bold !important;
+                min-width: 90px !important;
             }
             body.print-schedule-only .week-row th {
                 background-color: #e2e8f0 !important;
@@ -936,13 +938,11 @@
                         th { background: #e2e8f0 !important; color: #000 !important; }
                         .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
                         
-                        /* 1. Oldal után kényszerített törés, hogy a szabadságkezelő tiszta lapot kapjon */
                         .page-break {
                             page-break-before: always;
                             break-before: page;
                         }
 
-                        /* Színek visszaállítása a PDF jelentésben */
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
@@ -981,7 +981,6 @@
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
                     <div>${tableHtml}</div>
 
-                    <!-- Kényszerített oldaltörés, hogy a 2. oldalra tiszta lapként jöjjön a többi adat -->
                     <div class="page-break"></div>
 
                     <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
