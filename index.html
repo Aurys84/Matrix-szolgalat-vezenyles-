@@ -104,7 +104,7 @@
             white-space: nowrap;
         }
         
-        /* Tömör, stabil fix fejlécek scrollozáshoz */
+        /* Fix pozíciók a fejléc scrollozáshoz */
         th {
             position: sticky;
             z-index: 2;
@@ -197,13 +197,15 @@
             box-shadow: inset 0 -3px 0 0 var(--orange);
         }
 
-        /* Szombat (Zöld) és Vasárnap/Ünnepnap (Piros) kiemelések */
+        /* SZOMBATOK ÉS VASÁRNAPOK/ÜNNEPNAPOK HATÁROZOTT SZÍNEI */
         .day-saturday {
-            background-color: rgba(35, 134, 54, 0.45) !important;
+            background-color: #1b4b2c !important; /* Mély zöld */
+            color: #3fb950 !important;
             border-bottom: 3px solid var(--green) !important;
         }
         .day-sunday-holiday {
-            background-color: rgba(218, 54, 51, 0.45) !important;
+            background-color: #512022 !important; /* Mély piros */
+            color: #ff7b72 !important;
             border-bottom: 3px solid var(--red) !important;
         }
 
@@ -529,13 +531,7 @@
                     }
                 });
 
-                let thElement = document.getElementById(`th-day-${dKey}`);
-                if (thElement) {
-                    thElement.classList.remove('th-alert', 'th-warning');
-                }
-
                 if (actualCount < requiredCount) {
-                    if (thElement) thElement.classList.add('th-alert');
                     issues.push({
                         date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
                         required: requiredCount,
@@ -544,7 +540,6 @@
                         diff: requiredCount - actualCount
                     });
                 } else if (actualCount > requiredCount) {
-                    if (thElement) thElement.classList.add('th-warning');
                     issues.push({
                         date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
                         required: requiredCount,
