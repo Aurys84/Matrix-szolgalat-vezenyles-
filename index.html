@@ -157,6 +157,12 @@
             z-index: 5 !important;
         }
 
+        .total-row td {
+            background-color: #1f2937 !important;
+            color: #58a6ff !important;
+            font-weight: bold;
+        }
+
         .week-separator {
             border-right: 2px solid #58a6ff !important;
         }
@@ -323,7 +329,6 @@
             color: #f0f6fc !important;
         }
 
-        /* TÖKÉLETESÍTETT NYOMTATÁSI BEÁLLÍTÁSOK */
         @page {
             size: A4 landscape;
             margin: 4mm;
@@ -365,7 +370,7 @@
             body.print-schedule-only table {
                 width: 100% !important;
                 font-size: 7px !important;
-                transform: scale(0.95); /* Finoman összepréseli, hogy garantáltan ráférjen a szélességre */
+                transform: scale(0.95);
                 transform-origin: top left;
             }
             body.print-schedule-only th, 
@@ -379,6 +384,10 @@
                 color: #000000 !important;
                 font-weight: bold !important;
                 min-width: 85px !important;
+            }
+            body.print-schedule-only .total-row td {
+                background-color: #e2e8f0 !important;
+                color: #000000 !important;
             }
             body.print-schedule-only .week-row th {
                 background-color: #e2e8f0 !important;
@@ -662,15 +671,27 @@
                     }
                 });
 
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;" class="guard-hour-cell">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
 
+            // HAVI ÖSSZESÍTŐ SOR A TÁBLÁZAT ALJÁN
+            tbodyHtml += `<tr class="total-row">`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
+            days.forEach((item, dIndex) => {
+                let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
+                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
+            });
+            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
+            tbodyHtml += `</tr>`;
+
             document.getElementById('tableBody').innerHTML = tbodyHtml;
 
-            document.querySelectorAll('#scheduleTable tbody tr').forEach(row => {
+            document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
                 calculateRowHours(row);
             });
+
+            calculateColumnTotals(days);
 
             runAuditEngine(days, year, month);
             runVacationEngine(year, month);
@@ -725,9 +746,6 @@
                 localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellDataToSave));
             }
 
-            calculateRowHours(activeCell.closest('tr'));
-            autoSave();
-            
             const year = parseInt(document.getElementById('yearSelect').value);
             const month = parseInt(document.getElementById('monthSelect').value);
             let days = [];
@@ -735,6 +753,13 @@
             for(let i = 1; i <= currentMonthDays; i++) {
                 days.push({ date: new Date(year, month, i) });
             }
+
+            document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
+                calculateRowHours(row);
+            });
+            calculateColumnTotals(days);
+
+            autoSave();
             runAuditEngine(days, year, month);
             runVacationEngine(year, month);
         }
@@ -754,6 +779,46 @@
 
             let hoursCell = cells[cells.length - 1];
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
+        }
+
+        function calculateColumnTotals(days) {
+            let colCount = days.length;
+            let colTotals = new Array(colCount).fill(0);
+            let grandTotal = 0;
+
+            let rows = document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)');
+            rows.forEach(row => {
+                let cells = row.querySelectorAll('td');
+                for(let i = 1; i <= colCount; i++) {
+                    let type = cells[i].dataset.type;
+                    let h = 0;
+                    if(type === 'np' || type === 'ep' || type === 'szb') h = 12;
+                    else if(type === 'nep') h = 24;
+                    
+                    colTotals[i - 1] += h;
+                }
+            });
+
+            // Oszlopösszegek beírása a sor aljára
+            for(let i = 0; i < colCount; i++) {
+                let colCell = document.getElementById(`col-total-${i}`);
+                if(colCell) {
+                    colCell.innerText = colTotals[i] > 0 ? colTotals[i] + 'h' : '0h';
+                }
+            }
+
+            // Teljes összeg
+            rows.forEach(row => {
+                let cells = row.querySelectorAll('td');
+                let lastCell = cells[cells.length - 1];
+                let val = parseInt(lastCell.innerText) || 0;
+                grandTotal += val;
+            });
+
+            let grandCell = document.getElementById('grand-total-hours');
+            if(grandCell) {
+                grandCell.innerHTML = `<b>${grandTotal}h</b>`;
+            }
         }
 
         function runVacationEngine(year, month) {
@@ -867,7 +932,7 @@
             localStorage.setItem(`matrix_guards_${year}_${month}`, JSON.stringify(currentGuards));
 
             let dataToSave = {};
-            document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
+            document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
                     if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
                         let cellKey = cell.dataset.key;
@@ -946,6 +1011,12 @@
                             break-before: page;
                         }
 
+                        .total-row td {
+                            background-color: #e2e8f0 !important;
+                            color: #000 !important;
+                            font-weight: bold;
+                        }
+
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
@@ -964,7 +1035,7 @@
                         .summary-row {
                             display: grid;
                             grid-template-columns: 1fr 1fr;
-                            gap: 10px;
+                            gap: 10mm;
                             margin-top: 10px;
                         }
                         .summary-box {
