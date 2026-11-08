@@ -399,7 +399,6 @@
                 background-color: #1f6feb !important;
                 color: white !important;
             }
-            /* Óraszámok oszlopa nyomtatáskor világos hátteret kap */
             body.print-schedule-only tr td:last-child {
                 background-color: #e6edf3 !important;
                 color: #000000 !important;
@@ -416,7 +415,7 @@
 <body id="mainBody">
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Külön Nyomtatás és Teljes PDF Jelentés</div>
+    <div class="subtitle">Kék Áthozott Napok & Külön Nyomtatás és Vezetőségi PDF Jelentés</div>
 
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -450,8 +449,8 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-print" onclick="printSchedule()">🖨️ Nyomtatás (Vezetőség)</button>
-            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 Teljes PDF Jelentés</button>
+            <button class="btn-print" onclick="printSchedule()">🖨️ Nyomtatás</button>
+            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 PDF Jelentés (Vezetőségnek)</button>
         </div>
     </div>
 
@@ -894,7 +893,7 @@
             alert('💾 A Mátrix Labor adatai, a névsor és a szabadságok sikeresen mentve!');
         }
 
-        // 1. GOMB: Nyomtatás (Csak a vezénylés, tiszta világos háttérrel)
+        // Nyomtatás gomb (Csak a vezénylés)
         function printSchedule() {
             document.getElementById('mainBody').classList.add('print-schedule-only');
             window.print();
@@ -903,7 +902,7 @@
             }, 1000);
         }
 
-        // 2. GOMB: Teljes PDF Jelentés (Új ablakban nyitja meg a vezénylést ÉS az összes alsó panelt)
+        // Teljes PDF Jelentés gomb a vezetőségnek (Vezénylés + összes alsó panel)
         function exportFullPdfReport() {
             let printWindow = window.open('', '_blank');
             let htmlContent = `
@@ -911,7 +910,7 @@
                 <html lang="hu">
                 <head>
                     <meta charset="UTF-8">
-                    <title>Mátrix Labor — Teljes Havi Jelentés</title>
+                    <title>Mátrix Labor — Hivatalos Vezetőségi Jelentés</title>
                     <style>
                         body { font-family: sans-serif; background: #fff; color: #000; margin: 15px; font-size: 11px; }
                         h1 { text-align: center; font-size: 16px; margin-bottom: 5px; }
@@ -927,8 +926,8 @@
                     </style>
                 </head>
                 <body>
-                    <h1>Mátrix Labor — Hivatalos Teljes Havi Jelentés</h1>
-                    <div class="subtitle">Tartalmazza a vezénylési táblázatot és az éves szabadságkezelő összesítőt</div>
+                    <h1>Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
+                    <div class="subtitle">Tartalmazza a havi vezénylési táblázatot és az éves szabadságkezelő összesítőt</div>
                     
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
                     <div>${document.querySelector('.table-container').innerHTML}</div>
