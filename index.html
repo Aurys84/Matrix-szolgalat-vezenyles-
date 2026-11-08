@@ -21,39 +21,39 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 10px;
         }
         h1 {
             text-align: center;
             color: #58a6ff;
-            margin-bottom: 5px;
-            font-size: 1.5rem;
+            margin-bottom: 2px;
+            font-size: 1.3rem;
         }
         .subtitle {
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: #8b949e;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .controls {
             display: flex;
             justify-content: space-between;
             background: var(--panel-bg);
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
         select, input, button {
             background: #21262d;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 6px 10px;
+            padding: 5px 8px;
             border-radius: 6px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         button {
             background: var(--blue);
@@ -62,19 +62,21 @@
         }
         button:hover { background: #388bfd; }
 
+        /* Univerzális Poszt Választó Sáv */
         .palette {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: var(--panel-bg);
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             align-items: center;
             flex-wrap: wrap;
+            font-size: 0.85rem;
         }
-        .palette span { font-size: 0.85rem; font-weight: bold; color: #8b949e; margin-right: 5px; }
-        .p-btn { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        .palette span { font-weight: bold; color: #8b949e; margin-right: 5px; }
+        .p-btn { padding: 4px 8px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; font-size: 0.75rem; }
         .btn-np { background: var(--green); color: white; }
         .btn-ep { background: var(--red); color: white; }
         .btn-nep { background: var(--purple); color: white; }
@@ -87,18 +89,18 @@
             background: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            max-height: 65vh;
-            margin-bottom: 15px;
+            max-height: 62vh;
+            margin-bottom: 12px;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 6px 4px;
+            padding: 4px 3px;
             white-space: nowrap;
         }
         th {
@@ -113,12 +115,12 @@
             background: #1f242c;
             color: #58a6ff;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             border-bottom: 2px solid #58a6ff;
             z-index: 3;
         }
         .day-row th {
-            top: 29px;
+            top: 25px;
             z-index: 2;
         }
         .name-col {
@@ -128,7 +130,8 @@
             left: 0;
             background: #161b22;
             z-index: 4;
-            min-width: 130px;
+            min-width: 120px;
+            font-size: 0.8rem;
         }
         th.name-col { z-index: 5; }
 
@@ -140,8 +143,10 @@
             background-color: #f0f3f6;
             color: #24292e;
             cursor: pointer;
+            min-width: 32px;
         }
 
+        /* Eredeti, élénk színek (nincs elhalványítás) */
         .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; cursor: pointer; }
@@ -153,52 +158,51 @@
             outline-offset: -3px;
         }
 
-        /* Figyelőmotor & Eltérés stílusok */
         .audit-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
-            margin-top: 15px;
+            padding: 10px;
+            font-size: 0.85rem;
         }
         .audit-panel h3 {
             margin-top: 0;
             color: #58a6ff;
-            font-size: 1rem;
-            margin-bottom: 8px;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
         }
         .alert-badge {
             display: inline-block;
-            padding: 3px 8px;
+            padding: 2px 6px;
             border-radius: 4px;
             font-weight: bold;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
         .alert-ok { background: var(--green); color: white; }
         .alert-error { background: var(--red); color: white; }
 
         .th-alert {
-            background-color: rgba(218, 54, 51, 0.3) !important;
+            background-color: rgba(218, 54, 51, 0.4) !important;
             border: 2px solid var(--red) !important;
         }
 
         .legend {
             display: flex;
-            gap: 12px;
-            margin-top: 15px;
+            gap: 10px;
+            margin-top: 10px;
             flex-wrap: wrap;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             align-items: center;
             justify-content: center;
         }
-        .legend-item { display: flex; align-items: center; gap: 5px; }
-        .color-box { width: 14px; height: 14px; border-radius: 3px; }
+        .legend-item { display: flex; align-items: center; gap: 4px; }
+        .color-box { width: 12px; height: 12px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <h1>Mátrix Labor — Vezénylési Rendszer & Figyelőmotor</h1>
-    <div class="subtitle">Automatikus Létszámfigyelő & Eltérés Elemző</div>
+    <h1>Mátrix Labor — Vezénylési Rendszer</h1>
+    <div class="subtitle">Univerzális 1-20 Posztválasztó & Intelligens Figyelőmotor</div>
 
     <div class="controls">
         <div>
@@ -231,11 +235,24 @@
         <button onclick="manualSave()">Adatok Mentése</button>
     </div>
 
+    <!-- Univerzális Poszt Választó Sáv 1-20 legördülővel -->
     <div class="palette">
-        <span>Kijelölt cella kitöltése:</span>
-        <button class="p-btn btn-np" onclick="applyService('Np1', 'pos-np', 'np')">Nappal (Np)</button>
-        <button class="p-btn btn-ep" onclick="applyService('Ép1', 'pos-ep', 'ep')">Éjjel (Ép)</button>
-        <button class="p-btn btn-nep" onclick="applyService('NÉp1', 'pos-nep', 'nep')">24h (NÉp)</button>
+        <span>Gyorskitöltés:</span>
+        <button class="p-btn btn-np" onclick="applyServiceWithPos('Np', 'pos-np', 'np')">Nappal:</button>
+        <select id="npNum" style="padding: 2px 4px; font-size:0.75rem;">
+            <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+        </select>
+
+        <button class="p-btn btn-ep" onclick="applyServiceWithPos('Ép', 'pos-ep', 'ep')">Éjjel:</button>
+        <select id="epNum" style="padding: 2px 4px; font-size:0.75rem;">
+            <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+        </select>
+
+        <button class="p-btn btn-nep" onclick="applyServiceWithPos('NÉp', 'pos-nep', 'nep')">24h:</button>
+        <select id="nepNum" style="padding: 2px 4px; font-size:0.75rem;">
+            <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
+        </select>
+
         <button class="p-btn btn-szb" onclick="applyService('SZB', 'pos-szb', 'szb')">Szabadság (SZB)</button>
         <button class="p-btn btn-szab" onclick="applyService('SZ', 'pos-szab', 'szab')">Szabadnap (SZ)</button>
         <button class="p-btn btn-clear" onclick="applyService('', 'cell-default', 'clear')">Törlés</button>
@@ -248,16 +265,15 @@
         </table>
     </div>
 
-    <!-- Figyelőmotor Elemző Panel -->
     <div class="audit-panel">
         <h3>🔍 Mátrix Labor Biztonsági & Létszám Figyelőmotor</h3>
         <div id="auditReport">A rendszer elemzi a létszámokat...</div>
     </div>
 
     <div class="legend">
-        <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np) [12h]</div>
-        <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép) [12h]</div>
-        <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp) [24h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np 1-20) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép 1-20) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp 1-20) [24h]</div>
         <div class="legend-item"><div class="color-box" style="background: var(--yellow);"></div> Szabadság (SZB) [12h]</div>
         <div class="legend-item"><div class="color-box" style="background: var(--blue);"></div> Szabadnap (SZ)</div>
     </div>
@@ -314,7 +330,7 @@
             }
 
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
-            let reqRowHtml = '<tr class="req-row"><th class="name-col" style="background:#21262d; color:#e6edf3;">Megbízói Elvárt Létszám</th>';
+            let reqRowHtml = '<tr class="req-row"><th class="name-col" style="background:#21262d; color:#e6edf3;">Elvárt Létszám</th>';
             let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
 
             let prevWeek = -1;
@@ -333,14 +349,14 @@
 
                 weekRowHtml += `<th class="${sepClass}">${weekNum}. hét</th>`;
                 
-                let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2; // alapértelmezett elvárt létszám: 2 fő
-                reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:35px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:4px; font-weight:bold;"></th>`;
+                let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
+                reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:30px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;"></th>`;
 
-                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass}" style="${item.isExtra ? 'background:#1f2937; opacity: 0.8;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass}" style="${item.isExtra ? 'background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
             weekRowHtml += '<th>Össz. Óra</th></tr>';
-            reqRowHtml += '<th>Elvárt összes</th></tr>';
+            reqRowHtml += '<th>Cél</th></tr>';
             dayRowHtml += '<th>Órakeret</th></tr>';
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
@@ -350,7 +366,7 @@
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold;"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:110px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.8rem;"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let dKey = getDateKey(item.date);
@@ -388,7 +404,6 @@
             savedRequired[dKey] = parseInt(input.value) || 0;
             localStorage.setItem(`matrix_required_${year}_${month}`, JSON.stringify(savedRequired));
 
-            // Újrafuttatjuk az auditmotort
             generateCalendar();
         }
 
@@ -396,6 +411,12 @@
             if(activeCell) activeCell.classList.remove('selected-cell');
             activeCell = cell;
             activeCell.classList.add('selected-cell');
+        }
+
+        function applyServiceWithPos(prefix, className, type) {
+            let numId = type === 'np' ? 'npNum' : (type === 'ep' ? 'epNum' : 'nepNum');
+            let numVal = document.getElementById(numId).value;
+            applyService(prefix + numVal, className, type);
         }
 
         function applyService(text, className, type) {
@@ -422,7 +443,7 @@
 
             calculateRowHours(activeCell.closest('tr'));
             autoSave();
-            generateCalendar(); // Frissíti a figyelőmotort azonnal
+            generateCalendar();
         }
 
         function calculateRowHours(row) {
@@ -442,20 +463,18 @@
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
-        // --- FIGYELŐMOTOR & AUDIT LOGIKA ---
+        // --- FIGYELŐMOTOR (CSAK A VALÓDI HIÁNYT FIGYELI, A PLUSZT NEM) ---
         function runAuditEngine(days) {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             
             let discrepancies = [];
-            let totalDaysChecked = 0;
 
             days.forEach(item => {
                 let dKey = getDateKey(item.date);
                 let requiredCount = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                 
-                // Megszámoljuk hány őr dolgozik az adott napon (aki nem üres, nem szab, nem szabadnap)
                 let actualCount = 0;
                 guards.forEach((_, gIndex) => {
                     let globalData = JSON.parse(localStorage.getItem(`global_cell_${dKey}_g_${gIndex}`));
@@ -465,6 +484,7 @@
                 });
 
                 let thElement = document.getElementById(`th-day-${dKey}`);
+                // CSAK AKKOR HIÁNY, HA TÉNYLEG KESEVVBB VAN, MINT A CÉL (A plusz nem hiány!)
                 if (actualCount < requiredCount) {
                     if (thElement) thElement.classList.add('th-alert');
                     discrepancies.push({
@@ -476,16 +496,15 @@
                 } else {
                     if (thElement) thElement.classList.remove('th-alert');
                 }
-                totalDaysChecked++;
             });
 
             let reportHtml = '';
             if (discrepancies.length === 0) {
-                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN RENDBEN</span> A megbízói létszámkeret a hónap minden napján teljesül. Nincs eltérés!</p>`;
+                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN RENDBEN</span> A megbízói létszámkeret teljesül (többlet vagy pontos egyezés van). Nincs hiány!</p>`;
             } else {
-                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${discrepancies.length} NAPON ELTÉRÉS / LÉTSZÁMHIÁNY VAN!</span></p>`;
-                reportHtml += `<table style="width:100%; margin-top:8px; font-size:0.75rem;">`;
-                reportHtml += `<tr><th>Dátum</th><th>Elvárt Létszám</th><th>Tényleges Létszám</th><th>Hiány / Eltérés</th></tr>`;
+                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${discrepancies.length} NAPON LÉTSZÁMHIÁNY VAN!</span></p>`;
+                reportHtml += `<table style="width:100%; margin-top:6px; font-size:0.75rem;">`;
+                reportHtml += `<tr><th>Dátum</th><th>Elvárt</th><th>Tényleges</th><th>Hiány</th></tr>`;
                 discrepancies.forEach(d => {
                     reportHtml += `<tr>
                         <td><b>${d.date}</b></td>
@@ -530,7 +549,7 @@
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai, létszámok és figyelőmotor adatai sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai sikeresen mentve!');
         }
 
         window.onload = generateCalendar;
