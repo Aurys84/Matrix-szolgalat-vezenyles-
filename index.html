@@ -152,10 +152,10 @@
             min-width: 26px;
         }
 
-        /* Világosabb, jól látható zárolt cellák stílusa */
+        /* SZÉP HALVÁNY KÉK, ÁTÜTŐS ZÁROLT CELLÁK (Előző havi áthozott napok) */
         td.cell-locked {
-            background-color: #2d333b !important;
-            color: #8b949e !important;
+            background-color: #1c2b3d !important;
+            color: #79c0ff !important;
             cursor: not-allowed !important;
             pointer-events: none !important;
             font-weight: bold;
@@ -254,7 +254,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Zárolt Előző Havi Napok & Ünnepnap Számláló & LED Motor</div>
+    <div class="subtitle">Elegáns Kék Zárolt Napok & Ünnepnap Számláló & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -413,7 +413,7 @@
                 weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
                 
                 if (item.isExtra) {
-                    reqRowHtml += `<th class="${sepClass}" style="background:#2d333b;">-</th>`;
+                    reqRowHtml += `<th class="${sepClass}" style="background:#1c2b3d;">-</th>`;
                 } else {
                     let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                     reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#21262d; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
@@ -432,7 +432,7 @@
                 }
 
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
-                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${item.isExtra ? 'background:#2d333b; color:#8b949e;' : ''}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
+                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${item.isExtra ? 'background:#1c2b3d; color:#79c0ff;' : ''}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
 
             weekRowHtml += '<th class="name-col">Óra</th></tr>';
@@ -459,7 +459,6 @@
                     
                     let cellInfo = null;
                     if (item.isExtra) {
-                        // Biztosítjuk, hogy az előző hónap konkrét adatait hozza át oszlophelyesen
                         let prevD = item.date;
                         let prevDKey = getDateKey(prevD);
                         let prevGlobalKey = `global_cell_${prevDKey}_g_${gIndex}`;
