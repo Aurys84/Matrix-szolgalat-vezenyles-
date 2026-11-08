@@ -162,7 +162,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Tökéletesített 3-napos átvezetés + Auto-mentés</div>
+    <div class="subtitle">Kijavított 3-napos átvezetés & tiszta heti elválasztás</div>
 
     <div class="controls">
         <div>
@@ -244,7 +244,7 @@
 
             let days = [];
             
-            // 1. Előző hónap meghatározása
+            // Előző hónap meghatározása
             let pYear = year;
             let pMonth = month - 1;
             if(pMonth < 0) {
@@ -252,12 +252,11 @@
                 pYear = year - 1;
             }
             
-            let prevMonthLastDate = new Date(year, month, 0);
-            let pLastDayNum = prevMonthLastDate.getDate();
+            let prevMonthLastDate = new Date(pYear, pMonth + 1, 0).getDate();
 
-            // Előző hónap utolsó 3 napja
+            // Előző hónap utolsó 3 napja (biztosan mind a 3 benne lesz)
             for(let i = 2; i >= 0; i--) {
-                let dayNum = pLastDayNum - i;
+                let dayNum = prevMonthLastDate - i;
                 let d = new Date(pYear, pMonth, dayNum);
                 days.push({ date: d, isExtra: true, realYear: pYear, realMonth: pMonth, realDay: dayNum });
             }
@@ -269,7 +268,7 @@
                 days.push({ date: d, isExtra: false, realYear: year, realMonth: month, realDay: i });
             }
 
-            let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét / Nap</th>';
+            let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
             let dayRowHtml = '<tr><th class="name-col">Név / Dátum</th>';
 
             let prevWeek = -1;
@@ -284,7 +283,7 @@
                 let sepClass = isNewWeek ? 'week-separator' : '';
                 prevWeek = weekNum;
 
-                weekRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}. hét</th>`;
+                weekRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}.hét</th>`;
                 dayRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6; background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
@@ -293,9 +292,7 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
-            // Aktuális hónap mentett adatai
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
-            // Előző hónap mentett adatai a 3 napos áthíváshoz
             let prevMonthData = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
             let pDaysTotal = new Date(pYear, pMonth + 1, 0).getDate();
 
@@ -308,12 +305,9 @@
                     let cellKey = `g_${gIndex}_d_${dIndex}`;
                     let cellInfo = null;
 
-                    // Ha extra (átvezető) nap, akkor az előző hónap megfelelő napjának adatait keressük meg
                     if (item.isExtra) {
-                        let targetDayNum = item.realDay; // pl. 29, 30, 31
-                        // Megkeressük az előző havi táblázatban ennek a napnak az indexét
-                        // Az előző hónap napjai: 1-től pDaysTotal-ig
-                        let prevDayIndex = (pDaysTotal - 3) + (targetDayNum - (pLastDayNum - 2)); 
+                        let targetDayNum = item.realDay; 
+                        let prevDayIndex = (pDaysTotal - 3) + (targetDayNum - (prevMonthLastDate - 2)); 
                         let prevCellKey = `g_${gIndex}_d_${prevDayIndex}`;
                         cellInfo = prevMonthData[prevCellKey];
                     } else {
