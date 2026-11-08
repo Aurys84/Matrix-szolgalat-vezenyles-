@@ -152,7 +152,7 @@
             min-width: 26px;
         }
 
-        /* Ha üres az áthozott cella, akkor kapja a kék alapszínt */
+        /* Áthozott üres cellák kék színe */
         td.cell-locked {
             background-color: #1f6feb !important;
             color: white !important;
@@ -255,7 +255,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Hétvégi Színek & LED Motor</div>
+    <div class="subtitle">Kék Áthozott Napok & Hétvégi Színek & Ünnepnap Számláló</div>
 
     <div class="controls">
         <div>
@@ -464,16 +464,13 @@
                         let prevGlobalKey = `global_cell_${prevDKey}_g_${gIndex}`;
                         let prevCellData = JSON.parse(localStorage.getItem(prevGlobalKey));
 
-                        if (prevCellData) {
-                            // Ha van beírás, a saját poszt stílusa érvényesül, ha nincs, akkor a cell-locked (kék)
-                            let assignedClass = prevCellData.className ? prevCellData.className : 'cell-locked';
-                            cellInfo = { text: prevCellData.text, className: assignedClass, type: prevCellData.type };
+                        if (prevCellData && prevCellData.text) {
+                            cellInfo = { text: prevCellData.text, className: prevCellData.className, type: prevCellData.type };
                         } else {
                             let prevCellKey = `g_${gIndex}_d_${prevMonthLastDate - 3 + dIndex}`;
                             let oldData = prevMonthSchedule[prevCellKey];
                             if (oldData && oldData.text) {
-                                let assignedClass = oldData.className ? oldData.className : 'cell-locked';
-                                cellInfo = { text: oldData.text, className: assignedClass, type: oldData.type };
+                                cellInfo = { text: oldData.text, className: oldData.className, type: oldData.type };
                             } else {
                                 cellInfo = { text: '', className: 'cell-locked', type: 'locked' };
                             }
