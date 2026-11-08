@@ -61,12 +61,34 @@
             font-weight: bold;
         }
         button:hover { background: #388bfd; }
+
+        /* Gyorsválasztó sáv */
+        .palette {
+            display: flex;
+            gap: 8px;
+            background: var(--panel-bg);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .palette span { font-size: 0.85rem; font-weight: bold; color: #8b949e; margin-right: 5px; }
+        .p-btn { padding: 5px 10px; border-radius: 5px; border: none; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        .btn-np { background: var(--green); color: white; }
+        .btn-ep { background: var(--red); color: white; }
+        .btn-nep { background: var(--purple); color: white; }
+        .btn-szb { background: var(--yellow); color: white; }
+        .btn-szab { background: var(--blue); color: white; }
+        .btn-clear { background: #21262d; color: #c9d1d9; border: 1px solid var(--border-color); }
+
         .table-container {
             overflow-x: auto;
             background: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            max-height: 75vh;
+            max-height: 70vh;
         }
         table {
             width: 100%;
@@ -91,6 +113,7 @@
             background: #1f242c;
             color: #e6edf3;
             font-size: 0.75rem;
+            border-bottom: 2px solid #58a6ff;
         }
         .name-col {
             text-align: left;
@@ -98,18 +121,28 @@
             position: sticky;
             left: 0;
             background: #161b22;
-            z-index: 1;
+            z-index: 3;
             min-width: 130px;
         }
-        th.name-col { z-index: 3; }
+        th.name-col { z-index: 4; }
+
+        /* Heti elválasztó vonal */
+        .week-separator {
+            border-right: 2px solid #58a6ff !important;
+        }
 
         /* Pozíció / Szolgálat színek */
-        .pos-np { background-color: rgba(35, 134, 54, 0.35); color: #7ee787; font-weight: bold; } /* Nappalos (Np1-10) - Zöld */
-        .pos-ep { background-color: rgba(218, 54, 51, 0.35); color: #ffa198; font-weight: bold; } /* Éjjeles (Ép1-10) - Piros */
-        .pos-nep { background-color: rgba(137, 87, 229, 0.35); color: #d2a8ff; font-weight: bold; } /* 24h (NÉp1-10) - Lila */
-        .pos-szb { background-color: rgba(158, 106, 3, 0.35); color: #e3b341; font-weight: bold; } /* Szabadság (SZB) - Sárga */
-        .pos-szab { background-color: rgba(31, 111, 235, 0.2); color: #79c0ff; } /* Szabadnap (SZ) */
+        .pos-np { background-color: rgba(35, 134, 54, 0.35); color: #7ee787; font-weight: bold; cursor: pointer; }
+        .pos-ep { background-color: rgba(218, 54, 51, 0.35); color: #ffa198; font-weight: bold; cursor: pointer; }
+        .pos-nep { background-color: rgba(137, 87, 229, 0.35); color: #d2a8ff; font-weight: bold; cursor: pointer; }
+        .pos-szb { background-color: rgba(158, 106, 3, 0.35); color: #e3b341; font-weight: bold; cursor: pointer; }
+        .pos-szab { background-color: rgba(31, 111, 235, 0.2); color: #79c0ff; cursor: pointer; }
         
+        td.selected-cell {
+            outline: 2px solid #58a6ff;
+            outline-offset: -2px;
+        }
+
         .legend {
             display: flex;
             gap: 12px;
@@ -126,15 +159,18 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">20 fős univerzális modul | Automatikus átvezetés & biztonsági logikák</div>
+    <div class="subtitle">10-éves modul & Kattintós Szolgálat-beillesztő</div>
 
     <div class="controls">
         <div>
-            <label for="yearSelect">Év:</label>
+            <label for="yearSelect">Év (10 év):</label>
             <select id="yearSelect" onchange="generateCalendar()">
-                <option value="2026">2026</option>
-                <option value="2027" selected>2027</option>
-                <option value="2028">2028</option>
+                <script>
+                    const currentYear = new Date().getFullYear();
+                    for(let y = 2026; y <= 2035; y++) {
+                        document.write(`<option value="${y}" ${y === 2027 ? 'selected' : ''}>${y}</option>`);
+                    }
+                </script>
             </select>
         </div>
         <div>
@@ -157,14 +193,21 @@
         <button onclick="saveData()">Adatok Mentése</button>
     </div>
 
+    <!-- Kattintós Gyorsválasztó Sáv -->
+    <div class="palette">
+        <span>Kijelölt cella kitöltése:</span>
+        <button class="p-btn btn-np" onclick="applyService('Np1', 'pos-np', 'np')">Nappal (Np)</button>
+        <button class="p-btn btn-ep" onclick="applyService('Ép1', 'pos-ep', 'ep')">Éjjel (Ép)</button>
+        <button class="p-btn btn-nep" onclick="applyService('NÉp1', 'pos-nep', 'nep')">24h (NÉp)</button>
+        <button class="p-btn btn-szb" onclick="applyService('SZB', 'pos-szb', 'szb')">Szabadság (SZB)</button>
+        <button class="p-btn btn-szab" onclick="applyService('SZ', 'pos-szab', 'szab')">Szabadnap (SZ)</button>
+        <button class="p-btn btn-clear" onclick="applyService('-', 'pos-szab', 'clear')Törlés</button>
+    </div>
+
     <div class="table-container">
         <table id="scheduleTable">
-            <thead id="tableHeader">
-                <!-- Dinamikusan generálva -->
-            </thead>
-            <tbody id="tableBody">
-                <!-- Dinamikusan generálva 20 őrre -->
-            </tbody>
+            <thead id="tableHeader"></thead>
+            <tbody id="tableBody"></tbody>
         </table>
     </div>
 
@@ -184,7 +227,7 @@
         ];
 
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
-        const dayLetters = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Sz']; // Hétfőtől vasárnapig
+        let activeCell = null;
 
         function getWeekNumber(d) {
             d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
@@ -198,10 +241,9 @@
             const year = parseInt(document.getElementById('yearSelect').value);
             const month = parseInt(document.getElementById('monthSelect').value);
 
-            // Előző hónap utolsó 3 napja + aktuális hónap napjai
             let days = [];
             
-            // Előző hónap utolsó 3 napja
+            // Előző hónap utolsó 3 napja átvezetésként
             let prevMonthLastDay = new Date(year, month, 0);
             let pYear = prevMonthLastDay.getFullYear();
             let pMonth = prevMonthLastDay.getMonth();
@@ -219,9 +261,10 @@
                 days.push({ date: d, isExtra: false });
             }
 
-            let theadHtml = '';
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét / Nap</th>';
             let dayRowHtml = '<tr><th class="name-col">Név / Dátum</th>';
+
+            let prevWeek = -1;
 
             days.forEach((item, index) => {
                 let d = item.date;
@@ -229,8 +272,13 @@
                 let weekNum = getWeekNumber(d);
                 let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
                 
-                weekRowHtml += `<th style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}.hét</th>`;
-                dayRowHtml += `<th style="${item.isExtra ? 'opacity: 0.6; background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+                // Heti elválasztás detektálása
+                let isNewWeek = (weekNum !== prevWeek && index > 0);
+                let sepClass = isNewWeek ? 'week-separator' : '';
+                prevWeek = weekNum;
+
+                weekRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}. hét</th>`;
+                dayRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6; background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
             weekRowHtml += '<th>Össz. Óra</th></tr>';
@@ -247,7 +295,8 @@
                 days.forEach((item, dIndex) => {
                     let defaultVal = item.isExtra ? '-' : 'SZ';
                     let cssClass = 'pos-szab';
-                    tbodyHtml += `<td class="${cssClass}" contenteditable="true" onblur="validateCell(this)">${defaultVal}</td>`;
+                    let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
+                    tbodyHtml += `<td class="${cssClass} ${prevWeekCheck}" onclick="selectCell(this)" data-type="szab">${defaultVal}</td>`;
                 });
 
                 tbodyHtml += `<td><b>0h</b></td>`;
@@ -257,41 +306,36 @@
             document.getElementById('tableBody').innerHTML = tbodyHtml;
         }
 
-        function validateCell(cell) {
-            let val = cell.innerText.trim().toUpperCase();
-            cell.className = ''; // Reset
+        function selectCell(cell) {
+            if(activeCell) activeCell.classList.remove('selected-cell');
+            activeCell = cell;
+            activeCell.classList.add('selected-cell');
+        }
 
-            if(val.startsWith('NP')) {
-                cell.classList.add('pos-np');
-                cell.dataset.type = 'np';
-            } else if(val.startsWith('ÉP')) {
-                // Ellenőrzés: Előző nap volt-e nappalos?
-                let prevCell = cell.previousElementSibling;
+        function applyService(text, className, type) {
+            if(!activeCell) {
+                alert('⚠️ Először kattints rá egy cellára a táblázatban, ahová be szeretnéd illeszteni a szolgálatot!');
+                return;
+            }
+
+            // Biztonsági ellenőrzés Éjjeles (Ép) esetén: nem lehet Nappalos (Np) után
+            if(type === 'ep') {
+                let prevCell = activeCell.previousElementSibling;
                 if(prevCell && prevCell.dataset && prevCell.dataset.type === 'np') {
-                    alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) közvetlenül Nappalos (Np) poszt után! Kérlek ellenőrizd a pihenőidőt!');
-                    cell.innerText = 'SZ';
-                    cell.className = 'pos-szab';
+                    alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) közvetlenül Nappalos (Np) poszt után!');
                     return;
                 }
-                cell.classList.add('pos-ep');
-                cell.dataset.type = 'ep';
-            } else if(val.startsWith('NÉP')) {
-                cell.classList.add('pos-nep');
-                cell.dataset.type = 'nep';
-            } else if(val === 'SZB') {
-                cell.classList.add('pos-szb');
-                cell.dataset.type = 'szb';
-            } else {
-                cell.classList.add('pos-szab');
-                cell.dataset.type = 'szab';
             }
+
+            activeCell.className = activeCell.className.split(' ')[0] + ' ' + className + ' ' + (activeCell.classList.contains('week-separator') ? 'week-separator' : '') + ' selected-cell';
+            activeCell.innerText = text;
+            activeCell.dataset.type = type;
         }
 
         function saveData() {
             alert('A Mátrix Labor adatai sikeresen rögzítve!');
         }
 
-        // Init
         window.onload = generateCalendar;
     </script>
 </body>
