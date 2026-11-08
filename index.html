@@ -162,7 +162,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Szinkronizált Hónap-átvezetés + Auto-mentés</div>
+    <div class="subtitle">Tökéletesített 3-napos átvezetés + Auto-mentés</div>
 
     <div class="controls">
         <div>
@@ -244,12 +244,18 @@
 
             let days = [];
             
-            // Előző hónap utolsó 3 napja
+            // 1. Előző hónap meghatározása
+            let pYear = year;
+            let pMonth = month - 1;
+            if(pMonth < 0) {
+                pMonth = 11;
+                pYear = year - 1;
+            }
+            
             let prevMonthLastDate = new Date(year, month, 0);
-            let pYear = prevMonthLastDate.getFullYear();
-            let pMonth = prevMonthLastDate.getMonth();
             let pLastDayNum = prevMonthLastDate.getDate();
 
+            // Előző hónap utolsó 3 napja
             for(let i = 2; i >= 0; i--) {
                 let dayNum = pLastDayNum - i;
                 let d = new Date(pYear, pMonth, dayNum);
@@ -287,7 +293,11 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
+            // Aktuális hónap mentett adatai
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
+            // Előző hónap mentett adatai a 3 napos áthíváshoz
+            let prevMonthData = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
+            let pDaysTotal = new Date(pYear, pMonth + 1, 0).getDate();
 
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
@@ -296,23 +306,18 @@
                 
                 days.forEach((item, dIndex) => {
                     let cellKey = `g_${gIndex}_d_${dIndex}`;
-                    
-                    // Ha az első 3 napról van szó, ellenőrizzük, hogy az előző hónapban beírták-e
-                    let cellInfo = savedData[cellKey];
-                    if (!cellInfo && item.isExtra) {
-                        let prevMonthData = JSON.parse(localStorage.getItem(`matrix_schedule_${item.realYear}_${item.realMonth}`)) || {};
-                        // Megkeressük az előző havi adatokban azt a napot
-                        // Az előző hónap végének indexei
-                        let pDaysInMonth = new Date(item.realYear, item.realMonth + 1, 0).getDate();
-                        let targetDayIndex = pDaysInMonth - (item.realDay - 1); // hátulról számolva
-                        // Az előző havi nap index a napok tömbjében: az extra 3 nap + az aktuális napok
-                        // Egyszerűbb kulcs-alapú keresés:
-                        for(let key in prevMonthData) {
-                            if(key.startsWith(`g_${gIndex}_d_`) && key.endsWith(`_${pDaysInMonth - (pLastDayNum - item.realDay)}`)) {
-                                cellInfo = prevMonthData[key];
-                                break;
-                            }
-                        }
+                    let cellInfo = null;
+
+                    // Ha extra (átvezető) nap, akkor az előző hónap megfelelő napjának adatait keressük meg
+                    if (item.isExtra) {
+                        let targetDayNum = item.realDay; // pl. 29, 30, 31
+                        // Megkeressük az előző havi táblázatban ennek a napnak az indexét
+                        // Az előző hónap napjai: 1-től pDaysTotal-ig
+                        let prevDayIndex = (pDaysTotal - 3) + (targetDayNum - (pLastDayNum - 2)); 
+                        let prevCellKey = `g_${gIndex}_d_${prevDayIndex}`;
+                        cellInfo = prevMonthData[prevCellKey];
+                    } else {
+                        cellInfo = savedData[cellKey];
                     }
 
                     if (!cellInfo) {
