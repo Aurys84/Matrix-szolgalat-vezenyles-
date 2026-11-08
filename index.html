@@ -323,10 +323,10 @@
             color: #f0f6fc !important;
         }
 
-        /* TÖKÉLETES A4 FEKVŐ NYOMTATÁSI BEÁLLÍTÁSOK */
+        /* TÖKÉLETES A4 FEKVŐ NYOMTATÁSI BEÁLLÍTÁSOK (TELJES SZÉLESSÉG ÉS ERŐS FEKETE BETŰK) */
         @page {
             size: A4 landscape;
-            margin: 8mm;
+            margin: 4mm;
         }
 
         @media print {
@@ -351,42 +351,46 @@
             }
             table {
                 width: 100% !important;
-                font-size: 9px !important; /* Ideális olvasható méret fekvő A4-en */
+                font-size: 8px !important; /* Optimalizált méret, hogy minden nap ráférjen */
             }
             th, td {
-                border: 1px solid #333333 !important;
-                padding: 3px 2px !important;
+                border: 1px solid #222222 !important;
+                padding: 2px 1px !important;
+                color: #000000 !important;
             }
             .name-col {
                 position: static !important;
-                background-color: #f0f0f0 !important;
+                background-color: #e6edf3 !important;
                 color: #000000 !important;
+                font-weight: bold !important;
             }
             .week-row th {
-                background-color: #e0e0e0 !important;
+                background-color: #d0d7de !important;
                 color: #000000 !important;
             }
             .day-normal-header {
-                background-color: #e0e0e0 !important;
+                background-color: #e6edf3 !important;
                 color: #000000 !important;
             }
             .day-saturday-header {
-                background-color: #c8e6c9 !important;
-                color: #1b5e20 !important;
+                background-color: #2ea043 !important;
+                color: #ffffff !important;
+                font-weight: bold !important;
             }
             .day-sunday-holiday-header {
-                background-color: #ffcdd2 !important;
-                color: #b71c1c !important;
+                background-color: #da3633 !important;
+                color: #ffffff !important;
+                font-weight: bold !important;
             }
             td.cell-locked {
-                background-color: #2196f3 !important;
+                background-color: #1f6feb !important;
                 color: white !important;
             }
-            .pos-np { background-color: #2e7d32 !important; color: white !important; }
-            .pos-ep { background-color: #c62828 !important; color: white !important; }
-            .pos-nep { background-color: #6a1b9a !important; color: white !important; }
-            .pos-szb { background-color: #f57f17 !important; color: white !important; }
-            .pos-szab { background-color: #1565c0 !important; color: white !important; }
+            .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
+            .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
+            .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
+            .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
+            .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
         }
     </style>
 </head>
