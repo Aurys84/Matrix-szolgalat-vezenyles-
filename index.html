@@ -323,10 +323,10 @@
             color: #f0f6fc !important;
         }
 
-        /* NYOMTATÁSI MÓD: BIZTOSÍTJA, HOGY AZ ÓRA OSZLOP IS RÁFÉRJEN */
+        /* TÖKÉLETESÍTETT NYOMTATÁSI BEÁLLÍTÁSOK */
         @page {
             size: A4 landscape;
-            margin: 6mm;
+            margin: 4mm;
         }
 
         body.print-schedule-only .controls,
@@ -360,10 +360,13 @@
                 overflow: visible !important;
                 border: none !important;
                 background: transparent !important;
+                width: 100% !important;
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 7.5px !important; /* Picit optimalizálva, hogy az óra oszlop is garantáltan beférjen */
+                font-size: 7px !important;
+                transform: scale(0.95); /* Finoman összepréseli, hogy garantáltan ráférjen a szélességre */
+                transform-origin: top left;
             }
             body.print-schedule-only th, 
             body.print-schedule-only td {
@@ -375,7 +378,7 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: bold !important;
-                min-width: 90px !important;
+                min-width: 85px !important;
             }
             body.print-schedule-only .week-row th {
                 background-color: #e2e8f0 !important;
