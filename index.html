@@ -264,6 +264,7 @@
         .vacation-card-body {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             color: #8b949e;
             font-size: 0.7rem;
         }
@@ -427,7 +428,7 @@
 <body id="mainBody">
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Külön Nyomtatás és Vezetőségi PDF Jelentés</div>
+    <div class="subtitle">Egyedi Szabadságkeretek & Hivatalos Vezetőségi PDF Jelentés</div>
 
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -497,7 +498,7 @@
 
     <div class="panels-wrapper">
         <div class="vacation-panel">
-            <h3>🌴 Éves Göngyölített Szabadságkezelő (20 Őr kerete)</h3>
+            <h3>🌴 Éves Göngyölített Szabadságkezelő (Alapkeretek szabadon szerkeszthetők)</h3>
             <div id="vacationReport" class="vacation-grid">Szabadságok számítása...</div>
         </div>
 
@@ -675,7 +676,6 @@
                 tbodyHtml += `</tr>`;
             });
 
-            // HAVI ÖSSZESÍTŐ SOR A TÁBLÁZAT ALJÁN
             tbodyHtml += `<tr class="total-row">`;
             tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
@@ -799,7 +799,6 @@
                 }
             });
 
-            // Oszlopösszegek beírása a sor aljára
             for(let i = 0; i < colCount; i++) {
                 let colCell = document.getElementById(`col-total-${i}`);
                 if(colCell) {
@@ -807,7 +806,6 @@
                 }
             }
 
-            // Teljes összeg
             rows.forEach(row => {
                 let cells = row.querySelectorAll('td');
                 let lastCell = cells[cells.length - 1];
@@ -819,6 +817,14 @@
             if(grandCell) {
                 grandCell.innerHTML = `<b>${grandTotal}h</b>`;
             }
+        }
+
+        function updateVacationBase(gIndex, input) {
+            let val = parseInt(input.value) || 0;
+            localStorage.setItem(`vacation_base_${gIndex}`, val);
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            runVacationEngine(year, month);
         }
 
         function runVacationEngine(year, month) {
@@ -834,7 +840,7 @@
                 if(!guardName) guardName = `Őr ${gIndex+1}`;
                 
                 let baseKey = `vacation_base_${gIndex}`;
-                let baseVal = parseInt(localStorage.getItem(baseKey)) || 30;
+                let baseVal = localStorage.getItem(baseKey) !== null ? parseInt(localStorage.getItem(baseKey)) : 30;
 
                 let totalUsedUntilNow = 0;
                 for(let m = 0; m <= month; m++) {
@@ -859,7 +865,7 @@
                     <div class="vacation-card">
                         <div class="vacation-card-header">${guardName}</div>
                         <div class="vacation-card-body">
-                            <span>Alap: <b>${baseVal}</b></span>
+                            <span>Alap: <input type="number" value="${baseVal}" min="0" max="100" style="width:36px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;" onchange="updateVacationBase(${gIndex}, this)"></span>
                             <span>Felhasznált: <b style="color:var(--yellow);">${totalUsedUntilNow}</b></span>
                             <span>Maradék: <b style="color:var(--blue);">${remaining}</b></span>
                         </div>
@@ -958,7 +964,7 @@
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai, a névsor és a szabadságok sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
 
         function printSchedule() {
