@@ -1,2 +1,2 @@
-# Matrix-szolgálat-vezénylés-
+# Mátrix-szolgálat-vezénylés-
 Vagyonőri szolgáltatásokhoz vezénylés tervezetekhez illetve vezénylésekhez
