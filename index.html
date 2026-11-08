@@ -152,7 +152,7 @@
             min-width: 26px;
         }
 
-        /* Letiltott, áthozott előző havi cellák stílusa (Nem szerkeszthető!) */
+        /* Zárolt cellák stílusa */
         td.cell-locked {
             background-color: #111418 !important;
             color: #484f58 !important;
@@ -174,20 +174,20 @@
 
         .panels-wrapper {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 8px;
         }
-        @media (max-width: 900px) {
+        @media (max-width: 1100px) {
             .panels-wrapper { grid-template-columns: 1fr; }
         }
-        .audit-panel, .vacation-panel {
+        .audit-panel, .vacation-panel, .holiday-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 8px;
             font-size: 0.8rem;
         }
-        .audit-panel h3, .vacation-panel h3 {
+        .audit-panel h3, .vacation-panel h3, .holiday-panel h3 {
             margin-top: 0;
             color: #58a6ff;
             font-size: 0.85rem;
@@ -239,6 +239,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
+        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK KIFEJEZETTEN VISSZAÁLLÍTVA */
         .day-saturday {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -254,7 +255,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Zárolt Előző Havi Napok & 20 Fős Névsor & LED Motor</div>
+    <div class="subtitle">Zárolt Előző Havi Napok & Ünnepnap Számláló & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -316,7 +317,7 @@
         </table>
     </div>
 
-    <!-- Alsó Panelek -->
+    <!-- Alsó Panelek: Figyelő, Szabi és ÚJ Ünnepnap Összesítő -->
     <div class="panels-wrapper">
         <div class="audit-panel">
             <h3>🔍 Létszám Figyelőmotor</h3>
@@ -325,6 +326,10 @@
         <div class="vacation-panel">
             <h3>🌴 Éves Göngyölített Szabadságkezelő</h3>
             <div id="vacationReport" style="font-size:0.75rem;">Szabadságok számítása...</div>
+        </div>
+        <div class="holiday-panel">
+            <h3>🎉 Havi Ünnepnapok Számláló</h3>
+            <div id="holidayReport" style="font-size:0.75rem;">Ünnepnapok ellenőrzése...</div>
         </div>
     </div>
 
@@ -375,7 +380,6 @@
             }
             let prevMonthLastDate = new Date(pYear, pMonth + 1, 0).getDate();
 
-            // Előző hónap utolsó 3 napjának áthozatala a helyes heti mutatókhoz
             for(let i = 2; i >= 0; i--) {
                 let dayNum = prevMonthLastDate - i;
                 let d = new Date(pYear, pMonth, dayNum);
@@ -394,6 +398,7 @@
 
             let prevWeek = -1;
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
+            let holidayCount = 0; // Ünnepnapok számlálója a tárgyhónapban
 
             days.forEach((item, index) => {
                 let d = item.date;
@@ -418,9 +423,12 @@
 
                 let dayClass = "";
                 if (!item.isExtra) {
-                    if (dayIndex === 6) {
+                    if (isHoliday(d)) {
+                        dayClass = "day-sunday-holiday";
+                        holidayCount++;
+                    } else if (dayIndex === 6) {
                         dayClass = "day-saturday";
-                    } else if (dayIndex === 0 || isHoliday(d)) {
+                    } else if (dayIndex === 0) {
                         dayClass = "day-sunday-holiday";
                     }
                 }
@@ -434,6 +442,9 @@
             dayRowHtml += '<th class="name-col">Keret</th></tr>';
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
+
+            // Ünnepnap panelt frissítjük
+            document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik (piros kiemeléssel).`;
 
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
             let prevMonthSchedule = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
@@ -451,10 +462,9 @@
                     
                     let cellInfo = null;
                     if (item.isExtra) {
-                        // Előző hónap adataiból próbáljuk betölteni, ha van, és LELÁTCSUK / LE TILTJUK!
                         let prevCellKey = `g_${gIndex}_d_${prevMonthLastDate - 3 + dIndex}`;
                         cellInfo = prevMonthSchedule[prevCellKey] || { text: '', className: 'cell-locked', type: 'locked' };
-                        cellInfo.className = 'cell-locked'; // Szigorúan zárolt stílus
+                        cellInfo.className = 'cell-locked';
                     } else {
                         cellInfo = JSON.parse(localStorage.getItem(globalKey)) || savedData[cellKey];
                         if (!cellInfo) {
@@ -498,7 +508,7 @@
         }
 
         function selectCell(cell) {
-            if(cell.classList.contains('cell-locked')) return; // Zárolt cella nem választható ki
+            if(cell.classList.contains('cell-locked')) return;
             if(activeCell) activeCell.classList.remove('selected-cell');
             activeCell = cell;
             activeCell.classList.add('selected-cell');
@@ -570,7 +580,7 @@
                 currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
             }
 
-            let reportHtml = `<table style="width:100%; font-size:0.7rem;"><tr><th>Őr neve</th><th>Alap Keret</th><th>Eddig Felhasznált</th><th>Aktuális Maradék</th></tr>`;
+            let reportHtml = `<table style="width:100%; font-size:0.7rem;"><tr><th>Őr neve</th><th>Alap Keret</th><th>Felhasznált</th><th>Maradék</th></tr>`;
             
             currentGuards.forEach((guardName, gIndex) => {
                 if(!guardName) return;
@@ -599,9 +609,9 @@
 
                 reportHtml += `<tr>
                     <td><b>${guardName}</b></td>
-                    <td>${baseVal} nap</td>
-                    <td style="color:var(--yellow);">${totalUsedUntilNow} nap</td>
-                    <td style="color:var(--blue); font-weight:bold;">${remaining} nap</td>
+                    <td>${baseVal}</td>
+                    <td style="color:var(--yellow);">${totalUsedUntilNow}</td>
+                    <td style="color:var(--blue); font-weight:bold;">${remaining}</td>
                 </tr>`;
             });
             reportHtml += `</table>`;
@@ -619,7 +629,7 @@
             }
 
             days.forEach(item => {
-                if (item.isExtra) return; // Az extra napokat nem auditáljuk a tárgyhónapban
+                if (item.isExtra) return;
 
                 let dKey = getDateKey(item.date);
                 let requiredCount = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
@@ -648,19 +658,19 @@
 
             let reportHtml = '';
             if (issues.length === 0) {
-                reportHtml = `<span class="alert-badge alert-ok">MINDEN PONTOS</span> A létszám keret tökéletesen teljesül, minden LED zöld!`;
+                reportHtml = `<span class="alert-badge alert-ok">MINDEN PONTOS</span> A létszám keret tökéletesen teljesül!`;
             } else {
                 let deficits = issues.filter(i => i.type === 'hiány');
                 let surpluses = issues.filter(i => i.type === 'többlet');
-                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (villogó piros LED)</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">${surpluses.length} többlet (villogó narancs LED)</span>`;
+                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">${surpluses.length} többlet (LED)</span>`;
             }
 
             document.getElementById('auditReport').innerHTML = reportHtml;
         }
 
         function autoSave() {
-            const year = document.getElementById('yearSelect'].value;
-            const month = document.getElementById('monthSelect'].value;
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
             
             let currentGuards = [];
             for(let i = 0; i < 20; i++) {
@@ -672,7 +682,6 @@
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    // Csak a nem zárolt (nem extra) cellákat mentjük a tárgyhónapba
                     if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
                         let cellKey = cell.dataset.key;
                         let dKey = cell.dataset.date;
@@ -696,7 +705,7 @@
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai, a 20 fős névsor és a zárolt napok sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai, a névsor és az ünnepnapok adatai sikeresen mentve!');
         }
 
         window.onload = generateCalendar;
