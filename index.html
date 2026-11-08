@@ -21,37 +21,39 @@
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
         }
         h1 {
             text-align: center;
             color: #58a6ff;
             margin-bottom: 5px;
+            font-size: 1.5rem;
         }
         .subtitle {
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #8b949e;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .controls {
             display: flex;
             justify-content: space-between;
             background: var(--panel-bg);
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             flex-wrap: wrap;
             gap: 10px;
+            align-items: center;
         }
         select, input, button {
             background: #21262d;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         button {
             background: var(--blue);
@@ -64,119 +66,233 @@
             background: var(--panel-bg);
             border-radius: 8px;
             border: 1px solid var(--border-color);
+            max-height: 75vh;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 8px 6px;
+            padding: 6px 4px;
             white-space: nowrap;
         }
         th {
             background: #21262d;
             color: #58a6ff;
+            position: sticky;
+            top: 0;
+            z-index: 2;
         }
-        /* Pozíció színek */
-        .pos-np { background-color: rgba(35, 134, 54, 0.3); color: #7ee787; font-weight: bold; } /* Nappalos - Zöld */
-        .pos-ep { background-color: rgba(218, 54, 51, 0.3); color: #ffa198; font-weight: bold; } /* Éjjeles - Piros */
-        .pos-nep { background-color: rgba(137, 87, 229, 0.3); color: #d2a8ff; font-weight: bold; } /* 24h - Lila */
-        .pos-szb { background-color: rgba(158, 106, 3, 0.3); color: #e3b341; font-weight: bold; } /* Szabadság - Sárga */
-        .pos-szab { background-color: rgba(31, 111, 235, 0.2); color: #79c0ff; } /* Szabadnap */
+        .week-row th {
+            top: 27px;
+            background: #1f242c;
+            color: #e6edf3;
+            font-size: 0.75rem;
+        }
+        .name-col {
+            text-align: left;
+            font-weight: bold;
+            position: sticky;
+            left: 0;
+            background: #161b22;
+            z-index: 1;
+            min-width: 130px;
+        }
+        th.name-col { z-index: 3; }
+
+        /* Pozíció / Szolgálat színek */
+        .pos-np { background-color: rgba(35, 134, 54, 0.35); color: #7ee787; font-weight: bold; } /* Nappalos (Np1-10) - Zöld */
+        .pos-ep { background-color: rgba(218, 54, 51, 0.35); color: #ffa198; font-weight: bold; } /* Éjjeles (Ép1-10) - Piros */
+        .pos-nep { background-color: rgba(137, 87, 229, 0.35); color: #d2a8ff; font-weight: bold; } /* 24h (NÉp1-10) - Lila */
+        .pos-szb { background-color: rgba(158, 106, 3, 0.35); color: #e3b341; font-weight: bold; } /* Szabadság (SZB) - Sárga */
+        .pos-szab { background-color: rgba(31, 111, 235, 0.2); color: #79c0ff; } /* Szabadnap (SZ) */
         
         .legend {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             margin-top: 15px;
             flex-wrap: wrap;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             align-items: center;
+            justify-content: center;
         }
         .legend-item { display: flex; align-items: center; gap: 5px; }
-        .color-box { width: 16px; height: 16px; border-radius: 4px; }
+        .color-box { width: 14px; height: 14px; border-radius: 3px; }
     </style>
 </head>
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Univerzális 10-helyes modulos beosztás kalkulátor</div>
+    <div class="subtitle">20 fős univerzális modul | Automatikus átvezetés & biztonsági logikák</div>
 
     <div class="controls">
         <div>
-            <label for="monthSelect">Hónap:</label>
-            <select id="monthSelect">
-                <option value="jan">Január</option>
-                <option value="feb">Február</option>
-                <option value="mar">Március</option>
+            <label for="yearSelect">Év:</label>
+            <select id="yearSelect" onchange="generateCalendar()">
+                <option value="2026">2026</option>
+                <option value="2027" selected>2027</option>
+                <option value="2028">2028</option>
             </select>
         </div>
         <div>
-            <label for="guardSelect">Őr kiválasztása:</label>
-            <select id="guardSelect">
-                <option>Marácz Judit</option>
-                <option>Csonka Norbert</option>
-                <option>Gergely Richárd</option>
-                <option>Horváth Csaba</option>
-                <option>Páva Dávid</option>
-                <option>Szabó Gábor</option>
+            <label for="monthSelect">Hónap:</label>
+            <select id="monthSelect" onchange="generateCalendar()">
+                <option value="0">Január</option>
+                <option value="1">Február</option>
+                <option value="2">Március</option>
+                <option value="3">Április</option>
+                <option value="4">Május</option>
+                <option value="5">Június</option>
+                <option value="6">Július</option>
+                <option value="7">Augusztus</option>
+                <option value="8">Szeptember</option>
+                <option value="9">Október</option>
+                <option value="10">November</option>
+                <option value="11">December</option>
             </select>
         </div>
-        <button onclick="alert('Modul mentve a Mátrix Laborba!')">Adatok Mentése</button>
+        <button onclick="saveData()">Adatok Mentése</button>
     </div>
 
     <div class="table-container">
         <table id="scheduleTable">
-            <thead>
-                <tr>
-                    <th>Név / Nap</th>
-                    <th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
-                    <th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
-                    <th>Össz. Óra</th>
-                </tr>
+            <thead id="tableHeader">
+                <!-- Dinamikusan generálva -->
             </thead>
-            <tbody>
-                <tr>
-                    <td style="text-align: left; font-weight: bold;">Csonka Norbert</td>
-                    <td class="pos-np" contenteditable="true">Np1</td>
-                    <td class="pos-ep" contenteditable="true">Ép1</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-nep" contenteditable="true">NÉp1</td>
-                    <td class="pos-szb" contenteditable="true">SZB</td>
-                    <td class="pos-np" contenteditable="true">Np2</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-ep" contenteditable="true">Ép2</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-np" contenteditable="true">Np3</td>
-                    <td><b>96h</b></td>
-                </tr>
-                <tr>
-                    <td style="text-align: left; font-weight: bold;">Gergely Richárd</td>
-                    <td class="pos-ep" contenteditable="true">Ép1</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-np" contenteditable="true">Np1</td>
-                    <td class="pos-szb" contenteditable="true">SZB</td>
-                    <td class="pos-nep" contenteditable="true">NÉp1</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-np" contenteditable="true">Np2</td>
-                    <td class="pos-ep" contenteditable="true">Ép2</td>
-                    <td class="pos-szab" contenteditable="true">SZ</td>
-                    <td class="pos-np" contenteditable="true">Np1</td>
-                    <td><b>96h</b></td>
-                </tr>
+            <tbody id="tableBody">
+                <!-- Dinamikusan generálva 20 őrre -->
             </tbody>
         </table>
     </div>
 
-<div class="legend">
-    <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np 1-10) [12h]</div>
-    <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép 1-10) [12h]</div>
-    <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp 1-10) [24h]</div>
-    <div class="legend-item"><div class="color-box" style="background: var(--yellow);"></div> Szabadság (SZB) [12h]</div>
-    <div class="legend-item"><div class="color-box" style="background: var(--blue);"></div> Szabadnap (SZ)</div>
-</div>
+    <div class="legend">
+        <div class="legend-item"><div class="color-box" style="background: var(--green);"></div> Nappal (Np 1-10) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--red);"></div> Éjjel (Ép 1-10) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--purple);"></div> 24h Szolgálat (NÉp 1-10) [24h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--yellow);"></div> Szabadság (SZB) [12h]</div>
+        <div class="legend-item"><div class="color-box" style="background: var(--blue);"></div> Szabadnap (SZ)</div>
+    </div>
 
+    <script>
+        const guards = [
+            "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
+            "Szabó Gábor", "Varga Dávid", "Vigh Szabina", "Cziemler Márk", "Németh Andor",
+            "", "", "", "", "", "", "", "", "", ""
+        ];
+
+        const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
+        const dayLetters = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Sz']; // Hétfőtől vasárnapig
+
+        function getWeekNumber(d) {
+            d = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+            d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));
+            var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+            var weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+            return weekNo;
+        }
+
+        function generateCalendar() {
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+
+            // Előző hónap utolsó 3 napja + aktuális hónap napjai
+            let days = [];
+            
+            // Előző hónap utolsó 3 napja
+            let prevMonthLastDay = new Date(year, month, 0);
+            let pYear = prevMonthLastDay.getFullYear();
+            let pMonth = prevMonthLastDay.getMonth();
+            let pDaysCount = prevMonthLastDay.getDate();
+            
+            for(let i = 2; i >= 0; i--) {
+                let d = new Date(pYear, pMonth, pDaysCount - i);
+                days.push({ date: d, isExtra: true });
+            }
+
+            // Aktuális hónap napjai
+            let currentMonthDays = new Date(year, month + 1, 0).getDate();
+            for(let i = 1; i <= currentMonthDays; i++) {
+                let d = new Date(year, month, i);
+                days.push({ date: d, isExtra: false });
+            }
+
+            let theadHtml = '';
+            let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét / Nap</th>';
+            let dayRowHtml = '<tr><th class="name-col">Név / Dátum</th>';
+
+            days.forEach((item, index) => {
+                let d = item.date;
+                let dayLetter = dayNames[d.getDay()];
+                let weekNum = getWeekNumber(d);
+                let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
+                
+                weekRowHtml += `<th style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}.hét</th>`;
+                dayRowHtml += `<th style="${item.isExtra ? 'opacity: 0.6; background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+            });
+
+            weekRowHtml += '<th>Össz. Óra</th></tr>';
+            dayRowHtml += '<th>Órakeret</th></tr>';
+
+            document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
+
+            // Törzs generálása
+            let tbodyHtml = '';
+            guards.forEach((guardName, gIndex) => {
+                tbodyHtml += `<tr>`;
+                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold;"></td>`;
+                
+                days.forEach((item, dIndex) => {
+                    let defaultVal = item.isExtra ? '-' : 'SZ';
+                    let cssClass = 'pos-szab';
+                    tbodyHtml += `<td class="${cssClass}" contenteditable="true" onblur="validateCell(this)">${defaultVal}</td>`;
+                });
+
+                tbodyHtml += `<td><b>0h</b></td>`;
+                tbodyHtml += `</tr>`;
+            });
+
+            document.getElementById('tableBody').innerHTML = tbodyHtml;
+        }
+
+        function validateCell(cell) {
+            let val = cell.innerText.trim().toUpperCase();
+            cell.className = ''; // Reset
+
+            if(val.startsWith('NP')) {
+                cell.classList.add('pos-np');
+                cell.dataset.type = 'np';
+            } else if(val.startsWith('ÉP')) {
+                // Ellenőrzés: Előző nap volt-e nappalos?
+                let prevCell = cell.previousElementSibling;
+                if(prevCell && prevCell.dataset && prevCell.dataset.type === 'np') {
+                    alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Éjjeles (Ép) közvetlenül Nappalos (Np) poszt után! Kérlek ellenőrizd a pihenőidőt!');
+                    cell.innerText = 'SZ';
+                    cell.className = 'pos-szab';
+                    return;
+                }
+                cell.classList.add('pos-ep');
+                cell.dataset.type = 'ep';
+            } else if(val.startsWith('NÉP')) {
+                cell.classList.add('pos-nep');
+                cell.dataset.type = 'nep';
+            } else if(val === 'SZB') {
+                cell.classList.add('pos-szb');
+                cell.dataset.type = 'szb';
+            } else {
+                cell.classList.add('pos-szab');
+                cell.dataset.type = 'szab';
+            }
+        }
+
+        function saveData() {
+            alert('A Mátrix Labor adatai sikeresen rögzítve!');
+        }
+
+        // Init
+        window.onload = generateCalendar;
+    </script>
 </body>
 </html>
