@@ -104,7 +104,7 @@
             white-space: nowrap;
         }
         
-        /* Tömör, stabil fejléc scrollozáshoz */
+        /* Tömör, stabil fix fejlécek scrollozáshoz */
         th {
             position: sticky;
             z-index: 2;
@@ -197,13 +197,13 @@
             box-shadow: inset 0 -3px 0 0 var(--orange);
         }
 
-        /* ÚJ: Szombat (Zöld) és Vasárnap/Ünnepnap (Piros) kiemelések a fejlécnél */
+        /* Szombat (Zöld) és Vasárnap/Ünnepnap (Piros) kiemelések */
         .day-saturday {
-            background-color: rgba(35, 134, 54, 0.35) !important;
+            background-color: rgba(35, 134, 54, 0.45) !important;
             border-bottom: 3px solid var(--green) !important;
         }
         .day-sunday-holiday {
-            background-color: rgba(218, 54, 51, 0.35) !important;
+            background-color: rgba(218, 54, 51, 0.45) !important;
             border-bottom: 3px solid var(--red) !important;
         }
 
@@ -308,28 +308,13 @@
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
         let activeCell = null;
 
-        // Magyar hivatalos ünnepnapok ellenőrzője (hónap 1 alapú index, nap)
         function isHoliday(date) {
             let m = date.getMonth() + 1;
             let d = date.getDate();
-            let y = date.getFullYear();
-
-            // Fix magyar ünnepnapok
             const fixedHolidays = [
-                "1-1",   // Újév
-                "3-15",  // Nemzeti ünnep
-                "5-1",   // A munka ünnepe
-                "8-20",  // Államalapítás ünnepe
-                "10-23", // 1956-os forradalom
-                "11-1",  // Mindenszentek
-                "12-25", // Karácsony 1. napja
-                "12-26"  // Karácsony 2. napja
+                "1-1", "3-15", "5-1", "8-20", "10-23", "11-1", "12-25", "12-26"
             ];
-
-            if (fixedHolidays.includes(`${m}-${d}`)) {
-                return true;
-            }
-            return false;
+            return fixedHolidays.includes(`${m}-${d}`);
         }
 
         function getWeekNumber(d) {
@@ -352,7 +337,6 @@
             const month = parseInt(document.getElementById('monthSelect').value);
 
             let days = [];
-            
             let pYear = year;
             let pMonth = month - 1;
             if(pMonth < 0) {
@@ -382,7 +366,7 @@
 
             days.forEach((item, index) => {
                 let d = item.date;
-                let dayIndex = d.getDay(); // 0: Vasárnap, 6: Szombat
+                let dayIndex = d.getDay();
                 let dayLetter = dayNames[dayIndex];
                 let weekNum = getWeekNumber(d);
                 let dateStr = `${d.getMonth()+1}.${d.getDate()}.`;
@@ -397,15 +381,14 @@
                 let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                 reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:30px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;"></th>`;
 
-                // Hétvége & Ünnepnap osztályok meghatározása
                 let dayClass = "";
                 if (dayIndex === 6) {
-                    dayClass = "day-saturday"; // Szombat -> Zöld
+                    dayClass = "day-saturday";
                 } else if (dayIndex === 0 || isHoliday(d)) {
-                    dayClass = "day-sunday-holiday"; // Vasárnap vagy Ünnepnap -> Piros
+                    dayClass = "day-sunday-holiday";
                 }
 
-                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${item.isExtra ? 'opacity:0.7;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+                dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${item.isExtra ? 'opacity:0.6;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
             weekRowHtml += '<th class="name-col">Össz. Óra</th></tr>';
@@ -419,7 +402,7 @@
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:110px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.8rem;"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:110px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.8rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let dKey = getDateKey(item.date);
@@ -496,7 +479,7 @@
 
             calculateRowHours(activeCell.closest('tr'));
             autoSave();
-            generateCalendar();
+            runAuditEngineFromGlobal();
         }
 
         function calculateRowHours(row) {
@@ -514,6 +497,17 @@
 
             let hoursCell = cells[cells.length - 1];
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
+        }
+
+        function runAuditEngineFromGlobal() {
+            const year = parseInt(document.getElementById('yearSelect').value);
+            const month = parseInt(document.getElementById('monthSelect').value);
+            let days = [];
+            let currentMonthDays = new Date(year, month + 1, 0).getDate();
+            for(let i = 1; i <= currentMonthDays; i++) {
+                days.push({ date: new Date(year, month, i) });
+            }
+            runAuditEngine(days);
         }
 
         function runAuditEngine(days) {
@@ -535,14 +529,56 @@
                     }
                 });
 
-                // Figyelem: itt most már külön kezeljük a létszám-eltérést (th-alert) és a hétvégi színt, hogy ne írják felül egymást!
                 let thElement = document.getElementById(`th-day-${dKey}`);
-                
-                // Ha van hiány vagy többlet, jelezzük a kereten vagy egy kis buborékban, de a szombat/vasárnap alapstílus megmarad!
+                if (thElement) {
+                    thElement.classList.remove('th-alert', 'th-warning');
+                }
+
+                if (actualCount < requiredCount) {
+                    if (thElement) thElement.classList.add('th-alert');
+                    issues.push({
+                        date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
+                        required: requiredCount,
+                        actual: actualCount,
+                        type: 'hiány',
+                        diff: requiredCount - actualCount
+                    });
+                } else if (actualCount > requiredCount) {
+                    if (thElement) thElement.classList.add('th-warning');
+                    issues.push({
+                        date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
+                        required: requiredCount,
+                        actual: actualCount,
+                        type: 'többlet',
+                        diff: actualCount - requiredCount
+                    });
+                }
             });
 
-            // Audit riport panel szöveges összesítése
-            let reportHtml = `<p><span class="alert-badge alert-ok">MÁTRIX RENDSZER AKTÍV</span> A szombatok zölden, a vasárnapok és ünnepnapok pirosan jelölve.</p>`;
+            let reportHtml = '';
+            if (issues.length === 0) {
+                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN PONTOS</span> A beosztott létszám a hónap minden napján pontosan megegyezik a megbízói céllal!</p>`;
+            } else {
+                let deficits = issues.filter(i => i.type === 'hiány');
+                let surpluses = issues.filter(i => i.type === 'többlet');
+
+                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${deficits.length} hiány</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">FIGYELEM: ${surpluses.length} többlet / eltérés észlelve</span></p>`;
+                reportHtml += `<table style="width:100%; margin-top:6px; font-size:0.75rem;">`;
+                reportHtml += `<tr><th>Dátum</th><th>Cél</th><th>Tényleges</th><th>Állapot / Eltérés</th></tr>`;
+                
+                issues.forEach(i => {
+                    let colorStyle = i.type === 'hiány' ? 'color: var(--red); font-weight:bold;' : 'color: var(--orange); font-weight:bold;';
+                    let textMsg = i.type === 'hiány' ? `-${i.diff} fő hiány` : `+${i.diff} fő többlet (elírás?)`;
+                    reportHtml += `<tr>
+                        <td><b>${i.date}</b></td>
+                        <td>${i.required} fő</td>
+                        <td>${i.actual} fő</td>
+                        <td style="${colorStyle}">${textMsg}</td>
+                    </tr>`;
+                });
+                reportHtml += `</table>`;
+            }
+
             document.getElementById('auditReport').innerHTML = reportHtml;
         }
 
@@ -553,7 +589,7 @@
 
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
                         let cellKey = cell.dataset.key;
                         let dKey = cell.dataset.date;
                         if(cellKey) {
