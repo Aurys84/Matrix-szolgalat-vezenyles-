@@ -866,7 +866,7 @@
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
                         let cellKey = cell.dataset.key;
                         let dKey = cell.dataset.date;
                         if(cellKey && !cell.classList.contains('cell-locked')) {
@@ -902,7 +902,7 @@
             }, 1000);
         }
 
-        // Teljes PDF Jelentés gomb a vezetőségnek (Vezénylés + összes alsó panel)
+        // Teljes PDF Jelentés gomb a vezetőségnek (Vezénylés + összes alsó panel, tökéletesen 1 oldalra skálázva)
         function exportFullPdfReport() {
             let printWindow = window.open('', '_blank');
             let htmlContent = `
@@ -912,16 +912,27 @@
                     <meta charset="UTF-8">
                     <title>Mátrix Labor — Hivatalos Vezetőségi Jelentés</title>
                     <style>
-                        body { font-family: sans-serif; background: #fff; color: #000; margin: 15px; font-size: 11px; }
-                        h1 { text-align: center; font-size: 16px; margin-bottom: 5px; }
-                        .subtitle { text-align: center; font-size: 12px; margin-bottom: 15px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 20px; font-size: 9px; }
-                        th, td { border: 1px solid #333; padding: 3px 2px; }
+                        @page {
+                            size: A4 landscape;
+                            margin: 4mm;
+                        }
+                        body { 
+                            font-family: sans-serif; 
+                            background: #fff; 
+                            color: #000; 
+                            margin: 0; 
+                            padding: 5px; 
+                            font-size: 8.5px; 
+                        }
+                        h1 { text-align: center; font-size: 13px; margin: 2px 0; }
+                        .subtitle { text-align: center; font-size: 9px; margin-bottom: 8px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 8px; font-size: 8px; }
+                        th, td { border: 1px solid #333; padding: 2px 1px; }
                         th { background: #eee; }
-                        .section-title { font-size: 13px; font-weight: bold; margin-top: 20px; margin-bottom: 8px; border-bottom: 2px solid #333; padding-bottom: 3px; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px; font-size: 10px; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; }
+                        .section-title { font-size: 10px; font-weight: bold; margin-top: 10px; margin-bottom: 4px; border-bottom: 1.5px solid #333; padding-bottom: 2px; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 3px; padding: 3px 5px; font-size: 8px; background: #fafafa; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ddd; padding-bottom: 1px; margin-bottom: 2px; }
                         .vacation-card-body { display: flex; justify-content: space-between; }
                     </style>
                 </head>
@@ -932,7 +943,7 @@
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
                     <div>${document.querySelector('.table-container').innerHTML}</div>
 
-                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek</div>
+                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
                     <div class="vacation-grid">
                         ${document.getElementById('vacationReport').innerHTML}
                     </div>
