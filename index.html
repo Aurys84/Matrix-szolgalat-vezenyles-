@@ -52,7 +52,7 @@
             background: #30363d;
             color: var(--text-color);
             border: 1px solid var(--border-color);
-            padding: 4px 6px;
+            padding: 4px 8px;
             border-radius: 5px;
             font-size: 0.8rem;
         }
@@ -62,6 +62,19 @@
             font-weight: bold;
         }
         button:hover { background: #388bfd; }
+
+        /* Különleges stílus a Mentés és PDF gombokhoz */
+        .btn-save {
+            background: var(--green) !important;
+            color: white !important;
+        }
+        .btn-save:hover { background: #2ea043 !important; }
+
+        .btn-pdf {
+            background: #8957e5 !important;
+            color: white !important;
+        }
+        .btn-pdf:hover { background: #9c6ffe !important; }
 
         .palette {
             display: flex;
@@ -169,7 +182,6 @@
             outline-offset: -2px;
         }
 
-        /* ALSÓ PANELEK ELRENDEZÉSE: A szabadságkezelő külön széles sávot kap */
         .panels-wrapper {
             display: flex;
             flex-direction: column;
@@ -192,7 +204,6 @@
             font-size: 0.8rem;
         }
 
-        /* 🌴 SZÉLESÍTETT ÉS 4 SOROS (5-ÖS RÁCSOS) SZABADSÁGKEZELŐ */
         .vacation-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -298,7 +309,6 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* DÁTUM SÁV (FEJLÉC) SZÍNEZÉS */
         .day-saturday-header {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -313,6 +323,29 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
+
+        /* NYOMTATÁSI BEÁLLÍTÁSOK: CSAK A VEZÉNYLÉS LÁTSZIK PDF-BEN / NYOMTATÁSKOR */
+        @media print {
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+            .controls, .palette, .panels-wrapper, h1, .subtitle {
+                display: none !important;
+            }
+            .table-container {
+                max-height: none !important;
+                overflow: visible !important;
+                border: none !important;
+            }
+            table {
+                font-size: 8px !important;
+            }
+            th, td {
+                border: 1px solid #000000 !important;
+                color: #000000 !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -321,34 +354,39 @@
     <div class="subtitle">Kék Áthozott Napok & 4 Soros Szabadságkezelő & LED Motor</div>
 
     <div class="controls">
-        <div>
-            <label for="yearSelect">Év:</label>
-            <select id="yearSelect" onchange="generateCalendar()">
-                <script>
-                    for(let y = 2026; y <= 2035; y++) {
-                        document.write(`<option value="${y}" ${y === 2027 ? 'selected' : ''}>${y}</option>`);
-                    }
-                </script>
-            </select>
+        <div style="display: flex; gap: 8px; align-items: center;">
+            <div>
+                <label for="yearSelect">Év:</label>
+                <select id="yearSelect" onchange="generateCalendar()">
+                    <script>
+                        for(let y = 2026; y <= 2035; y++) {
+                            document.write(`<option value="${y}" ${y === 2027 ? 'selected' : ''}>${y}</option>`);
+                        }
+                    </script>
+                </select>
+            </div>
+            <div>
+                <label for="monthSelect">Hónap:</label>
+                <select id="monthSelect" onchange="generateCalendar()">
+                    <option value="0">Január</option>
+                    <option value="1">Február</option>
+                    <option value="2">Március</option>
+                    <option value="3">Április</option>
+                    <option value="4">Május</option>
+                    <option value="5">Június</option>
+                    <option value="6">Július</option>
+                    <option value="7">Augusztus</option>
+                    <option value="8">Szeptember</option>
+                    <option value="9">Október</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                </select>
+            </div>
         </div>
-        <div>
-            <label for="monthSelect">Hónap:</label>
-            <select id="monthSelect" onchange="generateCalendar()">
-                <option value="0">Január</option>
-                <option value="1">Február</option>
-                <option value="2">Március</option>
-                <option value="3">Április</option>
-                <option value="4">Május</option>
-                <option value="5">Június</option>
-                <option value="6">Július</option>
-                <option value="7">Augusztus</option>
-                <option value="8">Szeptember</option>
-                <option value="9">Október</option>
-                <option value="10">November</option>
-                <option value="11">December</option>
-            </select>
+        <div style="display: flex; gap: 6px;">
+            <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
+            <button class="btn-pdf" onclick="exportPdf()">🖨️ PDF Mentés / Nyomtatás</button>
         </div>
-        <button onclick="manualSave()">Adatok Mentése</button>
     </div>
 
     <div class="palette">
@@ -381,7 +419,6 @@
     </div>
 
     <div class="panels-wrapper">
-        <!-- Szélesített, 4 soros (5 oszlopos rácsos) szabadságkezelő alul teljes szélességben -->
         <div class="vacation-panel">
             <h3>🌴 Éves Göngyölített Szabadságkezelő (20 Őr kerete)</h3>
             <div id="vacationReport" class="vacation-grid">Szabadságok számítása...</div>
@@ -789,6 +826,10 @@
         function manualSave() {
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és a szabadságok sikeresen mentve!');
+        }
+
+        function exportPdf() {
+            window.print();
         }
 
         window.onload = generateCalendar;
