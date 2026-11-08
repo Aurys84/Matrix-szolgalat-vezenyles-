@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mátrix Labor — Vezénylési Rendszer & Intelligens LED-ek</title>
+    <title>Mátrix Labor — Vezénylési Rendszer & LED Motor</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -12,7 +12,7 @@
             --border-color: #30363d;
             --green: #238636;
             --red: #da3633;
-            --orange: #d29922;
+            --orange: #ff9500;
             --purple: #8957e5;
             --yellow: #9e6a03;
             --blue: #1f6feb;
@@ -163,7 +163,6 @@
             outline-offset: -2px;
         }
 
-        /* Alsó panelek */
         .panels-wrapper {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -196,10 +195,10 @@
         .alert-error { background: var(--red); color: white; }
         .alert-warning { background: var(--orange); color: white; }
 
-        /* ÉLÉNK ÉS INTELLIGENS LED-EK */
+        /* VILOGÓ ÉS ÉLÉNK LED-EK */
         @keyframes blinkLed {
             0% { opacity: 1; transform: scale(1); filter: brightness(1); }
-            50% { opacity: 0.2; transform: scale(1.4); filter: brightness(1.5); }
+            50% { opacity: 0.15; transform: scale(1.5); filter: brightness(2); }
             100% { opacity: 1; transform: scale(1); filter: brightness(1); }
         }
         .led-ok {
@@ -218,18 +217,18 @@
             background-color: #ff3b30;
             border-radius: 50%;
             margin-left: 3px;
-            animation: blinkLed 0.6s infinite;
-            box-shadow: 0 0 8px #ff3b30;
+            animation: blinkLed 0.5s infinite;
+            box-shadow: 0 0 10px #ff3b30;
         }
         .led-warning {
             display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: #ff9f0a;
+            background-color: #ff9500; /* Élénkebb narancs */
             border-radius: 50%;
             margin-left: 3px;
-            animation: blinkLed 0.6s infinite;
-            box-shadow: 0 0 8px #ff9f0a;
+            animation: blinkLed 0.5s infinite;
+            box-shadow: 0 0 10px #ff9500;
         }
 
         .day-saturday {
@@ -247,7 +246,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Göngyölített Szabadságkövető & Élénk Intelligens LED Figyelő</div>
+    <div class="subtitle">Precíz Szolgálatfigyelő & Élénk LED Rendszer</div>
 
     <div class="controls">
         <div>
@@ -312,7 +311,7 @@
     <!-- Alsó Panelek -->
     <div class="panels-wrapper">
         <div class="audit-panel">
-            <h3>🔍 Létszám Figyelőmotor (Intelligens LED)</h3>
+            <h3>🔍 Létszám Figyelőmotor (Precíz Szolgálat szűrés)</h3>
             <div id="auditReport" style="font-size:0.75rem;">Elemzés...</div>
         </div>
         <div class="vacation-panel">
@@ -411,7 +410,6 @@
                     dayClass = "day-sunday-holiday";
                 }
 
-                // Alapértelmezett stabil zöld LED minden napra, amíg a motor felül nem bírálja
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${item.isExtra ? 'opacity:0.6;' : ''}">${dateStr}<br><small>${dayLetter}</small><span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span></th>`;
             });
 
@@ -585,7 +583,8 @@
                 guards.forEach((_, gIndex) => {
                     if(!guards[gIndex]) return;
                     let globalData = JSON.parse(localStorage.getItem(`global_cell_${dKey}_g_${gIndex}`));
-                    if (globalData && globalData.type && globalData.type !== 'empty' && globalData.type !== 'szab') {
+                    // SZIGORÚ SZŰRÉS: Csak az igazi szolgálatokat számoljuk (np, ep, nep), a szabadságot (szb) és szabadnapot (sz) nem!
+                    if (globalData && globalData.type && (globalData.type === 'np' || globalData.type === 'ep' || globalData.type === 'nep')) {
                         actualCount++;
                     }
                 });
@@ -599,7 +598,6 @@
                         ledSpan.innerHTML = `<span class="led-warning" title="Többlet: ${actualCount}/${requiredCount}"></span>`;
                         issues.push({ date: `${item.date.getMonth()+1}.${item.date.getDate()}.`, type: 'többlet', diff: actualCount - requiredCount });
                     } else {
-                        // Ha pontos, stabil zöld LED világít!
                         ledSpan.innerHTML = `<span class="led-ok" title="Létszám rendben: ${actualCount}/${requiredCount}"></span>`;
                     }
                 }
@@ -611,7 +609,7 @@
             } else {
                 let deficits = issues.filter(i => i.type === 'hiány');
                 let surpluses = issues.filter(i => i.type === 'többlet');
-                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (villogó piros LED)</span> | <span class="alert-badge alert-warning">${surpluses.length} többlet (villogó narancs LED)</span>`;
+                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (villogó piros LED)</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">${surpluses.length} többlet (villogó narancs LED)</span>`;
             }
 
             document.getElementById('auditReport').innerHTML = reportHtml;
