@@ -104,7 +104,7 @@
             white-space: nowrap;
         }
         
-        /* Fix pozíciók a gördülési töréshez */
+        /* Fix pozíciók a gördülési töréshez (a napok alatt rögzítve) */
         th {
             background: #21262d;
             color: #58a6ff;
@@ -138,7 +138,6 @@
             min-width: 120px;
             font-size: 0.8rem;
         }
-        /* A bal felső sarok (Név / Dátum kereszteződés) legfelül úszik */
         th.name-col {
             z-index: 5 !important;
         }
@@ -214,7 +213,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kétirányú Létszámfigyelő & Fix Gördülési Törés</div>
+    <div class="subtitle">Stabil Helyreállítás + Kétirányú Létszámfigyelő</div>
 
     <div class="controls">
         <div>
@@ -407,8 +406,8 @@
         }
 
         function updateRequired(input) {
-            const year = document.getElementById('yearSelect'].value;
-            const month = document.getElementById('monthSelect'].value;
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
             let dKey = input.dataset.date;
             
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
