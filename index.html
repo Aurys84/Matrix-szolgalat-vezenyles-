@@ -6,9 +6,9 @@
     <title>Mátrix Labor — Vezénylési Rendszer</title>
     <style>
         :root {
-            --bg-color: #161b22;       /* Világosabb, modern sötétszürke alap */
-            --panel-bg: #21262d;       /* Kellemes szénszürke panelek */
-            --text-color: #f0f6fc;     /* Magas kontrasztú, világos szöveg */
+            --bg-color: #161b22;
+            --panel-bg: #21262d;
+            --text-color: #f0f6fc;
             --border-color: #30363d;
             --green: #238636;
             --red: #da3633;
@@ -195,7 +195,6 @@
         .alert-error { background: var(--red); color: white; }
         .alert-warning { background: var(--orange); color: white; }
 
-        /* ÉLÉNK ÉS INTELLIGENS LED-EK */
         @keyframes blinkLed {
             0% { opacity: 1; transform: scale(1); filter: brightness(1); }
             50% { opacity: 0.15; transform: scale(1.5); filter: brightness(2); }
@@ -231,7 +230,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* VILÁGOSABB, KONTRASTOSABB SZOMBAT ÉS VASÁRNAP HÁTTEREK */
+        /* SZOMBATOK ÉS VASÁRNAPOK / ÜNNEPNAPOK SZÍNEI */
         .day-saturday {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -247,7 +246,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Világosabb, Kontrasztosabb Műszerfal & Intelligens LED-ek</div>
+    <div class="subtitle">20 Fős Szerkeszthető Névsor & Hétvégi Színek & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -322,10 +321,11 @@
     </div>
 
     <script>
-        const guards = [
+        // Alapértelmezett 20 fős névsor (szerkeszthető és mentődik)
+        const defaultGuards = [
             "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
             "Szabó Gábor", "Varga Dávid", "Vigh Szabina", "Cziemler Márk", "Németh Andor",
-            "", "", "", "", "", "", "", "", "", ""
+            "Őr 11", "Őr 12", "Őr 13", "Őr 14", "Őr 15", "Őr 16", "Őr 17", "Őr 18", "Őr 19", "Őr 20"
         ];
 
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
@@ -420,13 +420,13 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
 
+            let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
 
             let tbodyHtml = '';
-            guards.forEach((guardName, gIndex) => {
-                if(!guardName) return;
+            savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let dKey = getDateKey(item.date);
@@ -534,9 +534,15 @@
         }
 
         function runVacationEngine(year, month) {
+            let currentGuards = [];
+            for(let i = 0; i < 20; i++) {
+                let nameInput = document.getElementById(`guard-name-${i}`);
+                currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
+            }
+
             let reportHtml = `<table style="width:100%; font-size:0.7rem;"><tr><th>Őr neve</th><th>Alap Keret</th><th>Eddig Felhasznált</th><th>Aktuális Maradék</th></tr>`;
             
-            guards.forEach((guardName, gIndex) => {
+            currentGuards.forEach((guardName, gIndex) => {
                 if(!guardName) return;
                 
                 let baseKey = `vacation_base_${gIndex}`;
@@ -576,13 +582,18 @@
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             let issues = [];
 
+            let currentGuards = [];
+            for(let i = 0; i < 20; i++) {
+                let nameInput = document.getElementById(`guard-name-${i}`);
+                currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
+            }
+
             days.forEach(item => {
                 let dKey = getDateKey(item.date);
                 let requiredCount = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                 
                 let actualCount = 0;
-                guards.forEach((_, gIndex) => {
-                    if(!guards[gIndex]) return;
+                currentGuards.forEach((_, gIndex) => {
                     let globalData = JSON.parse(localStorage.getItem(`global_cell_${dKey}_g_${gIndex}`));
                     if (globalData && globalData.type && (globalData.type === 'np' || globalData.type === 'ep' || globalData.type === 'nep')) {
                         actualCount++;
@@ -618,8 +629,15 @@
         function autoSave() {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
-            let dataToSave = {};
+            
+            let currentGuards = [];
+            for(let i = 0; i < 20; i++) {
+                let nameInput = document.getElementById(`guard-name-${i}`);
+                currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
+            }
+            localStorage.setItem(`matrix_guards_${year}_${month}`, JSON.stringify(currentGuards));
 
+            let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
                     if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
@@ -645,7 +663,7 @@
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai, a szabadságok és a LED állapotok sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai, a 20 fős névsor, a szabadságok és a LED állapotok sikeresen mentve!');
         }
 
         window.onload = generateCalendar;
