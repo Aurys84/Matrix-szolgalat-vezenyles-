@@ -152,12 +152,12 @@
             min-width: 26px;
         }
 
-        /* ZÁROLT CELLÁK: Alapból kék, de nem írhatja felül a hétvégi színeket */
+        /* Áthozott 3 nap alapértelmezett kék színe */
         td.cell-locked {
-            background-color: #1f6feb;
-            color: white;
-            cursor: not-allowed;
-            pointer-events: none;
+            background-color: #1f6feb !important;
+            color: white !important;
+            cursor: not-allowed !important;
+            pointer-events: none !important;
             font-weight: bold;
         }
 
@@ -239,7 +239,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Fejlécekhez és Cellákhoz is) */
+        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Elsőbbséget élveznek) */
         .day-saturday {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -255,7 +255,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Zárolt Napok & Hétvégi Színek & Ünnepnap Számláló</div>
+    <div class="subtitle">Kék Áthozott Napok & Ünnepnap Számláló & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -430,7 +430,8 @@
                     dayClass = "day-sunday-holiday";
                 }
 
-                let extraStyle = item.isExtra ? 'background:#1f6feb; color:white;' : '';
+                // Ha extra nap, de nem hétvége/ünnep, akkor kapja a kéket, egyébként a hétvégi szín él
+                let extraStyle = item.isExtra && !dayClass ? 'background:#1f6feb; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${extraStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
@@ -484,13 +485,13 @@
                     
                     let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
                     
-                    // Ha hétvége vagy ünnepnap az áthozott oszlopban, átveheti a háttérszínt, de a poszt saját színe felülírhatja
                     let dayIndex = item.date.getDay();
                     let specialDayClass = "";
                     if (isHoliday(item.date)) specialDayClass = "day-sunday-holiday";
                     else if (dayIndex === 6) specialDayClass = "day-saturday";
                     else if (dayIndex === 0) specialDayClass = "day-sunday-holiday";
 
+                    // Ha az áthozott cella üres, megkapja a sima kék hátteret (vagy a hétvégi színt, ha az a nap hétvége volt)
                     let combinedClass = item.isExtra ? `cell-locked ${specialDayClass} ${cellInfo.className}` : cellInfo.className;
 
                     if (item.isExtra) {
