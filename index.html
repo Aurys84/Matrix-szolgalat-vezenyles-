@@ -104,28 +104,26 @@
             white-space: nowrap;
         }
         
-        /* Eredeti, tiszta fekete/szürke háttérszínek a fix fejlécen (nincs elmosódás) */
+        /* SZIGORÚAN TÖMÖR, EREDETI HÁTTÉRSZÍNEK A FIX FEJLÉCEKEN (Nincs áttetszőség!) */
         th {
-            background: #21262d;
-            color: #58a6ff;
             position: sticky;
             z-index: 2;
         }
         .week-row th {
             top: 0;
-            background: #1f242c;
+            background-color: #1f242c !important;
             color: #58a6ff;
             font-weight: bold;
             z-index: 4;
         }
         .req-row th {
             top: 24px;
-            background: #161b22;
+            background-color: #161b22 !important;
             z-index: 4;
         }
         .day-row th {
             top: 48px;
-            background: #21262d;
+            background-color: #21262d !important;
             color: #58a6ff;
             z-index: 4;
         }
@@ -134,12 +132,13 @@
             font-weight: bold;
             position: sticky;
             left: 0;
-            background: #161b22;
+            background-color: #161b22 !important;
             z-index: 3;
             min-width: 120px;
             font-size: 0.8rem;
         }
         th.name-col {
+            background-color: #21262d !important;
             z-index: 5 !important;
         }
 
@@ -189,7 +188,7 @@
         .alert-error { background: var(--red); color: white; }
         .alert-warning { background: var(--orange); color: white; }
 
-        /* Tiszta keret jelölés a napok felett elírás/hiány esetén */
+        /* Tiszta keret jelölés a napok felett hiány vagy többlet esetén */
         .th-alert {
             border-bottom: 3px solid var(--red) !important;
             box-shadow: inset 0 -3px 0 0 var(--red);
@@ -215,7 +214,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Eredeti Színek & Kétirányú Létszámfigyelő</div>
+    <div class="subtitle">Stabil Tömör Fejlécek & Kétirányú Létszámfigyelő</div>
 
     <div class="controls">
         <div>
@@ -548,8 +547,8 @@
         }
 
         function autoSave() {
-            const year = document.getElementById('yearSelect'].value;
-            const month = document.getElementById('monthSelect'].value;
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
             let dataToSave = {};
 
             document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
