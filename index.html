@@ -150,7 +150,6 @@
             min-width: 26px;
         }
 
-        /* Áthozott üres cellák kék színe */
         td.cell-locked {
             background-color: #1f6feb !important;
             color: white !important;
@@ -170,22 +169,84 @@
             outline-offset: -2px;
         }
 
+        /* ALSÓ PANELEK ELRENDEZÉSE: A szabadságkezelő külön széles sávot kap */
         .panels-wrapper {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 8px;
         }
-        @media (max-width: 1100px) {
-            .panels-wrapper { grid-template-columns: 1fr; }
+        .top-panels-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
         }
-        .audit-panel, .vacation-panel, .holiday-panel {
+        @media (max-width: 900px) {
+            .top-panels-row { grid-template-columns: 1fr; }
+        }
+
+        .audit-panel, .holiday-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 8px;
             font-size: 0.8rem;
         }
-        .audit-panel h3, .vacation-panel h3, .holiday-panel h3 {
+
+        /* 🌴 SZÉLESÍTETT ÉS 4 SOROS (5-ÖS RÁCSOS) SZABADSÁGKEZELŐ */
+        .vacation-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            font-size: 0.8rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .vacation-panel h3 {
+            margin-top: 0;
+            color: #58a6ff;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .vacation-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        @media (max-width: 1200px) {
+            .vacation-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 800px) {
+            .vacation-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        .vacation-card {
+            background: #161b22;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 6px 8px;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .vacation-card-header {
+            font-weight: bold;
+            color: #f0f6fc;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 2px;
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .vacation-card-body {
+            display: flex;
+            justify-content: space-between;
+            color: #8b949e;
+            font-size: 0.7rem;
+        }
+
+        .audit-panel h3, .holiday-panel h3 {
             margin-top: 0;
             color: #58a6ff;
             font-size: 0.85rem;
@@ -237,7 +298,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* CSAK A DÁTUM SÁV (FEJLÉC) SZÍNEZÉSE */
+        /* DÁTUM SÁV (FEJLÉC) SZÍNEZÉS */
         .day-saturday-header {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -257,7 +318,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Dátum Sáv Színezés & LED Motor</div>
+    <div class="subtitle">Kék Áthozott Napok & 4 Soros Szabadságkezelő & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -320,17 +381,21 @@
     </div>
 
     <div class="panels-wrapper">
-        <div class="audit-panel">
-            <h3>🔍 Létszám Figyelőmotor</h3>
-            <div id="auditReport" style="font-size:0.75rem;">Elemzés...</div>
-        </div>
+        <!-- Szélesített, 4 soros (5 oszlopos rácsos) szabadságkezelő alul teljes szélességben -->
         <div class="vacation-panel">
-            <h3>🌴 Éves Göngyölített Szabadságkezelő</h3>
-            <div id="vacationReport" style="font-size:0.75rem;">Szabadságok számítása...</div>
+            <h3>🌴 Éves Göngyölített Szabadságkezelő (20 Őr kerete)</h3>
+            <div id="vacationReport" class="vacation-grid">Szabadságok számítása...</div>
         </div>
-        <div class="holiday-panel">
-            <h3>🎉 Havi Ünnepnapok Számláló</h3>
-            <div id="holidayReport" style="font-size:0.75rem;">Ünnepnapok ellenőrzése...</div>
+
+        <div class="top-panels-row">
+            <div class="audit-panel">
+                <h3>🔍 Létszám Figyelőmotor</h3>
+                <div id="auditReport" style="font-size:0.75rem;">Elemzés...</div>
+            </div>
+            <div class="holiday-panel">
+                <h3>🎉 Havi Ünnepnapok Számláló</h3>
+                <div id="holidayReport" style="font-size:0.75rem;">Ünnepnapok ellenőrzése...</div>
+            </div>
         </div>
     </div>
 
@@ -432,7 +497,6 @@
                     headerClass = "day-sunday-holiday-header";
                 }
 
-                // Az első 3 áthozott oszlop fejlécébe kék háttér kerül, kivéve ha ünnep vagy hétvége
                 let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#1f6feb; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${headerClass}" style="${extraHeaderStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
@@ -594,10 +658,10 @@
                 currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
             }
 
-            let reportHtml = `<table style="width:100%; font-size:0.7rem;"><tr><th>Őr neve</th><th>Alap Keret</th><th>Felhasznált</th><th>Maradék</th></tr>`;
+            let gridHtml = '';
             
             currentGuards.forEach((guardName, gIndex) => {
-                if(!guardName) return;
+                if(!guardName) guardName = `Őr ${gIndex+1}`;
                 
                 let baseKey = `vacation_base_${gIndex}`;
                 let baseVal = parseInt(localStorage.getItem(baseKey)) || 30;
@@ -621,15 +685,19 @@
 
                 let remaining = baseVal - totalUsedUntilNow;
 
-                reportHtml += `<tr>
-                    <td><b>${guardName}</b></td>
-                    <td>${baseVal}</td>
-                    <td style="color:var(--yellow);">${totalUsedUntilNow}</td>
-                    <td style="color:var(--blue); font-weight:bold;">${remaining}</td>
-                </tr>`;
+                gridHtml += `
+                    <div class="vacation-card">
+                        <div class="vacation-card-header">${guardName}</div>
+                        <div class="vacation-card-body">
+                            <span>Alap: <b>${baseVal}</b></span>
+                            <span>Felhasznált: <b style="color:var(--yellow);">${totalUsedUntilNow}</b></span>
+                            <span>Maradék: <b style="color:var(--blue);">${remaining}</b></span>
+                        </div>
+                    </div>
+                `;
             });
-            reportHtml += `</table>`;
-            document.getElementById('vacationReport').innerHTML = reportHtml;
+
+            document.getElementById('vacationReport').innerHTML = gridHtml;
         }
 
         function runAuditEngine(days, year, month) {
@@ -715,11 +783,12 @@
             });
 
             localStorage.setItem(`matrix_schedule_${year}_${month}`, JSON.stringify(dataToSave));
+            runVacationEngine(year, month);
         }
 
         function manualSave() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai, a névsor és az ünnepnapok adatai sikeresen mentve!');
+            alert('💾 A Mátrix Labor adatai, a névsor és a szabadságok sikeresen mentve!');
         }
 
         window.onload = generateCalendar;
