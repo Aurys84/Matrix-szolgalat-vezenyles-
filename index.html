@@ -104,7 +104,7 @@
             white-space: nowrap;
         }
         
-        /* Fix pozíciók a gördülési töréshez (a napok alatt rögzítve) */
+        /* Gördülési törés a napok és dátumok alatt */
         th {
             background: #21262d;
             color: #58a6ff;
@@ -119,13 +119,14 @@
             z-index: 4;
         }
         .req-row th {
-            top: 25px;
+            top: 24px;
             background: #161b22;
             z-index: 4;
         }
         .day-row th {
-            top: 50px;
+            top: 48px;
             background: #21262d;
+            color: #58a6ff;
             z-index: 4;
         }
         .name-col {
@@ -213,7 +214,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Stabil Helyreállítás + Kétirányú Létszámfigyelő</div>
+    <div class="subtitle">Fixált Fejléc & Kétirányú Létszámfigyelő</div>
 
     <div class="controls">
         <div>
