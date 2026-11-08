@@ -152,7 +152,7 @@
             min-width: 26px;
         }
 
-        /* Áthozott 3 nap alapértelmezett kék színe */
+        /* Ha üres az áthozott cella, akkor kapja a kék alapszínt */
         td.cell-locked {
             background-color: #1f6feb !important;
             color: white !important;
@@ -239,7 +239,7 @@
             box-shadow: 0 0 10px #ff9500;
         }
 
-        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Elsőbbséget élveznek) */
+        /* HÉTVÉGE ÉS ÜNNEPNAP SZÍNEK (Fejlécekhez) */
         .day-saturday {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -255,7 +255,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Ünnepnap Számláló & LED Motor</div>
+    <div class="subtitle">Kék Áthozott Napok & Hétvégi Színek & LED Motor</div>
 
     <div class="controls">
         <div>
@@ -423,14 +423,13 @@
                 let dayClass = "";
                 if (isHoliday(d)) {
                     dayClass = "day-sunday-holiday";
-                    if (!item.isExtra) holidayCount++;
+                    holidayCount++;
                 } else if (dayIndex === 6) {
                     dayClass = "day-saturday";
                 } else if (dayIndex === 0) {
                     dayClass = "day-sunday-holiday";
                 }
 
-                // Ha extra nap, de nem hétvége/ünnep, akkor kapja a kéket, egyébként a hétvégi szín él
                 let extraStyle = item.isExtra && !dayClass ? 'background:#1f6feb; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${dayClass}" style="${extraStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
@@ -466,12 +465,15 @@
                         let prevCellData = JSON.parse(localStorage.getItem(prevGlobalKey));
 
                         if (prevCellData) {
-                            cellInfo = { text: prevCellData.text, className: `cell-locked ${prevCellData.className || ''}`, type: prevCellData.type };
+                            // Ha van beírás, a saját poszt stílusa érvényesül, ha nincs, akkor a cell-locked (kék)
+                            let assignedClass = prevCellData.className ? prevCellData.className : 'cell-locked';
+                            cellInfo = { text: prevCellData.text, className: assignedClass, type: prevCellData.type };
                         } else {
                             let prevCellKey = `g_${gIndex}_d_${prevMonthLastDate - 3 + dIndex}`;
                             let oldData = prevMonthSchedule[prevCellKey];
-                            if (oldData) {
-                                cellInfo = { text: oldData.text, className: `cell-locked ${oldData.className || ''}`, type: oldData.type };
+                            if (oldData && oldData.text) {
+                                let assignedClass = oldData.className ? oldData.className : 'cell-locked';
+                                cellInfo = { text: oldData.text, className: assignedClass, type: oldData.type };
                             } else {
                                 cellInfo = { text: '', className: 'cell-locked', type: 'locked' };
                             }
@@ -485,19 +487,10 @@
                     
                     let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
                     
-                    let dayIndex = item.date.getDay();
-                    let specialDayClass = "";
-                    if (isHoliday(item.date)) specialDayClass = "day-sunday-holiday";
-                    else if (dayIndex === 6) specialDayClass = "day-saturday";
-                    else if (dayIndex === 0) specialDayClass = "day-sunday-holiday";
-
-                    // Ha az áthozott cella üres, megkapja a sima kék hátteret (vagy a hétvégi színt, ha az a nap hétvége volt)
-                    let combinedClass = item.isExtra ? `cell-locked ${specialDayClass} ${cellInfo.className}` : cellInfo.className;
-
                     if (item.isExtra) {
-                        tbodyHtml += `<td class="${combinedClass} ${prevWeekCheck}">${cellInfo.text || ''}</td>`;
+                        tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}">${cellInfo.text || ''}</td>`;
                     } else {
-                        tbodyHtml += `<td class="${combinedClass} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
+                        tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
 
