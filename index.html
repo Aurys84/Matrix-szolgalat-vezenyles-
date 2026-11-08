@@ -63,7 +63,6 @@
         }
         button:hover { background: #388bfd; }
 
-        /* Különleges stílus a Mentés és PDF gombokhoz */
         .btn-save {
             background: var(--green) !important;
             color: white !important;
@@ -324,11 +323,22 @@
             color: #f0f6fc !important;
         }
 
-        /* NYOMTATÁSI BEÁLLÍTÁSOK: CSAK A VEZÉNYLÉS LÁTSZIK PDF-BEN / NYOMTATÁSKOR */
+        /* TÖKÉLETES A4 FEKVŐ NYOMTATÁSI BEÁLLÍTÁSOK */
+        @page {
+            size: A4 landscape;
+            margin: 8mm;
+        }
+
         @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
             body {
                 background-color: #ffffff !important;
                 color: #000000 !important;
+                margin: 0;
+                padding: 0;
             }
             .controls, .palette, .panels-wrapper, h1, .subtitle {
                 display: none !important;
@@ -337,21 +347,53 @@
                 max-height: none !important;
                 overflow: visible !important;
                 border: none !important;
+                background: transparent !important;
             }
             table {
-                font-size: 8px !important;
+                width: 100% !important;
+                font-size: 9px !important; /* Ideális olvasható méret fekvő A4-en */
             }
             th, td {
-                border: 1px solid #000000 !important;
+                border: 1px solid #333333 !important;
+                padding: 3px 2px !important;
+            }
+            .name-col {
+                position: static !important;
+                background-color: #f0f0f0 !important;
                 color: #000000 !important;
             }
+            .week-row th {
+                background-color: #e0e0e0 !important;
+                color: #000000 !important;
+            }
+            .day-normal-header {
+                background-color: #e0e0e0 !important;
+                color: #000000 !important;
+            }
+            .day-saturday-header {
+                background-color: #c8e6c9 !important;
+                color: #1b5e20 !important;
+            }
+            .day-sunday-holiday-header {
+                background-color: #ffcdd2 !important;
+                color: #b71c1c !important;
+            }
+            td.cell-locked {
+                background-color: #2196f3 !important;
+                color: white !important;
+            }
+            .pos-np { background-color: #2e7d32 !important; color: white !important; }
+            .pos-ep { background-color: #c62828 !important; color: white !important; }
+            .pos-nep { background-color: #6a1b9a !important; color: white !important; }
+            .pos-szb { background-color: #f57f17 !important; color: white !important; }
+            .pos-szab { background-color: #1565c0 !important; color: white !important; }
         }
     </style>
 </head>
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & 4 Soros Szabadságkezelő & LED Motor</div>
+    <div class="subtitle">Kék Áthozott Napok & Fekvő A4 PDF Nyomtatás & LED Motor</div>
 
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
