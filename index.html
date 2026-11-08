@@ -110,8 +110,9 @@
         .week-row th {
             top: 27px;
             background: #1f242c;
-            color: #e6edf3;
-            font-size: 0.75rem;
+            color: #58a6ff;
+            font-weight: bold;
+            font-size: 0.8rem;
             border-bottom: 2px solid #58a6ff;
         }
         .name-col {
@@ -162,7 +163,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kijavított 3-napos átvezetés & tiszta heti elválasztás</div>
+    <div class="subtitle">Pontosított Dátum-alapú Átvezetés + Látható Hetek</div>
 
     <div class="controls">
         <div>
@@ -238,34 +239,40 @@
             return weekNo;
         }
 
+        // Segédfüggvény dátum ISO kulcshoz (YYYY-MM-DD)
+        function getDateKey(d) {
+            let y = d.getFullYear();
+            let m = String(d.getMonth() + 1).padStart(2, '0');
+            let day = String(d.getDate()).padStart(2, '0');
+            return `${y}-${m}-${day}`;
+        }
+
         function generateCalendar() {
             const year = parseInt(document.getElementById('yearSelect').value);
             const month = parseInt(document.getElementById('monthSelect').value);
 
             let days = [];
             
-            // Előző hónap meghatározása
+            // 1. Előző hónap utolsó 3 napja
             let pYear = year;
             let pMonth = month - 1;
             if(pMonth < 0) {
                 pMonth = 11;
                 pYear = year - 1;
             }
-            
             let prevMonthLastDate = new Date(pYear, pMonth + 1, 0).getDate();
 
-            // Előző hónap utolsó 3 napja (biztosan mind a 3 benne lesz)
             for(let i = 2; i >= 0; i--) {
                 let dayNum = prevMonthLastDate - i;
                 let d = new Date(pYear, pMonth, dayNum);
-                days.push({ date: d, isExtra: true, realYear: pYear, realMonth: pMonth, realDay: dayNum });
+                days.push({ date: d, isExtra: true });
             }
 
-            // Aktuális hónap napjai
+            // 2. Aktuális hónap napjai
             let currentMonthDays = new Date(year, month + 1, 0).getDate();
             for(let i = 1; i <= currentMonthDays; i++) {
                 let d = new Date(year, month, i);
-                days.push({ date: d, isExtra: false, realYear: year, realMonth: month, realDay: i });
+                days.push({ date: d, isExtra: false });
             }
 
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
@@ -283,8 +290,8 @@
                 let sepClass = isNewWeek ? 'week-separator' : '';
                 prevWeek = weekNum;
 
-                weekRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6;' : ''}">${weekNum}.hét</th>`;
-                dayRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'opacity: 0.6; background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
+                weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
+                dayRowHtml += `<th class="${sepClass}" style="${item.isExtra ? 'background:#1f2937;' : ''}">${dateStr}<br><small>${dayLetter}</small></th>`;
             });
 
             weekRowHtml += '<th>Össz. Óra</th></tr>';
@@ -292,9 +299,8 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
+            // Adatok betöltése a LocalStorage-ból az összes hónapra vonatkozóan
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
-            let prevMonthData = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
-            let pDaysTotal = new Date(pYear, pMonth + 1, 0).getDate();
 
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
@@ -302,14 +308,28 @@
                 tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold;"></td>`;
                 
                 days.forEach((item, dIndex) => {
+                    let dKey = getDateKey(item.date);
                     let cellKey = `g_${gIndex}_d_${dIndex}`;
+                    
                     let cellInfo = null;
 
+                    // Ha extra (átvezető) nap, kikeressük az illető hónap adataiból a dátum alapján
                     if (item.isExtra) {
-                        let targetDayNum = item.realDay; 
-                        let prevDayIndex = (pDaysTotal - 3) + (targetDayNum - (prevMonthLastDate - 2)); 
-                        let prevCellKey = `g_${gIndex}_d_${prevDayIndex}`;
-                        cellInfo = prevMonthData[prevCellKey];
+                        let eYear = item.date.getFullYear();
+                        let eMonth = item.date.getMonth();
+                        let eMonthData = JSON.parse(localStorage.getItem(`matrix_schedule_${eYear}_${eMonth}`)) || {};
+                        // Megkeressük az adott hónap napjai között azt, amelyiknek ez a dátuma
+                        let eDaysCount = new Date(eYear, eMonth + 1, 0).getDate();
+                        let eStartDay = eDaysCount - 2; // utolsó 3 nap
+                        for(let ed = 0; ed < 3; ed++) {
+                            let testDate = new Date(eYear, eMonth, eStartDay + ed);
+                            if(getDateKey(testDate) === dKey) {
+                                // Megvan melyik nap index volt az előző hónapban
+                                let originalDayIndex = (eDaysCount - 3) + ed;
+                                cellInfo = eMonthData[`g_${gIndex}_d_${originalDayIndex}`];
+                                break;
+                            }
+                        }
                     } else {
                         cellInfo = savedData[cellKey];
                     }
