@@ -165,7 +165,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Javított biztonsági szűrő & Havi óraszám összesítő</div>
+    <div class="subtitle">Automatikus átvezetés + LocalStorage Adatmentés</div>
 
     <div class="controls">
         <div>
@@ -195,7 +195,7 @@
                 <option value="11">December</option>
             </select>
         </div>
-        <button onclick="saveData()">Adatok Mentése</button>
+        <button onclick="manualSave()">Adatok Mentése</button>
     </div>
 
     <!-- Kattintós Gyorsválasztó Sáv -->
@@ -206,7 +206,7 @@
         <button class="p-btn btn-nep" onclick="applyService('NÉp1', 'pos-nep', 'nep')">24h (NÉp)</button>
         <button class="p-btn btn-szb" onclick="applyService('SZB', 'pos-szb', 'szb')">Szabadság (SZB)</button>
         <button class="p-btn btn-szab" onclick="applyService('SZ', 'pos-szab', 'szab')">Szabadnap (SZ)</button>
-        <button class="p-btn btn-clear" onclick="applyService('-', 'cell-default', 'clear')">Törlés</button>
+        <button class="p-btn btn-clear" onclick="applyService('', 'cell-default', 'clear')">Törlés</button>
     </div>
 
     <div class="table-container">
@@ -256,14 +256,14 @@
             
             for(let i = 2; i >= 0; i--) {
                 let d = new Date(pYear, pMonth, pDaysCount - i);
-                days.push({ date: d, isExtra: true });
+                days.push({ date: d, isExtra: true, dateKey: `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}` });
             }
 
             // Aktuális hónap napjai
             let currentMonthDays = new Date(year, month + 1, 0).getDate();
             for(let i = 1; i <= currentMonthDays; i++) {
                 let d = new Date(year, month, i);
-                days.push({ date: d, isExtra: false });
+                days.push({ date: d, isExtra: false, dateKey: `${year}-${month+1}-${i}` });
             }
 
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét / Nap</th>';
@@ -290,16 +290,20 @@
 
             document.getElementById('tableHeader').innerHTML = weekRowHtml + dayRowHtml;
 
-            // Törzs generálása
+            // Mentett adatok betöltése LocalStorage-ból
+            let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
+
             let tbodyHtml = '';
             guards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
                 tbodyHtml += `<td class="name-col"><input type="text" value="${guardName}" placeholder="Őr neve ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold;"></td>`;
                 
                 days.forEach((item, dIndex) => {
-                    let defaultVal = item.isExtra ? '-' : '';
+                    let cellKey = `g_${gIndex}_d_${dIndex}`;
+                    let cellInfo = savedData[cellKey] || { text: item.isExtra ? '-' : '', className: 'cell-default', type: 'empty' };
+                    
                     let prevWeekCheck = (dIndex > 0 && getWeekNumber(days[dIndex].date) !== getWeekNumber(days[dIndex-1].date)) ? 'week-separator' : '';
-                    tbodyHtml += `<td class="cell-default ${prevWeekCheck}" onclick="selectCell(this)" data-type="empty">${defaultVal}</td>`;
+                    tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}">${cellInfo.text}</td>`;
                 });
 
                 tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
@@ -307,6 +311,11 @@
             });
 
             document.getElementById('tableBody').innerHTML = tbodyHtml;
+
+            // Soronkénti óraszámok kiszámolása betöltés után
+            document.querySelectorAll('#scheduleTable tbody tr').forEach(row => {
+                calculateRowHours(row);
+            });
         }
 
         function selectCell(cell) {
@@ -321,9 +330,8 @@
                 return;
             }
 
-            // BIZTONSÁGI SZŰRŐ: Éjjeles (Ép) UTÁN NEM LEHET NAPPALOS (Np)
+            // Biztonsági szűrő: Éjjeles (Ép) után nem lehet Nappalos (Np)
             let prevCell = activeCell.previousElementSibling;
-            // Figyelembe vesszük, hogy a név oszlop utáni első nap-cellát vizsgáljuk-e
             if(type === 'np' && prevCell && prevCell.dataset && prevCell.dataset.type === 'ep') {
                 alert('⚠️ MÁTRIX LABOR BIZTONSÁGI FIGYELMEZTETÉS!\n\nNem lehet Nappalos (Np) poszt közvetlenül Éjjeles (Ép) után! Pihenőidő kötelező!');
                 return;
@@ -334,31 +342,54 @@
             activeCell.innerText = text;
             activeCell.dataset.type = type;
 
-            // Óraszámok újraszámolása az adott sorban
+            // Óraszámok újraszámolása és automatikus mentés
             calculateRowHours(activeCell.closest('tr'));
+            autoSave();
         }
 
         function calculateRowHours(row) {
             let cells = row.querySelectorAll('td');
             let totalHours = 0;
 
-            // Végigmegyünk a cellákon (kivéve az elsőt a nevet és az utolsót az óraszámot)
             for(let i = 1; i < cells.length - 1; i++) {
                 let type = cells[i].dataset.type;
                 if(type === 'np' || type === 'ep' || type === 'szb') {
-                    totalHours += 12; // 12 órás szolgálatok és szabadság
+                    totalHours += 12;
                 } else if(type === 'nep') {
-                    totalHours += 24; // 24 órás szolgálat
+                    totalHours += 24;
                 }
             }
 
-            // Kiírás az utolsó előtti/utolsó cellába
             let hoursCell = cells[cells.length - 1];
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
-        function saveData() {
-            alert('A Mátrix Labor adatai sikeresen rögzítve!');
+        function autoSave() {
+            const year = document.getElementById('yearSelect').value;
+            const month = document.getElementById('monthSelect').value;
+            let dataToSave = {};
+
+            document.querySelectorAll('#scheduleTable tbody tr').forEach((row, gIndex) => {
+                row.querySelectorAll('td').forEach((cell, cIndex) => {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
+                        let cellKey = cell.dataset.key;
+                        if(cellKey) {
+                            dataToSave[cellKey] = {
+                                text: cell.innerText,
+                                className: cell.className.replace('selected-cell', '').trim(),
+                                type: cell.dataset.type
+                            };
+                        }
+                    }
+                });
+            });
+
+            localStorage.setItem(`matrix_schedule_${year}_${month}`, JSON.stringify(dataToSave));
+        }
+
+        function manualSave() {
+            autoSave();
+            alert('💾 A Mátrix Labor adatai sikeresen mentve a böngészőbe (offline tárolóba)!');
         }
 
         window.onload = generateCalendar;
