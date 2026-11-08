@@ -69,6 +69,12 @@
         }
         .btn-save:hover { background: #2ea043 !important; }
 
+        .btn-print {
+            background: #1f6feb !important;
+            color: white !important;
+        }
+        .btn-print:hover { background: #388bfd !important; }
+
         .btn-pdf {
             background: #8957e5 !important;
             color: white !important;
@@ -256,12 +262,6 @@
             font-size: 0.7rem;
         }
 
-        .audit-panel h3, .holiday-panel h3 {
-            margin-top: 0;
-            color: #58a6ff;
-            font-size: 0.85rem;
-            margin-bottom: 4px;
-        }
         .alert-badge {
             display: inline-block;
             padding: 2px 5px;
@@ -323,10 +323,18 @@
             color: #f0f6fc !important;
         }
 
-        /* TÖKÉLETES A4 FEKVŐ NYOMTATÁSI BEÁLLÍTÁSOK (TELJES SZÉLESSÉG ÉS ERŐS FEKETE BETŰK) */
+        /* NYOMTATÁSI MÓD: CSAK A TÁBLÁZAT */
         @page {
             size: A4 landscape;
             margin: 4mm;
+        }
+
+        body.print-schedule-only .controls,
+        body.print-schedule-only .palette,
+        body.print-schedule-only .panels-wrapper,
+        body.print-schedule-only h1,
+        body.print-schedule-only .subtitle {
+            display: none !important;
         }
 
         @media print {
@@ -334,70 +342,81 @@
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            body {
+            body.print-schedule-only {
                 background-color: #ffffff !important;
                 color: #000000 !important;
                 margin: 0;
                 padding: 0;
             }
-            .controls, .palette, .panels-wrapper, h1, .subtitle {
+            body.print-schedule-only .controls,
+            body.print-schedule-only .palette,
+            body.print-schedule-only .panels-wrapper,
+            body.print-schedule-only h1,
+            body.print-schedule-only .subtitle {
                 display: none !important;
             }
-            .table-container {
+            body.print-schedule-only .table-container {
                 max-height: none !important;
                 overflow: visible !important;
                 border: none !important;
                 background: transparent !important;
             }
-            table {
+            body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 8px !important; /* Optimalizált méret, hogy minden nap ráférjen */
+                font-size: 8px !important;
             }
-            th, td {
+            body.print-schedule-only th, 
+            body.print-schedule-only td {
                 border: 1px solid #222222 !important;
                 padding: 2px 1px !important;
                 color: #000000 !important;
             }
-            .name-col {
+            body.print-schedule-only .name-col {
                 position: static !important;
                 background-color: #e6edf3 !important;
                 color: #000000 !important;
                 font-weight: bold !important;
             }
-            .week-row th {
+            body.print-schedule-only .week-row th {
                 background-color: #d0d7de !important;
                 color: #000000 !important;
             }
-            .day-normal-header {
+            body.print-schedule-only .day-normal-header {
                 background-color: #e6edf3 !important;
                 color: #000000 !important;
             }
-            .day-saturday-header {
+            body.print-schedule-only .day-saturday-header {
                 background-color: #2ea043 !important;
                 color: #ffffff !important;
                 font-weight: bold !important;
             }
-            .day-sunday-holiday-header {
+            body.print-schedule-only .day-sunday-holiday-header {
                 background-color: #da3633 !important;
                 color: #ffffff !important;
                 font-weight: bold !important;
             }
-            td.cell-locked {
+            body.print-schedule-only td.cell-locked {
                 background-color: #1f6feb !important;
                 color: white !important;
             }
-            .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
-            .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
-            .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
-            .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
-            .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
+            /* Óraszámok oszlopa nyomtatáskor világos hátteret kap */
+            body.print-schedule-only tr td:last-child {
+                background-color: #e6edf3 !important;
+                color: #000000 !important;
+                font-weight: bold !important;
+            }
+            body.print-schedule-only .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
+            body.print-schedule-only .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
+            body.print-schedule-only .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
+            body.print-schedule-only .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
+            body.print-schedule-only .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Kék Áthozott Napok & Fekvő A4 PDF Nyomtatás & LED Motor</div>
+    <div class="subtitle">Kék Áthozott Napok & Külön Nyomtatás és Teljes PDF Jelentés</div>
 
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
@@ -431,7 +450,8 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-pdf" onclick="exportPdf()">🖨️ PDF Mentés / Nyomtatás</button>
+            <button class="btn-print" onclick="printSchedule()">🖨️ Nyomtatás (Vezetőség)</button>
+            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 Teljes PDF Jelentés</button>
         </div>
     </div>
 
@@ -874,8 +894,58 @@
             alert('💾 A Mátrix Labor adatai, a névsor és a szabadságok sikeresen mentve!');
         }
 
-        function exportPdf() {
+        // 1. GOMB: Nyomtatás (Csak a vezénylés, tiszta világos háttérrel)
+        function printSchedule() {
+            document.getElementById('mainBody').classList.add('print-schedule-only');
             window.print();
+            setTimeout(() => {
+                document.getElementById('mainBody').classList.remove('print-schedule-only');
+            }, 1000);
+        }
+
+        // 2. GOMB: Teljes PDF Jelentés (Új ablakban nyitja meg a vezénylést ÉS az összes alsó panelt)
+        function exportFullPdfReport() {
+            let printWindow = window.open('', '_blank');
+            let htmlContent = `
+                <!DOCTYPE html>
+                <html lang="hu">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Mátrix Labor — Teljes Havi Jelentés</title>
+                    <style>
+                        body { font-family: sans-serif; background: #fff; color: #000; margin: 15px; font-size: 11px; }
+                        h1 { text-align: center; font-size: 16px; margin-bottom: 5px; }
+                        .subtitle { text-align: center; font-size: 12px; margin-bottom: 15px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 20px; font-size: 9px; }
+                        th, td { border: 1px solid #333; padding: 3px 2px; }
+                        th { background: #eee; }
+                        .section-title { font-size: 13px; font-weight: bold; margin-top: 20px; margin-bottom: 8px; border-bottom: 2px solid #333; padding-bottom: 3px; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px; font-size: 10px; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; }
+                        .vacation-card-body { display: flex; justify-content: space-between; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Mátrix Labor — Hivatalos Teljes Havi Jelentés</h1>
+                    <div class="subtitle">Tartalmazza a vezénylési táblázatot és az éves szabadságkezelő összesítőt</div>
+                    
+                    <div class="section-title">1. Havi Vezénylési Táblázat</div>
+                    <div>${document.querySelector('.table-container').innerHTML}</div>
+
+                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek</div>
+                    <div class="vacation-grid">
+                        ${document.getElementById('vacationReport').innerHTML}
+                    </div>
+
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
         }
 
         window.onload = generateCalendar;
