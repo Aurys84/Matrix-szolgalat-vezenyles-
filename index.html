@@ -12,6 +12,7 @@
             --border-color: #30363d;
             --green: #238636;
             --red: #da3633;
+            --orange: #d29922;
             --purple: #8957e5;
             --yellow: #9e6a03;
             --blue: #1f6feb;
@@ -62,7 +63,6 @@
         }
         button:hover { background: #388bfd; }
 
-        /* Univerzális Poszt Választó Sáv */
         .palette {
             display: flex;
             gap: 6px;
@@ -146,7 +146,6 @@
             min-width: 32px;
         }
 
-        /* Eredeti, élénk színek (nincs elhalványítás) */
         .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; cursor: pointer; }
@@ -180,10 +179,15 @@
         }
         .alert-ok { background: var(--green); color: white; }
         .alert-error { background: var(--red); color: white; }
+        .alert-warning { background: var(--orange); color: white; }
 
         .th-alert {
             background-color: rgba(218, 54, 51, 0.4) !important;
             border: 2px solid var(--red) !important;
+        }
+        .th-warning {
+            background-color: rgba(210, 153, 34, 0.4) !important;
+            border: 2px solid var(--orange) !important;
         }
 
         .legend {
@@ -202,7 +206,7 @@
 <body>
 
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Univerzális 1-20 Posztválasztó & Intelligens Figyelőmotor</div>
+    <div class="subtitle">Kétirányú Létszámfigyelő (Hiány & Többlet Elemzés)</div>
 
     <div class="controls">
         <div>
@@ -266,7 +270,7 @@
     </div>
 
     <div class="audit-panel">
-        <h3>🔍 Mátrix Labor Biztonsági & Létszám Figyelőmotor</h3>
+        <h3>🔍 Mátrix Labor Kétirányú Létszám Figyelőmotor</h3>
         <div id="auditReport">A rendszer elemzi a létszámokat...</div>
     </div>
 
@@ -463,13 +467,13 @@
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
 
-        // --- FIGYELŐMOTOR (CSAK A VALÓDI HIÁNYT FIGYELI, A PLUSZT NEM) ---
+        // --- KÉTIRÁNYÚ FIGYELŐMOTOR (HIÁNY ÉS TÖBBLET ÉSZLELÉSE) ---
         function runAuditEngine(days) {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             
-            let discrepancies = [];
+            let issues = [];
 
             days.forEach(item => {
                 let dKey = getDateKey(item.date);
@@ -484,33 +488,50 @@
                 });
 
                 let thElement = document.getElementById(`th-day-${dKey}`);
-                // CSAK AKKOR HIÁNY, HA TÉNYLEG KESEVVBB VAN, MINT A CÉL (A plusz nem hiány!)
+                if (thElement) {
+                    thElement.classList.remove('th-alert', 'th-warning');
+                }
+
                 if (actualCount < requiredCount) {
-                    if (thElement) thElement.classList.add('th-alert');
-                    discrepancies.push({
+                    if (thElement) thElement.classList.add('th-alert'); // Piros: hiány
+                    issues.push({
                         date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
                         required: requiredCount,
                         actual: actualCount,
+                        type: 'hiány',
                         diff: requiredCount - actualCount
                     });
-                } else {
-                    if (thElement) thElement.classList.remove('th-alert');
+                } else if (actualCount > requiredCount) {
+                    if (thElement) thElement.classList.add('th-warning'); // Narancs: többlet (elírás gyanú)
+                    issues.push({
+                        date: `${item.date.getMonth()+1}.${item.date.getDate()}.`,
+                        required: requiredCount,
+                        actual: actualCount,
+                        type: 'többlet',
+                        diff: actualCount - requiredCount
+                    });
                 }
             });
 
             let reportHtml = '';
-            if (discrepancies.length === 0) {
-                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN RENDBEN</span> A megbízói létszámkeret teljesül (többlet vagy pontos egyezés van). Nincs hiány!</p>`;
+            if (issues.length === 0) {
+                reportHtml = `<p><span class="alert-badge alert-ok">MINDEN PONTOS</span> A beosztott létszám a hónap minden napján pontosan megegyezik a megbízói céllal!</p>`;
             } else {
-                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${discrepancies.length} NAPON LÉTSZÁMHIÁNY VAN!</span></p>`;
+                let deficits = issues.filter(i => i.type === 'hiány');
+                let surpluses = issues.filter(i => i.type === 'többlet');
+
+                reportHtml = `<p><span class="alert-badge alert-error">FIGYELEM: ${deficits.length} hiány</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">FIGYELEM: ${surpluses.length} többlet / eltérés észlelve</span></p>`;
                 reportHtml += `<table style="width:100%; margin-top:6px; font-size:0.75rem;">`;
-                reportHtml += `<tr><th>Dátum</th><th>Elvárt</th><th>Tényleges</th><th>Hiány</th></tr>`;
-                discrepancies.forEach(d => {
+                reportHtml += `<tr><th>Dátum</th><th>Cél</th><th>Tényleges</th><th>Állapot / Eltérés</th></tr>`;
+                
+                issues.forEach(i => {
+                    let colorStyle = i.type === 'hiány' ? 'color: var(--red); font-weight:bold;' : 'color: var(--orange); font-weight:bold;';
+                    let textMsg = i.type === 'hiány' ? `-${i.diff} fő hiány` : `+${i.diff} fő többlet (elírás?)`;
                     reportHtml += `<tr>
-                        <td><b>${d.date}</b></td>
-                        <td>${d.required} fő</td>
-                        <td>${d.actual} fő</td>
-                        <td style="color: var(--red); font-weight:bold;">-${d.diff} fő hiány</td>
+                        <td><b>${i.date}</b></td>
+                        <td>${i.required} fő</td>
+                        <td>${i.actual} fő</td>
+                        <td style="${colorStyle}">${textMsg}</td>
                     </tr>`;
                 });
                 reportHtml += `</table>`;
@@ -533,7 +554,7 @@
                             let cellInfo = {
                                 text: cell.innerText,
                                 className: cell.className.replace('selected-cell', '').trim(),
-                                type: cell.dataset.type
+                                type: cell.type || cell.dataset.type
                             };
                             dataToSave[cellKey] = cellInfo;
                             if(dKey) {
