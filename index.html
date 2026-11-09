@@ -135,7 +135,6 @@
             z-index: 4;
         }
         
-        /* NÉV OSZLOP: VALÓDI TÖBBSOROS TEXTAREA TÖRHETŐ SZÖVEGGEL */
         .name-col {
             text-align: left;
             font-weight: 900;
@@ -347,110 +346,6 @@
         .day-normal-header {
             background-color: #30363d !important;
             color: #f0f6fc !important;
-        }
-
-        @page {
-            size: A4 landscape;
-            margin: 3mm;
-        }
-        body.print-schedule-only .controls,
-        body.print-schedule-only .palette,
-        body.print-schedule-only .panels-wrapper,
-        body.print-schedule-only h1 {
-            display: none !important;
-        }
-        @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            body.print-schedule-only {
-                background-color: #ffffff !important;
-                color: #000000 !important;
-                margin: 0;
-                padding: 0;
-            }
-            body.print-schedule-only .controls,
-            body.print-schedule-only .palette,
-            body.print-schedule-only .panels-wrapper,
-            body.print-schedule-only h1 {
-                display: none !important;
-            }
-            body.print-schedule-only .table-container {
-                max-height: none !important;
-                overflow: visible !important;
-                border: none !important;
-                background: transparent !important;
-                width: 100% !important;
-            }
-            body.print-schedule-only table {
-                width: 100% !important;
-                table-layout: fixed !important;
-                font-size: 7px !important;
-            }
-            body.print-schedule-only td.cell-default, 
-            body.print-schedule-only td[class*="pos-"] {
-                font-size: 8.5px !important;
-                font-weight: 900 !important;
-            }
-            body.print-schedule-only th, 
-            body.print-schedule-only td {
-                border: 1px solid #333333 !important;
-                padding: 1px 0px !important;
-                overflow: hidden;
-            }
-            body.print-schedule-only .name-col {
-                position: static !important;
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: 900 !important;
-                width: 95px !important;
-                min-width: 95px !important;
-                max-width: 95px !important;
-                white-space: normal !important;
-                word-break: break-word !important;
-                font-size: 7.5px !important;
-                line-height: 1.1 !important;
-            }
-            body.print-schedule-only tr td:last-child,
-            body.print-schedule-only th:last-child {
-                width: 30px !important;
-                min-width: 30px !important;
-                max-width: 30px !important;
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: 900 !important;
-                font-size: 8.5px !important;
-                white-space: nowrap !important;
-            }
-            body.print-schedule-only .total-row td {
-                background-color: #e2e8f0 !important;
-                color: #000000 !important;
-                font-weight: 900 !important;
-                font-size: 8.5px !important;
-            }
-            body.print-schedule-only .week-row th {
-                background-color: #e2e8f0 !important;
-                color: #1f2937 !important;
-            }
-            body.print-schedule-only .day-normal-header {
-                background-color: #f0f4f8 !important;
-                color: #1f2937 !important;
-            }
-            body.print-schedule-only .day-saturday-header {
-                background-color: #d1fae5 !important;
-                color: #065f46 !important;
-                font-weight: 900 !important;
-            }
-            body.print-schedule-only .day-sunday-holiday-header {
-                background-color: #fee2e2 !important;
-                color: #991b1b !important;
-                font-weight: 900 !important;
-            }
-            body.print-schedule-only td.cell-locked {
-                background-color: #bfdbfe !important;
-                color: #1e40af !important;
-            }
         }
     </style>
 </head>
@@ -725,7 +620,6 @@
             let prevCell = activeCell.previousElementSibling;
             if(prevCell && prevCell.dataset) {
                 let prevType = prevCell.dataset.type;
-                // SZIGORÚ SZABÁLY: Éjjel (ep) VAGY 24h (nep) után TILOS Nappalt (np) tenni!
                 if(type === 'np' && (prevType === 'ep' || prevType === 'nep')) {
                     alert('⚠️ Biztonsági figyelmeztetés: Éjszakai vagy 24 órás szolgálat után nem lehet közvetlenül Nappal!');
                     return;
@@ -934,11 +828,7 @@
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
         function printSchedule() {
-            document.getElementById('mainBody').classList.add('print-schedule-only');
-            window.print();
-            setTimeout(() => {
-                document.getElementById('mainBody').classList.remove('print-schedule-only');
-            }, 1000);
+            exportFullPdfReport();
         }
         function exportFullPdfReport() {
             let printWindow = window.open('', '_blank');
@@ -955,7 +845,7 @@
                     <style>
                         @page {
                             size: A4 landscape;
-                            margin: 3mm;
+                            margin: 2mm;
                         }
                         * {
                             -webkit-print-color-adjust: exact !important;
@@ -966,15 +856,15 @@
                             background: #fff; 
                             color: #000; 
                             margin: 0; 
-                            padding: 4px; 
-                            font-size: 7.5px; 
+                            padding: 2px; 
+                            font-size: 7px; 
                         }
-                        h1 { text-align: center; font-size: 12px; margin: 1px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 8.5px; margin-bottom: 6px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 8px; font-size: 7.5px; table-layout: fixed; }
+                        h1 { text-align: center; font-size: 11px; margin: 1px 0; color: #1f6feb; }
+                        .subtitle { text-align: center; font-size: 8px; margin-bottom: 4px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 6px; font-size: 7px; table-layout: fixed; }
                         th, td { border: 1px solid #333; padding: 1px 0px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
-                        .section-title { font-size: 10px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb; }
+                        .section-title { font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
                         
                         tr {
                             page-break-inside: avoid;
@@ -988,70 +878,70 @@
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 8px !important;
+                            font-size: 7.5px !important;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 8.5px !important; font-weight: 900 !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 8px !important; font-weight: 900 !important; }
                         
                         .name-col {
-                            width: 90px !important;
-                            min-width: 90px !important;
-                            max-width: 90px !important;
+                            width: 85px !important;
+                            min-width: 85px !important;
+                            max-width: 85px !important;
                             white-space: normal !important;
                             word-break: break-word !important;
-                            font-size: 7.5px !important;
-                            line-height: 1.05 !important;
+                            font-size: 7px !important;
+                            line-height: 1.0 !important;
                             background-color: #f0f4f8 !important;
                             color: #000000 !important;
                             font-weight: 900 !important;
                             text-align: left !important;
-                            padding: 2px 3px !important;
+                            padding: 1px 2px !important;
                         }
                         .guard-name-input {
                             background: transparent !important;
                             border: none !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 7.5px !important;
+                            font-size: 7px !important;
                             width: 100% !important;
                             resize: none;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
-                            font-size: 8.5px !important;
+                            font-size: 8px !important;
                             font-weight: 900 !important;
                         }
                         tr td:last-child, th:last-child {
-                            font-size: 8.5px !important;
+                            font-size: 8px !important;
                             font-weight: 900 !important;
-                            width: 30px !important;
-                            min-width: 30px !important;
-                            max-width: 30px !important;
+                            width: 28px !important;
+                            min-width: 28px !important;
+                            max-width: 28px !important;
                         }
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
                         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
                         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
                         .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
                         .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 8px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 4px 6px; font-size: 8px; background: #f9fafb !important; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 2px; color: #111; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 3px; padding: 3px 5px; font-size: 7.5px; background: #f9fafb !important; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 2px; color: #111; }
                         .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
                         .summary-row {
                             display: grid;
                             grid-template-columns: 1fr 1fr;
-                            gap: 6mm;
-                            margin-top: 4px;
+                            gap: 4mm;
+                            margin-top: 3px;
                         }
                         .summary-box {
                             border: 1px solid #333;
-                            border-radius: 4px;
-                            padding: 5px;
-                            font-size: 8.5px;
+                            border-radius: 3px;
+                            padding: 4px;
+                            font-size: 8px;
                             background: #f9fafb !important;
                         }
-                        .summary-box h3 { margin: 0 0 3px 0; font-size: 9.5px; color: #1f6feb; }
+                        .summary-box h3 { margin: 0 0 2px 0; font-size: 9px; color: #1f6feb; }
                     </style>
                 </head>
                 <body>
