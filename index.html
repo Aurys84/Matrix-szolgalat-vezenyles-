@@ -314,19 +314,19 @@
             color: #f0f6fc !important;
         }
 
-        /* Tiszta, automata nyomtatási/mentési nézet */
+        /* Pontos nyomtatási/mentési kép a háttérszínek és dizájn megtartásával */
         @media print {
             @page {
                 size: A4 landscape;
-                margin: 4mm;
+                margin: 6mm;
             }
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             body {
-                background-color: #ffffff !important;
-                color: #000000 !important;
+                background-color: var(--bg-color) !important;
+                color: var(--text-color) !important;
                 margin: 0;
                 padding: 0;
             }
@@ -336,59 +336,12 @@
             .table-container {
                 max-height: none !important;
                 overflow: visible !important;
-                border: none !important;
-                background: transparent !important;
+                border: 1px solid var(--border-color) !important;
+                background: var(--panel-bg) !important;
                 width: 100% !important;
             }
             table {
                 width: 100% !important;
-                font-size: 7px !important;
-            }
-            td.cell-default, td[class*="pos-"] {
-                font-size: 10px !important;
-                font-weight: bold !important;
-            }
-            th, td {
-                border: 1px solid #333333 !important;
-                padding: 2px 1px !important;
-            }
-            .name-col {
-                position: static !important;
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: bold !important;
-                min-width: 85px !important;
-            }
-            .total-row td {
-                background-color: #e2e8f0 !important;
-                color: #000000 !important;
-            }
-            .week-row th {
-                background-color: #e2e8f0 !important;
-                color: #1f2937 !important;
-            }
-            .day-normal-header {
-                background-color: #f0f4f8 !important;
-                color: #1f2937 !important;
-            }
-            .day-saturday-header {
-                background-color: #d1fae5 !important;
-                color: #065f46 !important;
-                font-weight: bold !important;
-            }
-            .day-sunday-holiday-header {
-                background-color: #fee2e2 !important;
-                color: #991b1b !important;
-                font-weight: bold !important;
-            }
-            td.cell-locked {
-                background-color: #bfdbfe !important;
-                color: #1e40af !important;
-            }
-            tr td:last-child {
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: bold !important;
             }
         }
     </style>
@@ -874,11 +827,7 @@
         }
         function triggerPrint() {
             autoSave();
-            document.getElementById('mainBody').classList.add('print-schedule-only');
             window.print();
-            setTimeout(() => {
-                document.getElementById('mainBody').classList.remove('print-schedule-only');
-            }, 500);
         }
         window.onload = function() {
             generateCalendar();
