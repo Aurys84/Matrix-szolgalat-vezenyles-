@@ -352,6 +352,54 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
+
+        /* Speciális szabályok a böngésző saját nyomtatásához */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 5mm;
+            }
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .controls, .palette, .panels-wrapper {
+                display: none !important;
+            }
+            .table-container {
+                max-height: none !important;
+                overflow: visible !important;
+                border: none !important;
+                background: #ffffff !important;
+            }
+            table {
+                font-size: 7.5px !important;
+            }
+            th, td {
+                border: 1px solid #333 !important;
+                padding: 2px 1px !important;
+                color: #000 !important;
+            }
+            .name-col {
+                background-color: #f0f4f8 !important;
+                color: #000 !important;
+                width: 100px !important;
+                min-width: 100px !important;
+                max-width: 100px !important;
+            }
+            .guard-name-input {
+                background: transparent !important;
+                border: none !important;
+                color: #000 !important;
+                font-size: 7.5px !important;
+                height: auto !important;
+            }
+            .pos-np { background-color: #238636 !important; color: white !important; }
+            .pos-ep { background-color: #da3633 !important; color: white !important; }
+            .pos-nep { background-color: #8957e5 !important; color: white !important; }
+            .pos-szb { background-color: #9e6a03 !important; color: white !important; }
+            .pos-szab { background-color: #1f6feb !important; color: white !important; }
+        }
     </style>
 </head>
 <body id="mainBody">
@@ -388,7 +436,7 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-print" onclick="exportDirectPdf()">🖨️ Nyomtatás</button>
+            <button class="btn-print" onclick="window.print()">🖨️ Nyomtatás</button>
             <button class="btn-pdf" onclick="exportDirectPdf()">📥 PDF Vezetőségi Jelentés</button>
         </div>
     </div>
