@@ -142,20 +142,20 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 115px;
-            min-width: 115px;
-            max-width: 115px;
+            width: 120px;
+            min-width: 120px;
+            max-width: 120px;
             padding: 2px 4px !important;
             vertical-align: middle;
-            height: 38px;
+            height: 42px;
         }
         .guard-name-input {
-            width: 105px;
+            width: 110px;
             background: transparent;
             border: none;
             color: inherit;
             font-weight: 900;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             resize: none;
             overflow: hidden;
             white-space: pre-wrap;
@@ -163,7 +163,7 @@
             line-height: 1.15;
             font-family: inherit;
             display: block;
-            height: 32px;
+            height: 36px;
         }
         th.name-col {
             background-color: #30363d !important;
@@ -351,44 +351,6 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
-
-        /* NYOMTATÁSI BEÁLLÍTÁSOK */
-        @media print {
-            body {
-                background: #ffffff !important;
-                color: #000000 !important;
-            }
-            .controls, .palette, .panels-wrapper, h1 {
-                display: none !important;
-            }
-            .table-container {
-                overflow: visible !important;
-                max-height: none !important;
-                border: none !important;
-                background: #ffffff !important;
-            }
-            table {
-                font-size: 8.5px !important;
-            }
-            .name-col {
-                width: 110px !important;
-                min-width: 110px !important;
-                max-width: 110px !important;
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: 900 !important;
-                height: 36px !important;
-            }
-            .guard-name-input {
-                color: #000000 !important;
-                font-size: 8.5px !important;
-                width: 102px !important;
-                height: 32px !important;
-                line-height: 1.15 !important;
-                white-space: pre-wrap !important;
-                word-break: break-word !important;
-            }
-        }
     </style>
 </head>
 <body id="mainBody">
@@ -569,7 +531,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" wrap="soft" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
+                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -878,6 +840,19 @@
             let vacationHtml = document.getElementById('vacationReport').innerHTML;
             let auditHtml = document.getElementById('auditReport').innerHTML;
             let holidayHtml = document.getElementById('holidayReport').innerHTML;
+            
+            // Cseréljük ki a textarea-kat fix div-ekre a nyomtatási/PDF sablonban, hogy minden név szépen tördelődjön
+            let tempDiv = document.createElement('div');
+            tempDiv.innerHTML = tableHtml;
+            tempDiv.querySelectorAll('textarea').forEach((ta, idx) => {
+                let val = ta.value || `Őr ${idx+1}`;
+                let nameSpan = document.createElement('div');
+                nameSpan.style.cssText = "font-weight: 900; font-size: 8.5px; line-height: 1.15; white-space: normal; word-break: break-word; color: #000;";
+                nameSpan.innerText = val;
+                ta.parentNode.replaceChild(nameSpan, ta);
+            });
+            let cleanTableHtml = tempDiv.innerHTML;
+
             let htmlContent = `
                 <!DOCTYPE html>
                 <html lang="hu">
@@ -887,7 +862,7 @@
                     <style>
                         @page {
                             size: A4 landscape;
-                            margin: 2mm;
+                            margin: 4mm;
                         }
                         * {
                             -webkit-print-color-adjust: exact !important;
@@ -904,7 +879,7 @@
                         h1 { text-align: center; font-size: 11px; margin: 1px 0; color: #1f6feb; }
                         .subtitle { text-align: center; font-size: 8.5px; margin-bottom: 4px; color: #555; }
                         table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 6px; font-size: 8.5px; table-layout: fixed; }
-                        th, td { border: 1px solid #333; padding: 2px 1px; }
+                        th, td { border: 1px solid #333; padding: 3px 1px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
                         .section-title { font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
                         
@@ -928,32 +903,18 @@
                         .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 9px !important; font-weight: 900 !important; }
                         
                         .name-col {
-                            width: 115px !important;
-                            min-width: 115px !important;
-                            max-width: 115px !important;
+                            width: 120px !important;
+                            min-width: 120px !important;
+                            max-width: 120px !important;
                             white-space: normal !important;
                             word-break: break-word !important;
-                            font-size: 8.5px !important;
-                            line-height: 1.15 !important;
                             background-color: #f0f4f8 !important;
                             color: #000000 !important;
                             font-weight: 900 !important;
                             text-align: left !important;
                             padding: 2px 4px !important;
-                            height: 36px !important;
-                        }
-                        .guard-name-input {
-                            background: transparent !important;
-                            border: none !important;
-                            color: #000 !important;
-                            font-weight: 900 !important;
-                            font-size: 8.5px !important;
-                            width: 105px !important;
-                            height: 32px !important;
-                            line-height: 1.15 !important;
-                            white-space: pre-wrap !important;
-                            word-break: break-word !important;
-                            resize: none;
+                            height: 42px !important;
+                            vertical-align: middle !important;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
                             font-size: 9.5px !important;
@@ -962,9 +923,9 @@
                         tr td:last-child, th:last-child {
                             font-size: 9.5px !important;
                             font-weight: 900 !important;
-                            width: 34px !important;
-                            min-width: 34px !important;
-                            max-width: 34px !important;
+                            width: 38px !important;
+                            min-width: 38px !important;
+                            max-width: 38px !important;
                         }
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
                         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
@@ -997,8 +958,10 @@
                     <div class="subtitle">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
                     
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
-                    <div>${tableHtml}</div>
+                    <div>${cleanTableHtml}</div>
+                    
                     <div class="page-break"></div>
+                    
                     <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
                     <div class="vacation-grid">
                         ${vacationHtml}
