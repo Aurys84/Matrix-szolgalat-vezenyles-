@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mátrix Labor — Vezénylési Rendszer</title>
-    <!-- html2pdf.js könyvtár a közvetlen PDF mentéshez -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -349,6 +348,65 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
+
+        /* NYOMTATÁSI BEÁLLÍTÁSOK */
+        @page {
+            size: A4 landscape;
+            margin: 3mm;
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #printArea, #printArea * {
+                visibility: visible !important;
+            }
+            #printArea {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .print-table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-size: 7.5px !important;
+                table-layout: fixed !important;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid #333333 !important;
+                padding: 1px 0px !important;
+                color: #000000 !important;
+            }
+            .print-name-col {
+                width: 95px !important;
+                min-width: 95px !important;
+                max-width: 95px !important;
+                text-align: left !important;
+                font-weight: 900 !important;
+                font-size: 7.5px !important;
+                white-space: normal !important;
+                word-break: break-word !important;
+                background-color: #f0f4f8 !important;
+                padding: 2px !important;
+            }
+            .print-textarea {
+                background: transparent !important;
+                border: none !important;
+                color: #000000 !important;
+                font-weight: 900 !important;
+                font-size: 7.5px !important;
+                width: 100% !important;
+                resize: none;
+            }
+            .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
+            .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
+            .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
+            .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
+            .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
+        }
     </style>
 </head>
 <body id="mainBody">
@@ -430,8 +488,8 @@
         </div>
     </div>
     
-    <!-- Rejtett konténer a közvetlen PDF letöltéshez -->
-    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:10px; width:1120px;"></div>
+    <!-- Nyomtatási és PDF export terület -->
+    <div id="printArea" style="display:none;"></div>
 
     <script>
         const defaultGuards = [
@@ -842,59 +900,60 @@
             let auditHtml = document.getElementById('auditReport').innerHTML;
             let holidayHtml = document.getElementById('holidayReport').innerHTML;
             
-            let exportContainer = document.getElementById('pdfExportContainer');
-            exportContainer.innerHTML = `
-                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 5px;">
-                    <h1 style="text-align: center; font-size: 14px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
-                    <div style="text-align: center; font-size: 9px; margin-bottom: 8px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
+            let printArea = document.getElementById('printArea');
+            printArea.style.display = 'block';
+            printArea.innerHTML = `
+                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 5px; width: 1100px;">
+                    <h1 style="text-align: center; font-size: 13px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
+                    <div style="text-align: center; font-size: 8.5px; margin-bottom: 6px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
                     
-                    <div style="font-size: 11px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
+                    <div style="font-size: 10px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
                     <div>${tableHtml}</div>
                     
-                    <div style="font-size: 11px; font-weight: bold; margin-top: 15px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
-                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-bottom: 8px;">
+                    <div style="font-size: 10px; font-weight: bold; margin-top: 10px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px;">
                         ${vacationHtml}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6mm; margin-top: 5px;">
-                        <div style="border: 1px solid #333; border-radius: 4px; padding: 5px; font-size: 8.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 3px 0; font-size: 9.5px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 4px;">
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 8px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 2px 0; font-size: 9px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
                             <div>${auditHtml}</div>
                         </div>
-                        <div style="border: 1px solid #333; border-radius: 4px; padding: 5px; font-size: 8.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 3px 0; font-size: 9.5px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 8px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 2px 0; font-size: 9px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
                             <div>${holidayHtml}</div>
                         </div>
                     </div>
                 </div>
             `;
             
-            // CSS javítások a rejtett div-ben lévő táblázathoz a tökéletes PDF generáláshoz
-            let tempTable = exportContainer.querySelector('table');
+            // Stílusok alkalmazása a generálandó PDF-hez
+            let tempTable = printArea.querySelector('table');
             if(tempTable) {
                 tempTable.style.width = '100%';
-                tempTable.style.fontSize = '8px';
+                tempTable.style.fontSize = '7.5px';
                 tempTable.style.borderCollapse = 'collapse';
                 tempTable.querySelectorAll('th, td').forEach(cell => {
                     cell.style.border = '1px solid #333';
-                    cell.style.padding = '2px 1px';
+                    cell.style.padding = '1px 0px';
                 });
-                exportContainer.querySelectorAll('.name-col').forEach(el => {
-                    el.style.width = '100px';
-                    el.style.minWidth = '100px';
-                    el.style.maxWidth = '100px';
+                printArea.querySelectorAll('.name-col').forEach(el => {
+                    el.style.width = '95px';
+                    el.style.minWidth = '95px';
+                    el.style.maxWidth = '95px';
                     el.style.whiteSpace = 'normal';
                     el.style.wordBreak = 'break-word';
-                    el.style.fontSize = '8px';
+                    el.style.fontSize = '7.5px';
                     el.style.backgroundColor = '#f0f4f8';
                     el.style.color = '#000';
                 });
-                exportContainer.querySelectorAll('.guard-name-input').forEach(textarea => {
+                printArea.querySelectorAll('.guard-name-input').forEach(textarea => {
                     textarea.style.background = 'transparent';
                     textarea.style.border = 'none';
                     textarea.style.color = '#000';
                     textarea.style.fontWeight = '900';
-                    textarea.style.fontSize = '8px';
+                    textarea.style.fontSize = '7.5px';
                     textarea.style.width = '100%';
                     textarea.style.resize = 'none';
                 });
@@ -908,8 +967,9 @@
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
             };
 
-            html2pdf().from(exportContainer).set(opt).save().then(() => {
-                exportContainer.innerHTML = '';
+            html2pdf().from(printArea).set(opt).save().then(() => {
+                printArea.style.display = 'none';
+                printArea.innerHTML = '';
             });
         }
         window.addEventListener('DOMContentLoaded', () => {
