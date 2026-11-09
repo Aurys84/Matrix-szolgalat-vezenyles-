@@ -27,14 +27,8 @@
         h1 {
             text-align: center;
             color: #58a6ff;
-            margin-bottom: 2px;
+            margin-bottom: 6px;
             font-size: 1.1rem;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 0.75rem;
-            color: #8b949e;
-            margin-bottom: 10px;
         }
         .controls {
             display: flex;
@@ -146,7 +140,6 @@
             z-index: 4;
         }
         
-        /* ITT A VÁLTOZÁS: NÉV OSZLOP SZÉLESEBB ÉS TÖBBELTSOROS (SORTÖRÉS) */
         .name-col {
             text-align: left;
             font-weight: 900;
@@ -154,14 +147,14 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            min-width: 130px;
-            max-width: 130px;
-            width: 130px;
+            min-width: 135px;
+            max-width: 135px;
+            width: 135px;
             font-size: 0.8rem;
             white-space: normal !important;
             word-break: break-word;
             line-height: 1.15;
-            padding: 2px 4px !important;
+            padding: 3px 5px !important;
         }
         th.name-col {
             background-color: #30363d !important;
@@ -344,8 +337,7 @@
         body.print-schedule-only .controls,
         body.print-schedule-only .palette,
         body.print-schedule-only .panels-wrapper,
-        body.print-schedule-only h1,
-        body.print-schedule-only .subtitle {
+        body.print-schedule-only h1 {
             display: none !important;
         }
         @media print {
@@ -362,8 +354,7 @@
             body.print-schedule-only .controls,
             body.print-schedule-only .palette,
             body.print-schedule-only .panels-wrapper,
-            body.print-schedule-only h1,
-            body.print-schedule-only .subtitle {
+            body.print-schedule-only h1 {
                 display: none !important;
             }
             body.print-schedule-only .table-container {
@@ -375,7 +366,7 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 7.5px !important;
+                font-size: 7px !important;
             }
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
@@ -392,9 +383,9 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                min-width: 120px !important;
-                max-width: 120px !important;
-                width: 120px !important;
+                min-width: 125px !important;
+                max-width: 125px !important;
+                width: 125px !important;
                 white-space: normal !important;
                 font-size: 7.5px !important;
             }
@@ -439,7 +430,6 @@
 </head>
 <body id="mainBody">
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
-    <div class="subtitle">Nagyobb Cellakarakterek & Hétfői Hétkezdés</div>
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
             <div>
@@ -616,7 +606,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:120px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.8rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:125px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.8rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
