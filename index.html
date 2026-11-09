@@ -104,7 +104,7 @@
             border-collapse: collapse;
             text-align: center;
             font-size: 0.95rem;
-            table-layout: fixed; /* KÉNYSZERÍTSE A TÖMÖR, EGYENLETES OSZLOPOKAT */
+            table-layout: fixed;
         }
         th, td {
             border: 1px solid var(--border-color);
@@ -338,7 +338,7 @@
 
         @page {
             size: A4 landscape;
-            margin: 3mm;
+            margin: 2mm;
         }
         body.print-schedule-only .controls,
         body.print-schedule-only .palette,
@@ -373,17 +373,17 @@
             body.print-schedule-only table {
                 width: 100% !important;
                 table-layout: fixed !important;
-                font-size: 8px !important;
+                font-size: 7.5px !important;
             }
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
-                font-size: 9.5px !important;
+                font-size: 9px !important;
                 font-weight: 900 !important;
             }
             body.print-schedule-only th, 
             body.print-schedule-only td {
                 border: 1px solid #333333 !important;
-                padding: 2px 1px !important;
+                padding: 1px 0px !important;
                 overflow: hidden;
             }
             body.print-schedule-only .name-col {
@@ -391,30 +391,30 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                width: 120px !important;
-                min-width: 120px !important;
-                max-width: 120px !important;
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
                 white-space: nowrap !important;
                 overflow: hidden;
                 text-overflow: ellipsis;
-                font-size: 9px !important;
+                font-size: 8.5px !important;
             }
             body.print-schedule-only tr td:last-child,
             body.print-schedule-only th:last-child {
-                width: 38px !important;
-                min-width: 38px !important;
-                max-width: 38px !important;
+                width: 32px !important;
+                min-width: 32px !important;
+                max-width: 32px !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                font-size: 9.5px !important;
+                font-size: 9px !important;
                 white-space: nowrap !important;
             }
             body.print-schedule-only .total-row td {
                 background-color: #e2e8f0 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                font-size: 9.5px !important;
+                font-size: 9px !important;
             }
             body.print-schedule-only .week-row th {
                 background-color: #e2e8f0 !important;
@@ -938,7 +938,7 @@
                     <style>
                         @page {
                             size: A4 landscape;
-                            margin: 10mm;
+                            margin: 4mm;
                         }
                         * {
                             -webkit-print-color-adjust: exact !important;
@@ -949,16 +949,20 @@
                             background: #fff; 
                             color: #000; 
                             margin: 0; 
-                            padding: 10px; 
-                            font-size: 9px; 
+                            padding: 5px; 
+                            font-size: 8px; 
                         }
-                        h1 { text-align: center; font-size: 15px; margin: 2px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 10px; margin-bottom: 15px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 10px; table-layout: fixed; }
-                        th, td { border: 1px solid #333; padding: 4px 2px; }
+                        h1 { text-align: center; font-size: 13px; margin: 2px 0; color: #1f6feb; }
+                        .subtitle { text-align: center; font-size: 9px; margin-bottom: 8px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 10px; font-size: 8.5px; table-layout: fixed; }
+                        th, td { border: 1px solid #333; padding: 2px 1px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
-                        .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
+                        .section-title { font-size: 11px; font-weight: bold; margin-top: 10px; margin-bottom: 5px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb; }
                         
+                        tr {
+                            page-break-inside: avoid;
+                            break-inside: avoid;
+                        }
                         .page-break {
                             page-break-before: always;
                             break-before: page;
@@ -967,19 +971,19 @@
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 10px !important;
+                            font-size: 9px !important;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 11px !important; font-weight: 900 !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 9.5px !important; font-weight: 900 !important; }
                         
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
-                            font-size: 11px !important;
+                            font-size: 9.5px !important;
                             font-weight: 900 !important;
                         }
                         tr td:last-child, th:last-child {
-                            font-size: 11px !important;
+                            font-size: 9.5px !important;
                             font-weight: 900 !important;
                         }
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
@@ -987,24 +991,24 @@
                         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
                         .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
                         .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px 8px; font-size: 9px; background: #f9fafb !important; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; color: #111; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 4px 6px; font-size: 8.5px; background: #f9fafb !important; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 3px; color: #111; }
                         .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
                         .summary-row {
                             display: grid;
                             grid-template-columns: 1fr 1fr;
-                            gap: 10mm;
-                            margin-top: 10px;
+                            gap: 8mm;
+                            margin-top: 5px;
                         }
                         .summary-box {
                             border: 1px solid #333;
                             border-radius: 4px;
-                            padding: 8px;
-                            font-size: 10px;
+                            padding: 6px;
+                            font-size: 9px;
                             background: #f9fafb !important;
                         }
-                        .summary-box h3 { margin: 0 0 5px 0; font-size: 11px; color: #1f6feb; }
+                        .summary-box h3 { margin: 0 0 4px 0; font-size: 10px; color: #1f6feb; }
                     </style>
                 </head>
                 <body>
