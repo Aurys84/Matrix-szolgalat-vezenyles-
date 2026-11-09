@@ -132,7 +132,6 @@
             top: 44px;
             z-index: 4;
         }
-        /* Név oszlop javítva, hogy semmi se lógjon le */
         .name-col {
             text-align: left;
             font-weight: bold;
@@ -149,7 +148,6 @@
             z-index: 5 !important;
             padding-left: 12px !important;
         }
-        /* Utolsó sor (Havi Összesítő) felnagyítva */
         .total-row td {
             background-color: #313b4c !important;
             color: #79c0ff !important;
@@ -319,11 +317,11 @@
             color: #f0f6fc !important;
         }
 
-        /* Nyomtatási protokoll */
+        /* Tökéletesített, hibátlan nyomtatási protokoll (a sticky eltolódás javítva) */
         @media print {
             @page {
                 size: A4 landscape;
-                margin: 5mm;
+                margin: 4mm;
             }
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -334,7 +332,7 @@
                 color: var(--text-color) !important;
                 margin: 0;
                 padding: 0;
-                zoom: 82%;
+                zoom: 80%;
             }
             .controls, .palette, h1, .subtitle {
                 display: none !important;
@@ -351,6 +349,11 @@
             }
             table {
                 width: 100% !important;
+            }
+            /* Nyomtatáskor töröljük a sticky pozíciót, hogy a nevek eleje ne lógjon le és ne vágódjon le */
+            .name-col, th.name-col {
+                position: static !important;
+                left: auto !important;
             }
             .panels-wrapper {
                 page-break-before: always;
@@ -592,7 +595,6 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                // Utolsó oszlop (óra keretek) felnagyítva
                 tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #79c0ff; font-size: 0.9rem;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
