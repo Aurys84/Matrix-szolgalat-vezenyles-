@@ -142,14 +142,14 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 100px;
-            min-width: 100px;
-            max-width: 100px;
+            width: 105px;
+            min-width: 105px;
+            max-width: 105px;
             padding: 2px 3px !important;
             vertical-align: middle;
         }
         .guard-name-input {
-            width: 92px;
+            width: 98px;
             background: transparent;
             border: none;
             color: inherit;
@@ -171,9 +171,9 @@
         
         #scheduleTable th:last-child,
         #scheduleTable td:last-child {
-            width: 42px;
-            min-width: 42px;
-            max-width: 42px;
+            width: 45px;
+            min-width: 45px;
+            max-width: 45px;
             font-size: 0.95rem !important;
             font-weight: 900 !important;
             color: #58a6ff !important;
@@ -857,12 +857,12 @@
                             color: #000; 
                             margin: 0; 
                             padding: 2px; 
-                            font-size: 7px; 
+                            font-size: 8px; 
                         }
                         h1 { text-align: center; font-size: 11px; margin: 1px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 8px; margin-bottom: 4px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 6px; font-size: 7px; table-layout: fixed; }
-                        th, td { border: 1px solid #333; padding: 1px 0px; }
+                        .subtitle { text-align: center; font-size: 8.5px; margin-bottom: 4px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 6px; font-size: 8.5px; table-layout: fixed; }
+                        th, td { border: 1px solid #333; padding: 2px 1px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
                         .section-title { font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
                         
@@ -878,46 +878,46 @@
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 7.5px !important;
+                            font-size: 9px !important;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 8px !important; font-weight: 900 !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 9px !important; font-weight: 900 !important; }
                         
                         .name-col {
-                            width: 85px !important;
-                            min-width: 85px !important;
-                            max-width: 85px !important;
+                            width: 105px !important;
+                            min-width: 105px !important;
+                            max-width: 105px !important;
                             white-space: normal !important;
                             word-break: break-word !important;
-                            font-size: 7px !important;
-                            line-height: 1.0 !important;
+                            font-size: 8px !important;
+                            line-height: 1.15 !important;
                             background-color: #f0f4f8 !important;
                             color: #000000 !important;
                             font-weight: 900 !important;
                             text-align: left !important;
-                            padding: 1px 2px !important;
+                            padding: 2px 3px !important;
                         }
                         .guard-name-input {
                             background: transparent !important;
                             border: none !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 7px !important;
+                            font-size: 8px !important;
                             width: 100% !important;
                             resize: none;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
-                            font-size: 8px !important;
+                            font-size: 9.5px !important;
                             font-weight: 900 !important;
                         }
                         tr td:last-child, th:last-child {
-                            font-size: 8px !important;
+                            font-size: 9.5px !important;
                             font-weight: 900 !important;
-                            width: 28px !important;
-                            min-width: 28px !important;
-                            max-width: 28px !important;
+                            width: 34px !important;
+                            min-width: 34px !important;
+                            max-width: 34px !important;
                         }
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
                         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
@@ -966,15 +966,22 @@
                         </div>
                     </div>
                     <script>
-                        window.onload = function() { window.print(); }
-                  <script>
-    window.onload = function() { 
-        window.print(); 
-        // Automatikusan bezárja az ideiglenes ablakot nyomtatás/mentés után
-        setTimeout(function() {
-            window.close();
-        }, 500);
-    }
-</script>
+                        window.onload = function() { 
+                            window.print(); 
+                            setTimeout(function() {
+                                window.close();
+                            }, 500);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
+        }
+        window.addEventListener('DOMContentLoaded', () => {
+            generateCalendar();
+        });
+    </script>
 </body>
 </html>
