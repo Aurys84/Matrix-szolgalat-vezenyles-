@@ -6,16 +6,16 @@
     <title>Mátrix Labor — Vezénylési Rendszer</title>
     <style>
         :root {
-            --bg-color: #222831;
-            --panel-bg: #2d3440;
+            --bg-color: #161b22;
+            --panel-bg: #21262d;
             --text-color: #f0f6fc;
-            --border-color: #404b5c;
-            --green: #2ea043;
-            --red: #f85149;
+            --border-color: #30363d;
+            --green: #238636;
+            --red: #da3633;
             --yellow-led: #ffd700;
             --purple: #8957e5;
-            --yellow: #d29922;
-            --blue: #388bfd;
+            --yellow: #9e6a03;
+            --blue: #1f6feb;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -49,7 +49,7 @@
             align-items: center;
         }
         select, input, button {
-            background: #394251;
+            background: #30363d;
             color: var(--text-color);
             border: 1px solid var(--border-color);
             padding: 4px 8px;
@@ -61,14 +61,14 @@
             cursor: pointer;
             font-weight: bold;
         }
-        button:hover { background: #58a6ff; }
+        button:hover { background: #388bfd; }
         .btn-save {
             background: var(--green) !important;
             color: white !important;
         }
-        .btn-save:hover { background: #3fb950 !important; }
+        .btn-save:hover { background: #2ea043 !important; }
         .btn-pdf {
-            background: var(--purple) !important;
+            background: #8957e5 !important;
             color: white !important;
         }
         .btn-pdf:hover { background: #9c6ffe !important; }
@@ -91,7 +91,7 @@
         .btn-nep { background: var(--purple); color: white; }
         .btn-szb { background: var(--yellow); color: white; }
         .btn-szab { background: var(--blue); color: white; }
-        .btn-clear { background: #394251; color: #c9d1d9; border: 1px solid var(--border-color); }
+        .btn-clear { background: #30363d; color: #c9d1d9; border: 1px solid var(--border-color); }
         .table-container {
             overflow: auto;
             background: var(--panel-bg);
@@ -108,7 +108,7 @@
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 5px 4px;
+            padding: 4px 3px;
             white-space: nowrap;
         }
         
@@ -118,18 +118,18 @@
         }
         .week-row th {
             top: 0;
-            background-color: #2d3440 !important;
+            background-color: #21262d !important;
             color: #58a6ff;
             font-weight: bold;
             z-index: 4;
         }
         .req-row th {
-            top: 22px;
-            background-color: #222831 !important;
+            top: 21px;
+            background-color: #161b22 !important;
             z-index: 4;
         }
         .day-row th {
-            top: 44px;
+            top: 42px;
             z-index: 4;
         }
         .name-col {
@@ -137,22 +137,19 @@
             font-weight: bold;
             position: sticky;
             left: 0;
-            background-color: #2d3440 !important;
+            background-color: #21262d !important;
             z-index: 3;
-            min-width: 145px;
-            padding-left: 12px !important;
-            font-size: 0.8rem;
+            min-width: 110px;
+            font-size: 0.75rem;
         }
         th.name-col {
-            background-color: #394251 !important;
+            background-color: #30363d !important;
             z-index: 5 !important;
-            padding-left: 12px !important;
         }
         .total-row td {
-            background-color: #313b4c !important;
-            color: #79c0ff !important;
-            font-weight: bold !important;
-            font-size: 0.9rem !important;
+            background-color: #1f2937 !important;
+            color: #58a6ff !important;
+            font-weight: bold;
         }
         .week-separator {
             border-left: 2px solid #58a6ff !important;
@@ -175,11 +172,11 @@
             font-weight: bold;
             font-size: 0.9rem !important;
         }
-        .pos-np { background-color: #2ea043 !important; color: white !important; cursor: pointer; }
-        .pos-ep { background-color: #f85149 !important; color: white !important; cursor: pointer; }
+        .pos-np { background-color: #238636 !important; color: white !important; cursor: pointer; }
+        .pos-ep { background-color: #da3633 !important; color: white !important; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; cursor: pointer; }
-        .pos-szb { background-color: #d29922 !important; color: white !important; cursor: pointer; }
-        .pos-szab { background-color: #388bfd !important; color: white !important; cursor: pointer; }
+        .pos-szb { background-color: #9e6a03 !important; color: white !important; cursor: pointer; }
+        .pos-szab { background-color: #1f6feb !important; color: white !important; cursor: pointer; }
         
         td.selected-cell {
             outline: 2px solid #ff7b72;
@@ -232,7 +229,7 @@
             .vacation-grid { grid-template-columns: repeat(2, 1fr); }
         }
         .vacation-card {
-            background: #222831;
+            background: #161b22;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             padding: 6px 8px;
@@ -286,11 +283,11 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: #f85149;
+            background-color: #ff3b30;
             border-radius: 50%;
             margin-left: 3px;
             animation: blinkLed 0.5s infinite;
-            box-shadow: 0 0 10px #f85149;
+            box-shadow: 0 0 10px #ff3b30;
         }
         .led-warning {
             display: inline-block;
@@ -303,74 +300,18 @@
             box-shadow: 0 0 10px #ffd700;
         }
         .day-saturday-header {
-            background-color: #1b4728 !important;
+            background-color: #1f4f29 !important;
             color: #56d364 !important;
             border-bottom: 2px solid var(--green) !important;
         }
         .day-sunday-holiday-header {
-            background-color: #5c2226 !important;
+            background-color: #672528 !important;
             color: #ff8182 !important;
             border-bottom: 2px solid var(--red) !important;
         }
         .day-normal-header {
-            background-color: #394251 !important;
+            background-color: #30363d !important;
             color: #f0f6fc !important;
-        }
-
-        /* Tökéletesített, hibátlan nyomtatási protokoll (a sticky eltolódás javítva) */
-        @media print {
-            @page {
-                size: A4 landscape;
-                margin: 4mm;
-            }
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            body {
-                background-color: var(--bg-color) !important;
-                color: var(--text-color) !important;
-                margin: 0;
-                padding: 0;
-                zoom: 80%;
-            }
-            .controls, .palette, h1, .subtitle {
-                display: none !important;
-            }
-            .table-container {
-                max-height: none !important;
-                overflow: visible !important;
-                border: 1px solid var(--border-color) !important;
-                background: var(--panel-bg) !important;
-                width: 100% !important;
-                page-break-after: always;
-                break-after: page;
-                margin-bottom: 0 !important;
-            }
-            table {
-                width: 100% !important;
-            }
-            /* Nyomtatáskor töröljük a sticky pozíciót, hogy a nevek eleje ne lógjon le és ne vágódjon le */
-            .name-col, th.name-col {
-                position: static !important;
-                left: auto !important;
-            }
-            .panels-wrapper {
-                page-break-before: always;
-                break-before: page;
-                display: flex !important;
-                flex-direction: column !important;
-                gap: 10px !important;
-                background: var(--bg-color) !important;
-                padding-top: 5px;
-            }
-            .vacation-panel, .audit-panel, .holiday-panel {
-                background: var(--panel-bg) !important;
-                border: 1px solid var(--border-color) !important;
-            }
-            .vacation-grid {
-                grid-template-columns: repeat(4, 1fr) !important;
-            }
         }
     </style>
 </head>
@@ -409,7 +350,7 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-pdf" onclick="triggerPrint()">📥 Mentés</button>
+            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 Mentés</button>
         </div>
     </div>
     <div class="palette">
@@ -452,7 +393,6 @@
             </div>
         </div>
     </div>
-
     <script>
         const defaultGuards = [
             "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
@@ -524,10 +464,10 @@
                 weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
                 
                 if (item.isExtra) {
-                    reqRowHtml += `<th class="${sepClass}" style="background:#388bfd;">-</th>`;
+                    reqRowHtml += `<th class="${sepClass}" style="background:#1f6feb;">-</th>`;
                 } else {
                     let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
-                    reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#2d3440; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
+                    reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#21262d; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
                 }
                 let headerClass = "day-normal-header";
                 if (isHoliday(d)) {
@@ -538,13 +478,13 @@
                 } else if (dayIndex === 0) {
                     headerClass = "day-sunday-holiday-header";
                 }
-                let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#388bfd; color:white;' : '';
+                let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#1f6feb; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${headerClass}" style="${extraHeaderStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
-            weekRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Óra</th></tr>';
-            reqRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Cél</th></tr>';
-            dayRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Keret</th></tr>';
+            weekRowHtml += '<th class="name-col">Óra</th></tr>';
+            reqRowHtml += '<th class="name-col">Cél</th></tr>';
+            dayRowHtml += '<th class="name-col">Keret</th></tr>';
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
             document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
@@ -553,7 +493,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:130px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.8rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -595,19 +535,19 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #79c0ff; font-size: 0.9rem;">0h</td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
-            tbodyHtml += `<td class="name-col" style="background:#313b4c !important; color:#79c0ff; font-size:0.9rem;">Havi Összesítő</td>`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
                 let isMonday = (dayIndex === 1);
                 let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
-                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}" style="font-size:0.85rem; font-weight:bold;">0h</td>`;
+                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
             });
-            tbodyHtml += `<td id="grand-total-hours" style="color:#79c0ff; font-size:1rem; font-weight:bold;">0h</td>`;
+            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
             tbodyHtml += `</tr>`;
             document.getElementById('tableBody').innerHTML = tbodyHtml;
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
@@ -646,6 +586,7 @@
             let prevCell = activeCell.previousElementSibling;
             if(prevCell && prevCell.dataset) {
                 let prevType = prevCell.dataset.type;
+                // Szigorú szűrő: éjszakai (ep) vagy 24 órás (nep) után TILOS nappalt (np) beírni!
                 if(type === 'np' && (prevType === 'ep' || prevType === 'nep')) {
                     alert('⚠️ Biztonsági szabályzat: Éjszakai vagy 24 órás szolgálat után nem lehet közvetlenül Nappal!');
                     return;
@@ -764,7 +705,7 @@
                     <div class="vacation-card">
                         <div class="vacation-card-header">${guardName}</div>
                         <div class="vacation-card-body">
-                            <span>Alap: <input type="number" value="${baseVal}" min="0" max="100" style="width:36px; text-align:center; background:#222831; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;" onchange="updateVacationBase(${gIndex}, this)"></span>
+                            <span>Alap: <input type="number" value="${baseVal}" min="0" max="100" style="width:36px; text-align:center; background:#161b22; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;" onchange="updateVacationBase(${gIndex}, this)"></span>
                             <span>Felhasznált: <b style="color:var(--yellow);">${totalUsedUntilNow}</b></span>
                             <span>Maradék: <b style="color:var(--blue);">${remaining}</b></span>
                         </div>
@@ -853,9 +794,112 @@
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
-        function triggerPrint() {
-            autoSave();
-            window.print();
+        function exportFullPdfReport() {
+            let printWindow = window.open('', '_blank');
+            let tableHtml = document.querySelector('.table-container').innerHTML;
+            let vacationHtml = document.getElementById('vacationReport').innerHTML;
+            let auditHtml = document.getElementById('auditReport').innerHTML;
+            let holidayHtml = document.getElementById('holidayReport').innerHTML;
+            let htmlContent = `
+                <!DOCTYPE html>
+                <html lang="hu">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Mátrix Labor — Mentés / Jelentés</title>
+                    <style>
+                        @page {
+                            size: A4 landscape;
+                            margin: 10mm;
+                        }
+                        * {
+                            -webkit-print-color-adjust: exact !important;
+                            print-color-adjust: exact !important;
+                        }
+                        body { 
+                            font-family: sans-serif; 
+                            background: #fff; 
+                            color: #000; 
+                            margin: 0; 
+                            padding: 10px; 
+                            font-size: 9px; 
+                        }
+                        h1 { text-align: center; font-size: 15px; margin: 2px 0; color: #1f6feb; }
+                        .subtitle { text-align: center; font-size: 10px; margin-bottom: 15px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 8.5px; }
+                        th, td { border: 1px solid #333; padding: 4px 2px; }
+                        th { background: #e2e8f0 !important; color: #000 !important; }
+                        .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
+                        .page-break {
+                            page-break-before: always;
+                            break-before: page;
+                        }
+                        .total-row td {
+                            background-color: #e2e8f0 !important;
+                            color: #000 !important;
+                            font-weight: bold;
+                        }
+                        .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
+                        .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
+                        .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 10px !important; font-weight: bold !important; }
+                        td.cell-default, td[class*="pos-"] {
+                            font-size: 10px !important;
+                            font-weight: bold !important;
+                        }
+                        .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
+                        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
+                        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
+                        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
+                        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px 8px; font-size: 9px; background: #f9fafb !important; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; color: #111; }
+                        .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
+                        .summary-row {
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 10mm;
+                            margin-top: 10px;
+                        }
+                        .summary-box {
+                            border: 1px solid #333;
+                            border-radius: 4px;
+                            padding: 8px;
+                            font-size: 10px;
+                            background: #f9fafb !important;
+                        }
+                        .summary-box h3 { margin: 0 0 5px 0; font-size: 11px; color: #1f6feb; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Mátrix Labor — Hivatalos Jelentés</h1>
+                    <div class="subtitle">Tartalmazza a havi vezénylési táblázatot és a szabadságkezelőt</div>
+                    
+                    <div class="section-title">1. Havi Vezénylési Táblázat</div>
+                    <div>${tableHtml}</div>
+                    <div class="page-break"></div>
+                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div class="vacation-grid">
+                        ${vacationHtml}
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-box">
+                            <h3>🔍 Létszám Figyelőmotor Összesítés</h3>
+                            <div>${auditHtml}</div>
+                        </div>
+                        <div class="summary-box">
+                            <h3>🎉 Havi Ünnepnapok Számláló</h3>
+                            <div>${holidayHtml}</div>
+                        </div>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); }
+                    <\/script>
+                </body>
+                </html>
+            `;
+            printWindow.document.write(htmlContent);
+            printWindow.document.close();
         }
         window.onload = function() {
             generateCalendar();
