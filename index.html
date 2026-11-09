@@ -108,7 +108,7 @@
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 3px 1px;
+            padding: 4px 2px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -142,14 +142,15 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 105px;
-            min-width: 105px;
-            max-width: 105px;
-            padding: 2px 3px !important;
+            width: 115px;
+            min-width: 115px;
+            max-width: 115px;
+            padding: 2px 4px !important;
             vertical-align: middle;
+            height: 38px;
         }
         .guard-name-input {
-            width: 98px;
+            width: 105px;
             background: transparent;
             border: none;
             color: inherit;
@@ -159,14 +160,16 @@
             overflow: hidden;
             white-space: pre-wrap;
             word-break: break-word;
-            line-height: 1.1;
+            line-height: 1.15;
             font-family: inherit;
             display: block;
+            height: 32px;
         }
         th.name-col {
             background-color: #30363d !important;
             z-index: 5 !important;
             white-space: nowrap !important;
+            height: auto !important;
         }
         
         #scheduleTable th:last-child,
@@ -184,6 +187,7 @@
             color: #58a6ff !important;
             font-weight: 900 !important;
             font-size: 0.95rem !important;
+            height: auto !important;
         }
         .week-separator {
             border-left: 2px solid #58a6ff !important;
@@ -346,6 +350,44 @@
         .day-normal-header {
             background-color: #30363d !important;
             color: #f0f6fc !important;
+        }
+
+        /* NYOMTATÁSI BEÁLLÍTÁSOK */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+            }
+            .controls, .palette, .panels-wrapper, h1 {
+                display: none !important;
+            }
+            .table-container {
+                overflow: visible !important;
+                max-height: none !important;
+                border: none !important;
+                background: #ffffff !important;
+            }
+            table {
+                font-size: 8.5px !important;
+            }
+            .name-col {
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
+                background-color: #f0f4f8 !important;
+                color: #000000 !important;
+                font-weight: 900 !important;
+                height: 36px !important;
+            }
+            .guard-name-input {
+                color: #000000 !important;
+                font-size: 8.5px !important;
+                width: 102px !important;
+                height: 32px !important;
+                line-height: 1.15 !important;
+                white-space: pre-wrap !important;
+                word-break: break-word !important;
+            }
         }
     </style>
 </head>
@@ -527,7 +569,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
+                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" wrap="soft" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -886,26 +928,31 @@
                         .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 9px !important; font-weight: 900 !important; }
                         
                         .name-col {
-                            width: 105px !important;
-                            min-width: 105px !important;
-                            max-width: 105px !important;
+                            width: 115px !important;
+                            min-width: 115px !important;
+                            max-width: 115px !important;
                             white-space: normal !important;
                             word-break: break-word !important;
-                            font-size: 8px !important;
+                            font-size: 8.5px !important;
                             line-height: 1.15 !important;
                             background-color: #f0f4f8 !important;
                             color: #000000 !important;
                             font-weight: 900 !important;
                             text-align: left !important;
-                            padding: 2px 3px !important;
+                            padding: 2px 4px !important;
+                            height: 36px !important;
                         }
                         .guard-name-input {
                             background: transparent !important;
                             border: none !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 8px !important;
-                            width: 100% !important;
+                            font-size: 8.5px !important;
+                            width: 105px !important;
+                            height: 32px !important;
+                            line-height: 1.15 !important;
+                            white-space: pre-wrap !important;
+                            word-break: break-word !important;
                             resize: none;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
