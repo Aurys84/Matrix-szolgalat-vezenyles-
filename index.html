@@ -12,7 +12,7 @@
             --border-color: #30363d;
             --green: #238636;
             --red: #da3633;
-            --orange: #ff9500;
+            --yellow-led: #ffd700;
             --purple: #8957e5;
             --yellow: #9e6a03;
             --blue: #1f6feb;
@@ -139,9 +139,9 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 125px;
-            min-width: 125px;
-            max-width: 125px;
+            width: 140px;
+            min-width: 140px;
+            max-width: 140px;
             font-size: 0.85rem;
             white-space: nowrap !important;
             overflow: hidden;
@@ -280,7 +280,8 @@
         }
         .alert-ok { background: var(--green); color: white; }
         .alert-error { background: var(--red); color: white; }
-        .alert-warning { background: var(--orange); color: white; }
+        .alert-warning { background: var(--yellow-led); color: #000; }
+        
         @keyframes blinkLed {
             0% { opacity: 1; transform: scale(1); filter: brightness(1); }
             50% { opacity: 0.15; transform: scale(1.5); filter: brightness(2); }
@@ -305,15 +306,16 @@
             animation: blinkLed 0.5s infinite;
             box-shadow: 0 0 10px #ff3b30;
         }
+        /* CITROMSÁRGA LED TÖBBLETEKHEZ */
         .led-warning {
             display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: #ff9500;
+            background-color: #ffd700;
             border-radius: 50%;
             margin-left: 3px;
             animation: blinkLed 0.5s infinite;
-            box-shadow: 0 0 10px #ff9500;
+            box-shadow: 0 0 10px #ffd700;
         }
         .day-saturday-header {
             background-color: #1f4f29 !important;
@@ -385,9 +387,9 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                width: 110px !important;
-                min-width: 110px !important;
-                max-width: 110px !important;
+                width: 125px !important;
+                min-width: 125px !important;
+                max-width: 125px !important;
                 white-space: nowrap !important;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -610,7 +612,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:118px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:130px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -866,7 +868,7 @@
             } else {
                 let deficits = issues.filter(i => i.type === 'hiány');
                 let surpluses = issues.filter(i => i.type === 'többlet');
-                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">${surpluses.length} többlet (LED)</span>`;
+                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning">${surplus.length || surpluses.length} többlet (LED)</span>`;
             }
             document.getElementById('auditReport').innerHTML = reportHtml;
         }
