@@ -967,16 +967,14 @@
                     </div>
                     <script>
                         window.onload = function() { window.print(); }
-                    <\/script>
-                </body>
-                </html>
-            `;
-            printWindow.document.write(htmlContent);
-            printWindow.document.close();
-        }
-        window.addEventListener('DOMContentLoaded', () => {
-            generateCalendar();
-        });
-    </script>
+                  <script>
+    window.onload = function() { 
+        window.print(); 
+        // Automatikusan bezárja az ideiglenes ablakot nyomtatás/mentés után
+        setTimeout(function() {
+            window.close();
+        }, 500);
+    }
+</script>
 </body>
 </html>
