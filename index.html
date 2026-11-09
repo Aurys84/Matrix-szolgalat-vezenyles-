@@ -109,7 +109,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 0.95rem; /* ITT LETT FELNAGYÍTVA A TÁBLÁZAT ALAPBETŰMÉRETE IS */
+            font-size: 0.95rem;
         }
         th, td {
             border: 1px solid var(--border-color);
@@ -127,7 +127,7 @@
         th {
             position: sticky;
             z-index: 2;
-            font-weight: 900; /* Fejlécek is jó vastagok */
+            font-weight: 900;
         }
         .week-row th {
             top: 0;
@@ -167,7 +167,6 @@
             border-left: 2px solid #58a6ff !important;
         }
         
-        /* ÖSSZES CELLA ÉS KARAKTER NAGYOBB ÉS VASTAGABB A DOBOZON BELÜL */
         td.cell-default, td[class*="pos-"], td:not(.name-col) {
             font-size: 1rem !important;
             font-weight: 900 !important;
@@ -327,9 +326,10 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
+
         @page {
             size: A4 landscape;
-            margin: 4mm;
+            margin: 5mm;
         }
         body.print-schedule-only .controls,
         body.print-schedule-only .palette,
@@ -365,11 +365,13 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 9px !important;
+                font-size: 7.5px !important;
+                transform: scale(0.96);
+                transform-origin: top left;
             }
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
-                font-size: 11px !important;
+                font-size: 9px !important;
                 font-weight: 900 !important;
             }
             body.print-schedule-only th, 
@@ -382,7 +384,18 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                min-width: 85px !important;
+                min-width: 75px !important;
+                max-width: 75px !important;
+            }
+            /* Óra oszlop nyomtatásban is szépen, fixen befér */
+            body.print-schedule-only tr td:last-child,
+            body.print-schedule-only th:last-child {
+                min-width: 32px !important;
+                max-width: 38px !important;
+                width: 35px !important;
+                background-color: #f0f4f8 !important;
+                color: #000000 !important;
+                font-weight: 900 !important;
             }
             body.print-schedule-only .total-row td {
                 background-color: #e2e8f0 !important;
@@ -409,11 +422,6 @@
             body.print-schedule-only td.cell-locked {
                 background-color: #bfdbfe !important;
                 color: #1e40af !important;
-            }
-            body.print-schedule-only tr td:last-child {
-                background-color: #f0f4f8 !important;
-                color: #000000 !important;
-                font-weight: 900 !important;
             }
         }
     </style>
