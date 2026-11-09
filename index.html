@@ -96,7 +96,7 @@
             background: var(--panel-bg);
             border-radius: 6px;
             border: 1px solid var(--border-color);
-            max-height: 50vh;
+            max-height: 55vh;
             margin-bottom: 8px;
         }
         table {
@@ -863,12 +863,12 @@
                 }
             });
             let reportHtml = '';
+            let deficits = issues.filter(i => i.type === 'hiány');
+            let surpluses = issues.filter(i => i.type === 'többlet');
             if (issues.length === 0) {
                 reportHtml = `<span class="alert-badge alert-ok">MINDEN PONTOS</span> A létszám keret tökéletesen teljesül!`;
             } else {
-                let deficits = issues.filter(i => i.type === 'hiány');
-                let surpluses = issues.filter(i => i.type === 'többlet');
-                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning">${surplus.length || surpluses.length} többlet (LED)</span>`;
+                reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning">${surpluses.length} többlet (LED)</span>`;
             }
             document.getElementById('auditReport').innerHTML = reportHtml;
         }
