@@ -104,12 +104,12 @@
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             table-layout: fixed;
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 4px 2px;
+            padding: 6px 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -127,12 +127,12 @@
             z-index: 4;
         }
         .req-row th {
-            top: 25px;
+            top: 28px;
             background-color: #161b22 !important;
             z-index: 4;
         }
         .day-row th {
-            top: 50px;
+            top: 56px;
             z-index: 4;
         }
         
@@ -143,41 +143,43 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 120px;
-            min-width: 120px;
-            max-width: 120px;
-            padding: 2px 4px !important;
+            width: 160px;
+            min-width: 160px;
+            max-width: 160px;
+            padding: 4px 8px !important;
             vertical-align: middle;
-            height: 42px;
+            height: 46px;
         }
         .guard-name-input {
-            width: 110px;
+            width: 145px;
             background: transparent;
             border: none;
             color: inherit;
             font-weight: 900;
-            font-size: 0.78rem;
+            font-size: 0.85rem;
             resize: none;
             overflow: hidden;
             white-space: pre-wrap;
             word-break: break-word;
-            line-height: 1.15;
+            line-height: 1.2;
             font-family: inherit;
             display: block;
-            height: 36px;
+            height: 38px;
         }
         th.name-col {
             background-color: #30363d !important;
             z-index: 5 !important;
             white-space: nowrap !important;
             height: auto !important;
+            width: 160px !important;
+            min-width: 160px !important;
         }
         
         #scheduleTable th:last-child,
         #scheduleTable td:last-child {
-            width: 45px;
-            min-width: 45px;
-            max-width: 45px;
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
             font-size: 0.95rem !important;
             font-weight: 900 !important;
             color: #58a6ff !important;
@@ -353,52 +355,9 @@
             color: #f0f6fc !important;
         }
 
-        /* Speciális szabályok a böngésző saját nyomtatásához */
         @media print {
-            @page {
-                size: A4 landscape;
-                margin: 5mm;
-            }
-            body {
-                background: #ffffff !important;
-                color: #000000 !important;
-            }
-            .controls, .palette, .panels-wrapper {
-                display: none !important;
-            }
-            .table-container {
-                max-height: none !important;
-                overflow: visible !important;
-                border: none !important;
-                background: #ffffff !important;
-            }
-            table {
-                font-size: 7.5px !important;
-            }
-            th, td {
-                border: 1px solid #333 !important;
-                padding: 2px 1px !important;
-                color: #000 !important;
-            }
-            .name-col {
-                background-color: #f0f4f8 !important;
-                color: #000 !important;
-                width: 100px !important;
-                min-width: 100px !important;
-                max-width: 100px !important;
-            }
-            .guard-name-input {
-                background: transparent !important;
-                border: none !important;
-                color: #000 !important;
-                font-size: 7.5px !important;
-                height: auto !important;
-            }
-            .pos-np { background-color: #238636 !important; color: white !important; }
-            .pos-ep { background-color: #da3633 !important; color: white !important; }
-            .pos-nep { background-color: #8957e5 !important; color: white !important; }
-            .pos-szb { background-color: #9e6a03 !important; color: white !important; }
-            .pos-szab { background-color: #1f6feb !important; color: white !important; }
+            .controls, .palette, .panels-wrapper { display: none !important; }
+            body { background: #fff !important; color: #000 !important; }
         }
     </style>
 </head>
@@ -481,8 +440,8 @@
         </div>
     </div>
 
-    <!-- Rejtett konténer a közvetlen html2pdf mentéshez -->
-    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:4px; width:1120px;"></div>
+    <!-- Rejtett konténer a többlapos, tiszta PDF exportért -->
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:15px; width:1120px;"></div>
 
     <script>
         const defaultGuards = [
@@ -576,6 +535,70 @@
             weekRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Óra</th></tr>';
             reqRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Cél</th></tr>';
             dayRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Keret</th></tr>';
+            document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
+            document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
+            let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
+            let prevMonthSchedule = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
+            let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
+            let tbodyHtml = '';
+            savedGuards.forEach((guardName, gIndex) => {
+                tbodyHtml += `<tr>`;
+                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
+                
+                days.forEach((item, dIndex) => {
+                    let d = item.date;
+                    let dayIndex = d.getDay();
+                    let dKey = getDateKey(d);
+                    let cellKey = `g_${gIndex}_d_${dIndex}`;
+                    let globalKey = `global_cell_${dKey}_g_${gIndex}`;
+                    
+                    let cellInfo = null;
+                    if (item.isExtra) {
+                        let prevD = item.date;
+                        let prevDKey = getDateKey(prevD);
+                        let prevGlobalKey = `global_cell_${prevDKey}_g_${gIndex}`;
+                        let prevCellData = JSON.parse(localStorage.getItem(prevGlobalKey));
+                        if (prevCellData && prevCellData.text) {
+                            cellInfo = { text: prevCellData.text, className: prevCellData.className, type: prevCellData.type };
+                        } else {
+                            let prevCellKey = `g_${gIndex}_d_${prevMonthLastDate - 3 + dIndex}`;
+                            let oldData = prevMonthSchedule[prevCellKey];
+                            if (oldData && oldData.text) {
+                                cellInfo = { text: oldData.text, className: oldData.className, type: oldData.type };
+                            } else {
+                                cellInfo = { text: '', className: 'cell-locked', type: 'locked' };
+                            }
+                        }
+                    } else {
+                        cellInfo = JSON.parse(localStorage.getItem(globalKey)) || savedData[cellKey];
+                        if (!cellInfo) {
+                            cellInfo = { text: '', className: 'cell-default', type: 'empty' };
+                        }
+                    }
+                    
+                    let isMonday = (dayIndex === 1);
+                    let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
+                    
+                    if (item.isExtra) {
+                        tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}">${cellInfo.text || ''}</td>`;
+                    } else {
+                        tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
+                    }
+                });
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; font-size: 0.95rem; color: #58a6ff; white-space:nowrap;">0h</td>`;
+                tbodyHtml += `</tr>`;
+            });
+            tbodyHtml += `<tr class="total-row">`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; font-weight: 900; font-size: 0.8rem; white-space:normal !important; word-break:break-word !important; padding:4px;">Havi Összesítő</td>`;
+            days.forEach((item, dIndex) => {
+                let d = item.date;
+                let dayIndex = d.getDay();
+                let isMonday = (dayIndex === 1);
+                let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
+                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}" style="font-weight:900; font-size:0.95rem;">0h</td>`;
+            });
+            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff; font-weight:900; font-size:0.95rem; white-space:nowrap;">0h</td>`;
+            tbodyHtml += `</tr>`;
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
             document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
@@ -898,32 +921,32 @@
             tempDiv.querySelectorAll('textarea').forEach((ta, idx) => {
                 let val = ta.value || `Őr ${idx+1}`;
                 let nameSpan = document.createElement('div');
-                nameSpan.style.cssText = "font-weight: 900; font-size: 6.5px; line-height: 1.1; white-space: normal; word-break: break-word; color: #000;";
+                nameSpan.style.cssText = "font-weight: 900; font-size: 9px; line-height: 1.2; white-space: normal; word-break: break-word; color: #000;";
                 nameSpan.innerText = val;
                 ta.parentNode.replaceChild(nameSpan, ta);
             });
             let cleanTableHtml = tempDiv.innerHTML;
 
             exportContainer.innerHTML = `
-                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 4px; width: 1100px;">
-                    <h1 style="text-align: center; font-size: 10px; margin: 1px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
-                    <div style="text-align: center; font-size: 7px; margin-bottom: 4px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
+                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 10px; width: 1100px;">
+                    <h1 style="text-align: center; font-size: 14px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
+                    <div style="text-align: center; font-size: 9px; margin-bottom: 8px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
                     
-                    <div style="font-size: 8.5px; font-weight: bold; margin-top: 4px; margin-bottom: 2px; border-bottom: 1.5px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb; page-break-before: always;">1. Havi Vezénylési Táblázat</div>
                     <div>${cleanTableHtml}</div>
                     
-                    <div style="font-size: 8.5px; font-weight: bold; margin-top: 6px; margin-bottom: 2px; border-bottom: 1.5px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 4px;">
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 15px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb; page-break-before: always;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;">
                         ${vacationHtml}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 2px;">
-                        <div style="border: 1px solid #333; border-radius: 2px; padding: 3px; font-size: 6.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 1px 0; font-size: 7.5px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 10px; page-break-inside: avoid;">
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 6px; font-size: 9px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 3px 0; font-size: 10px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
                             <div>${auditHtml}</div>
                         </div>
-                        <div style="border: 1px solid #333; border-radius: 2px; padding: 3px; font-size: 6.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 1px 0; font-size: 7.5px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 6px; font-size: 9px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 3px 0; font-size: 10px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
                             <div>${holidayHtml}</div>
                         </div>
                     </div>
@@ -933,26 +956,26 @@
             let tempTable = exportContainer.querySelector('table');
             if(tempTable) {
                 tempTable.style.width = '100%';
-                tempTable.style.fontSize = '6.5px';
+                tempTable.style.fontSize = '9px';
                 tempTable.style.borderCollapse = 'collapse';
                 tempTable.querySelectorAll('th, td').forEach(cell => {
                     cell.style.border = '1px solid #333';
-                    cell.style.padding = '1px 0px';
+                    cell.style.padding = '4px 2px';
                 });
                 exportContainer.querySelectorAll('.name-col').forEach(el => {
-                    el.style.width = '90px';
-                    el.style.minWidth = '90px';
-                    el.style.maxWidth = '90px';
+                    el.style.width = '150px';
+                    el.style.minWidth = '150px';
+                    el.style.maxWidth = '150px';
                     el.style.whiteSpace = 'normal';
                     el.style.wordBreak = 'break-word';
-                    el.style.fontSize = '6.5px';
+                    el.style.fontSize = '9px';
                     el.style.backgroundColor = '#f0f4f8';
                     el.style.color = '#000';
                 });
             }
 
             let opt = {
-                margin:       1,
+                margin:       5,
                 filename:     'Matrix_Labor_Vezetosegi_Jelentes.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
