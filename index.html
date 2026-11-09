@@ -625,7 +625,6 @@
             let prevCell = activeCell.previousElementSibling;
             if(prevCell && prevCell.dataset) {
                 let prevType = prevCell.dataset.type;
-                // Szigorú szűrő: éjszakai (ep) vagy 24 órás (nep) után TILOS nappalt (np) beírni!
                 if(type === 'np' && (prevType === 'ep' || prevType === 'nep')) {
                     alert('⚠️ Biztonsági szabályzat: Éjszakai vagy 24 órás szolgálat után nem lehet közvetlenül Nappal!');
                     return;
@@ -808,23 +807,23 @@
             localStorage.setItem(`matrix_guards_${year}_${month}`, JSON.stringify(currentGuards));
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach((row, gIndex) => {
-                row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
-                        let cellKey = cell.dataset.key;
-                        let dKey = cell.dataset.date;
-                        if(cellKey && !cell.classList.contains('cell-locked')) {
-                            let cellInfo = {
-                                text: cell.innerText,
-                                className: cell.className.replace('selected-cell', '').trim(),
-                                type: cell.type || cell.dataset.type
-                            };
-                            dataToSave[cellKey] = cellInfo;
-                            if(dKey) {
-                                localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellInfo));
-                            }
+                let cells = row.querySelectorAll('td');
+                for(let cIndex = 1; cIndex < cells.length - 1; cIndex++) {
+                    let cell = cells[cIndex];
+                    let cellKey = cell.dataset.key;
+                    let dKey = cell.dataset.date;
+                    if(cellKey && !cell.classList.contains('cell-locked')) {
+                        let cellInfo = {
+                            text: cell.innerText,
+                            className: cell.className.replace('selected-cell', '').trim(),
+                            type: cell.dataset.type || ''
+                        };
+                        dataToSave[cellKey] = cellInfo;
+                        if(dKey) {
+                            localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellInfo));
                         }
                     }
-                });
+                }
             });
             localStorage.setItem(`matrix_schedule_${year}_${month}`, JSON.stringify(dataToSave));
             runVacationEngine(year, month);
@@ -888,7 +887,7 @@
                     cell.style.border = '1px solid #333';
                     cell.style.padding = '4px 2px';
                 });
-                exportContainer.querySelectorAll('.name-col').forEach(el => {
+                exportContainer.querySelectorAll('.name-col').forEach.call(exportContainer.querySelectorAll('.name-col'), el => {
                     el.style.width = '150px';
                     el.style.minWidth = '150px';
                     el.style.maxWidth = '150px';
