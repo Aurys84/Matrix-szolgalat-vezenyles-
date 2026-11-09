@@ -122,6 +122,7 @@
             min-width: 44px;
             max-width: 50px;
             width: 46px;
+            white-space: nowrap;
         }
 
         th {
@@ -144,6 +145,8 @@
             top: 50px;
             z-index: 4;
         }
+        
+        /* ITT A VÁLTOZÁS: NÉV OSZLOP SZÉLESEBB ÉS TÖBBELTSOROS (SORTÖRÉS) */
         .name-col {
             text-align: left;
             font-weight: 900;
@@ -151,13 +154,19 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            min-width: 115px;
-            max-width: 115px;
-            font-size: 0.9rem;
+            min-width: 130px;
+            max-width: 130px;
+            width: 130px;
+            font-size: 0.8rem;
+            white-space: normal !important;
+            word-break: break-word;
+            line-height: 1.15;
+            padding: 2px 4px !important;
         }
         th.name-col {
             background-color: #30363d !important;
             z-index: 5 !important;
+            white-space: nowrap !important;
         }
         .total-row td {
             background-color: #1f2937 !important;
@@ -168,7 +177,7 @@
             border-left: 2px solid #58a6ff !important;
         }
         
-        td.cell-default, td[class*="pos-"], td:not(.name-col) {
+        td.cell-default, td[class*="pos-"] {
             font-size: 1rem !important;
             font-weight: 900 !important;
         }
@@ -378,24 +387,26 @@
                 border: 1px solid #333333 !important;
                 padding: 2px 1px !important;
             }
-            /* NYOMTATÁSBAN IS FIX ÉS HELYÉN MARAD A NÉVOSZLOP, NINCS CSÚSZÁS */
             body.print-schedule-only .name-col {
                 position: static !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                min-width: 110px !important;
-                max-width: 110px !important;
-                width: 110px !important;
+                min-width: 120px !important;
+                max-width: 120px !important;
+                width: 120px !important;
+                white-space: normal !important;
+                font-size: 7.5px !important;
             }
             body.print-schedule-only tr td:last-child,
             body.print-schedule-only th:last-child {
-                min-width: 38px !important;
-                max-width: 45px !important;
-                width: 42px !important;
+                min-width: 35px !important;
+                max-width: 40px !important;
+                width: 38px !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
+                white-space: nowrap !important;
             }
             body.print-schedule-only .total-row td {
                 background-color: #e2e8f0 !important;
@@ -558,9 +569,9 @@
                 let d = new Date(year, month, i);
                 days.push({ date: d, isExtra: false });
             }
-            let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
-            let reqRowHtml = '<tr class="req-row"><th class="name-col">Elvárt Létszám</th>';
-            let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
+            let weekRowHtml = '<tr class="week-row"><th class="name-col" style="white-space:nowrap !important;">Hét száma</th>';
+            let reqRowHtml = '<tr class="req-row"><th class="name-col" style="white-space:nowrap !important;">Elvárt Létszám</th>';
+            let dayRowHtml = '<tr class="day-row"><th class="name-col" style="white-space:nowrap !important;">Név / Dátum</th>';
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             let holidayCount = 0;
             days.forEach((item, index) => {
@@ -594,9 +605,9 @@
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${headerClass}" style="${extraHeaderStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
-            weekRowHtml += '<th class="name-col">Óra</th></tr>';
-            reqRowHtml += '<th class="name-col">Cél</th></tr>';
-            dayRowHtml += '<th class="name-col">Keret</th></tr>';
+            weekRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Óra</th></tr>';
+            reqRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Cél</th></tr>';
+            dayRowHtml += '<th class="name-col" style="white-space:nowrap !important;">Keret</th></tr>';
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
             document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
@@ -605,7 +616,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:105px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:120px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.8rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -647,11 +658,11 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; color: #58a6ff;">0h</td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; color: #58a6ff; white-space:nowrap;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
-            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; white-space:nowrap !important;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
@@ -659,7 +670,7 @@
                 let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
                 tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
             });
-            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
+            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff; white-space:nowrap;">0h</td>`;
             tbodyHtml += `</tr>`;
             document.getElementById('tableBody').innerHTML = tbodyHtml;
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
