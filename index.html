@@ -509,6 +509,7 @@
         ];
 
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
+        let activeCell = null;
 
         function isHoliday(date) {
             let m = date.getMonth() + 1;
@@ -700,7 +701,6 @@
             generateCalendar();
         }
 
-        let activeCell = null;
         function selectCell(cell) {
             if(cell.classList.contains('cell-locked') && cell.innerText.trim() !== '') return;
             if(activeCell) activeCell.classList.remove('selected-cell');
