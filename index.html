@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mátrix Labor — Vezénylési Rendszer</title>
-    <!-- html2pdf.js könyvtár a közvetlen és hibátlan PDF letöltéshez -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
@@ -435,7 +434,7 @@
     </div>
 
     <!-- Rejtett konténer a közvetlen html2pdf mentéshez -->
-    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:10px; width:1120px;"></div>
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:6px; width:1120px;"></div>
 
     <script>
         const defaultGuards = [
@@ -854,32 +853,32 @@
             tempDiv.querySelectorAll('textarea').forEach((ta, idx) => {
                 let val = ta.value || `Őr ${idx+1}`;
                 let nameSpan = document.createElement('div');
-                nameSpan.style.cssText = "font-weight: 900; font-size: 7.5px; line-height: 1.15; white-space: normal; word-break: break-word; color: #000;";
+                nameSpan.style.cssText = "font-weight: 900; font-size: 6.5px; line-height: 1.1; white-space: normal; word-break: break-word; color: #000;";
                 nameSpan.innerText = val;
                 ta.parentNode.replaceChild(nameSpan, ta);
             });
             let cleanTableHtml = tempDiv.innerHTML;
 
             exportContainer.innerHTML = `
-                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 5px;">
-                    <h1 style="text-align: center; font-size: 12px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
-                    <div style="text-align: center; font-size: 8px; margin-bottom: 6px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
+                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 4px; width: 1100px;">
+                    <h1 style="text-align: center; font-size: 10px; margin: 1px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
+                    <div style="text-align: center; font-size: 7px; margin-bottom: 4px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
                     
-                    <div style="font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
+                    <div style="font-size: 8.5px; font-weight: bold; margin-top: 4px; margin-bottom: 2px; border-bottom: 1.5px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
                     <div>${cleanTableHtml}</div>
                     
-                    <div style="font-size: 9.5px; font-weight: bold; margin-top: 10px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
-                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 6px;">
+                    <div style="font-size: 8.5px; font-weight: bold; margin-top: 6px; margin-bottom: 2px; border-bottom: 1.5px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 4px;">
                         ${vacationHtml}
                     </div>
                     
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 4px;">
-                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 7.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 2px 0; font-size: 8.5px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 2px;">
+                        <div style="border: 1px solid #333; border-radius: 2px; padding: 3px; font-size: 6.5px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 1px 0; font-size: 7.5px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
                             <div>${auditHtml}</div>
                         </div>
-                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 7.5px; background: #f9fafb;">
-                            <h3 style="margin: 0 0 2px 0; font-size: 8.5px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
+                        <div style="border: 1px solid #333; border-radius: 2px; padding: 3px; font-size: 6.5px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 1px 0; font-size: 7.5px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
                             <div>${holidayHtml}</div>
                         </div>
                     </div>
@@ -889,26 +888,26 @@
             let tempTable = exportContainer.querySelector('table');
             if(tempTable) {
                 tempTable.style.width = '100%';
-                tempTable.style.fontSize = '7.5px';
+                tempTable.style.fontSize = '6.5px';
                 tempTable.style.borderCollapse = 'collapse';
                 tempTable.querySelectorAll('th, td').forEach(cell => {
                     cell.style.border = '1px solid #333';
-                    cell.style.padding = '2px 1px';
+                    cell.style.padding = '1px 0px';
                 });
                 exportContainer.querySelectorAll('.name-col').forEach(el => {
-                    el.style.width = '100px';
-                    el.style.minWidth = '100px';
-                    el.style.maxWidth = '100px';
+                    el.style.width = '90px';
+                    el.style.minWidth = '90px';
+                    el.style.maxWidth = '90px';
                     el.style.whiteSpace = 'normal';
                     el.style.wordBreak = 'break-word';
-                    el.style.fontSize = '7.5px';
+                    el.style.fontSize = '6.5px';
                     el.style.backgroundColor = '#f0f4f8';
                     el.style.color = '#000';
                 });
             }
 
             let opt = {
-                margin:       2,
+                margin:       1,
                 filename:     'Matrix_Labor_Vezetosegi_Jelentes.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
