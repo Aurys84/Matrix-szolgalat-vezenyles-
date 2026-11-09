@@ -104,11 +104,14 @@
             border-collapse: collapse;
             text-align: center;
             font-size: 0.95rem;
+            table-layout: fixed; /* KÉNYSZERÍTSE A TÖMÖR, EGYENLETES OSZLOPOKAT */
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 4px 2px;
+            padding: 3px 1px;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         th {
@@ -139,9 +142,9 @@
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
-            width: 140px;
-            min-width: 140px;
-            max-width: 140px;
+            width: 135px;
+            min-width: 135px;
+            max-width: 135px;
             font-size: 0.85rem;
             white-space: nowrap !important;
             overflow: hidden;
@@ -152,21 +155,23 @@
         th.name-col {
             background-color: #30363d !important;
             z-index: 5 !important;
-            white-space: nowrap !important;
         }
         
         #scheduleTable th:last-child,
         #scheduleTable td:last-child {
-            width: 38px;
-            min-width: 38px;
-            max-width: 38px;
-            white-space: nowrap;
+            width: 45px;
+            min-width: 45px;
+            max-width: 45px;
+            font-size: 0.95rem !important;
+            font-weight: 900 !important;
+            color: #58a6ff !important;
         }
 
         .total-row td {
             background-color: #1f2937 !important;
             color: #58a6ff !important;
-            font-weight: 900;
+            font-weight: 900 !important;
+            font-size: 0.95rem !important;
         }
         .week-separator {
             border-left: 2px solid #58a6ff !important;
@@ -306,7 +311,6 @@
             animation: blinkLed 0.5s infinite;
             box-shadow: 0 0 10px #ff3b30;
         }
-        /* CITROMSÁRGA LED TÖBBLETEKHEZ */
         .led-warning {
             display: inline-block;
             width: 8px;
@@ -387,9 +391,9 @@
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                width: 125px !important;
-                min-width: 125px !important;
-                max-width: 125px !important;
+                width: 120px !important;
+                min-width: 120px !important;
+                max-width: 120px !important;
                 white-space: nowrap !important;
                 overflow: hidden;
                 text-overflow: ellipsis;
@@ -397,17 +401,20 @@
             }
             body.print-schedule-only tr td:last-child,
             body.print-schedule-only th:last-child {
-                width: 32px !important;
-                min-width: 32px !important;
-                max-width: 32px !important;
+                width: 38px !important;
+                min-width: 38px !important;
+                max-width: 38px !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
+                font-size: 9.5px !important;
                 white-space: nowrap !important;
             }
             body.print-schedule-only .total-row td {
                 background-color: #e2e8f0 !important;
                 color: #000000 !important;
+                font-weight: 900 !important;
+                font-size: 9.5px !important;
             }
             body.print-schedule-only .week-row th {
                 background-color: #e2e8f0 !important;
@@ -612,7 +619,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:130px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:125px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -654,19 +661,19 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; color: #58a6ff; white-space:nowrap;">0h</td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; font-size: 0.95rem; color: #58a6ff; white-space:nowrap;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
-            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; white-space:nowrap !important;">Havi Összesítő</td>`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; font-weight: 900; font-size: 0.95rem; white-space:nowrap !important;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
                 let isMonday = (dayIndex === 1);
                 let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
-                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
+                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}" style="font-weight:900; font-size:0.95rem;">0h</td>`;
             });
-            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff; white-space:nowrap;">0h</td>`;
+            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff; font-weight:900; font-size:0.95rem; white-space:nowrap;">0h</td>`;
             tbodyHtml += `</tr>`;
             document.getElementById('tableBody').innerHTML = tbodyHtml;
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
@@ -947,7 +954,7 @@
                         }
                         h1 { text-align: center; font-size: 15px; margin: 2px 0; color: #1f6feb; }
                         .subtitle { text-align: center; font-size: 10px; margin-bottom: 15px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 10px; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 10px; table-layout: fixed; }
                         th, td { border: 1px solid #333; padding: 4px 2px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
                         .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
@@ -959,7 +966,8 @@
                         .total-row td {
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
-                            font-weight: 900;
+                            font-weight: 900 !important;
+                            font-size: 10px !important;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
@@ -967,6 +975,10 @@
                         .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 11px !important; font-weight: 900 !important; }
                         
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
+                            font-size: 11px !important;
+                            font-weight: 900 !important;
+                        }
+                        tr td:last-child, th:last-child {
                             font-size: 11px !important;
                             font-weight: 900 !important;
                         }
