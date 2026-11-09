@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mátrix Labor — Vezénylési Rendszer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg-color: #161b22;
@@ -350,7 +351,7 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 Mentés</button>
+            <button class="btn-pdf" onclick="exportPdfDirect()">📥 Mentés</button>
         </div>
     </div>
     <div class="palette">
@@ -393,6 +394,11 @@
             </div>
         </div>
     </div>
+
+    <!-- Rejtett konténer a közvetlen letöltéshez -->
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:10px; width:1120px;"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script>
         const defaultGuards = [
             "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
@@ -793,9 +799,65 @@
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
-        function exportFullPdfReport() {
+        function exportPdfDirect() {
             autoSave();
-            alert('💾 A Mátrix Labor adatai sikeresen rögzítve!');
+            let tableHtml = document.querySelector('.table-container').innerHTML;
+            let vacationHtml = document.getElementById('vacationReport').innerHTML;
+            let auditHtml = document.getElementById('auditReport').innerHTML;
+            let holidayHtml = document.getElementById('holidayReport').innerHTML;
+            
+            let exportContainer = document.getElementById('pdfExportContainer');
+            exportContainer.style.display = 'block';
+            
+            exportContainer.innerHTML = `
+                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 10px; width: 1100px;">
+                    <h1 style="text-align: center; font-size: 14px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Jelentés</h1>
+                    <div style="text-align: center; font-size: 9px; margin-bottom: 8px; color: #555;">Havi vezénylési mátrix és szabadságkezelő</div>
+                    
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
+                    <div>${tableHtml}</div>
+                    
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 15px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">2. Éves Szabadságkezelő & Keretek</div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;">
+                        ${vacationHtml}
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 5mm; margin-top: 10px;">
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 6px; font-size: 9px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 3px 0; font-size: 10px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
+                            <div>${auditHtml}</div>
+                        </div>
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 6px; font-size: 9px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 3px 0; font-size: 10px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
+                            <div>${holidayHtml}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            let tempTable = exportContainer.querySelector('table');
+            if(tempTable) {
+                tempTable.style.width = '100%';
+                tempTable.style.fontSize = '9px';
+                tempTable.style.borderCollapse = 'collapse';
+                tempTable.querySelectorAll('th, td').forEach(cell => {
+                    cell.style.border = '1px solid #333';
+                    cell.style.padding = '4px 2px';
+                });
+            }
+
+            let opt = {
+                margin:       5,
+                filename:     'Matrix_Labor_Jelentes.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().from(exportContainer).set(opt).save().then(() => {
+                exportContainer.style.display = 'none';
+                exportContainer.innerHTML = '';
+            });
         }
         window.onload = function() {
             generateCalendar();
