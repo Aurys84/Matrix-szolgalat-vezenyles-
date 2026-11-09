@@ -841,13 +841,12 @@
             let auditHtml = document.getElementById('auditReport').innerHTML;
             let holidayHtml = document.getElementById('holidayReport').innerHTML;
             
-            // Cseréljük ki a textarea-kat fix div-ekre a nyomtatási/PDF sablonban, hogy minden név szépen tördelődjön
             let tempDiv = document.createElement('div');
             tempDiv.innerHTML = tableHtml;
             tempDiv.querySelectorAll('textarea').forEach((ta, idx) => {
                 let val = ta.value || `Őr ${idx+1}`;
                 let nameSpan = document.createElement('div');
-                nameSpan.style.cssText = "font-weight: 900; font-size: 8.5px; line-height: 1.15; white-space: normal; word-break: break-word; color: #000;";
+                nameSpan.style.cssText = "font-weight: 900; font-size: 7.5px; line-height: 1.15; white-space: normal; word-break: break-word; color: #000;";
                 nameSpan.innerText = val;
                 ta.parentNode.replaceChild(nameSpan, ta);
             });
@@ -862,7 +861,7 @@
                     <style>
                         @page {
                             size: A4 landscape;
-                            margin: 4mm;
+                            margin: 3mm;
                         }
                         * {
                             -webkit-print-color-adjust: exact !important;
@@ -874,14 +873,14 @@
                             color: #000000; 
                             margin: 0; 
                             padding: 2px; 
-                            font-size: 8px; 
+                            font-size: 7.5px; 
                         }
-                        h1 { text-align: center; font-size: 11px; margin: 1px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 8.5px; margin-bottom: 4px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 6px; font-size: 8.5px; table-layout: fixed; }
-                        th, td { border: 1px solid #333; padding: 3px 1px; }
+                        h1 { text-align: center; font-size: 10px; margin: 1px 0; color: #1f6feb; }
+                        .subtitle { text-align: center; font-size: 7.5px; margin-bottom: 3px; color: #555; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 4px; font-size: 7.5px; table-layout: fixed; }
+                        th, td { border: 1px solid #333; padding: 2px 1px; }
                         th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
-                        .section-title { font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
+                        .section-title { font-size: 8.5px; font-weight: bold; margin-top: 4px; margin-bottom: 2px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
                         
                         tr {
                             page-break-inside: avoid;
@@ -895,62 +894,62 @@
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
                             font-weight: 900 !important;
-                            font-size: 9px !important;
+                            font-size: 8px !important;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 9px !important; font-weight: 900 !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 8px !important; font-weight: 900 !important; }
                         
                         .name-col {
-                            width: 120px !important;
-                            min-width: 120px !important;
-                            max-width: 120px !important;
+                            width: 100px !important;
+                            min-width: 100px !important;
+                            max-width: 100px !important;
                             white-space: normal !important;
                             word-break: break-word !important;
                             background-color: #f0f4f8 !important;
                             color: #000000 !important;
                             font-weight: 900 !important;
                             text-align: left !important;
-                            padding: 2px 4px !important;
-                            height: 42px !important;
+                            padding: 2px 3px !important;
+                            height: 32px !important;
                             vertical-align: middle !important;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
-                            font-size: 9.5px !important;
+                            font-size: 8.5px !important;
                             font-weight: 900 !important;
                         }
                         tr td:last-child, th:last-child {
-                            font-size: 9.5px !important;
+                            font-size: 8.5px !important;
                             font-weight: 900 !important;
-                            width: 38px !important;
-                            min-width: 38px !important;
-                            max-width: 38px !important;
+                            width: 32px !important;
+                            min-width: 32px !important;
+                            max-width: 32px !important;
                         }
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
                         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
                         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
                         .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
                         .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-bottom: 6px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 3px; padding: 3px 5px; font-size: 7.5px; background: #f9fafb !important; color: #000 !important; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 2px; color: #111; }
+                        .vacation-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 4px; }
+                        .vacation-card { border: 1px solid #333; border-radius: 2px; padding: 2px 4px; font-size: 7px; background: #f9fafb !important; color: #000 !important; }
+                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 1px; color: #111; }
                         .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
                         .summary-row {
                             display: grid;
                             grid-template-columns: 1fr 1fr;
-                            gap: 4mm;
-                            margin-top: 3px;
+                            gap: 3mm;
+                            margin-top: 2px;
                         }
                         .summary-box {
                             border: 1px solid #333;
-                            border-radius: 3px;
-                            padding: 4px;
-                            font-size: 8px;
+                            border-radius: 2px;
+                            padding: 3px;
+                            font-size: 7.5px;
                             background: #f9fafb !important;
                             color: #000 !important;
                         }
-                        .summary-box h3 { margin: 0 0 2px 0; font-size: 9px; color: #1f6feb; }
+                        .summary-box h3 { margin: 0 0 1px 0; font-size: 8px; color: #1f6feb; }
                     </style>
                 </head>
                 <body>
@@ -959,8 +958,6 @@
                     
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
                     <div>${cleanTableHtml}</div>
-                    
-                    <div class="page-break"></div>
                     
                     <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
                     <div class="vacation-grid">
