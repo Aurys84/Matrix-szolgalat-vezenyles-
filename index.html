@@ -388,7 +388,7 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-print" onclick="printSchedule()">🖨️ Nyomtatás</button>
+            <button class="btn-print" onclick="exportDirectPdf()">🖨️ Nyomtatás</button>
             <button class="btn-pdf" onclick="exportDirectPdf()">📥 PDF Vezetőségi Jelentés</button>
         </div>
     </div>
@@ -434,7 +434,7 @@
     </div>
 
     <!-- Rejtett konténer a közvetlen html2pdf mentéshez -->
-    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:6px; width:1120px;"></div>
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:4px; width:1120px;"></div>
 
     <script>
         const defaultGuards = [
@@ -835,9 +835,6 @@
         function manualSave() {
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
-        }
-        function printSchedule() {
-            window.print();
         }
         function exportDirectPdf() {
             let tableHtml = document.querySelector('.table-container').innerHTML;
