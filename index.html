@@ -150,11 +150,11 @@
             min-width: 135px;
             max-width: 135px;
             width: 135px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             white-space: normal !important;
             word-break: break-word;
             line-height: 1.15;
-            padding: 3px 5px !important;
+            padding: 4px 5px !important;
         }
         th.name-col {
             background-color: #30363d !important;
@@ -366,34 +366,34 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 7px !important;
+                font-size: 9.5px !important; /* VISSZAÁLLÍTVA A NAGYOBB, JÓL OLVASHATÓ MÉRETRE */
             }
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
-                font-size: 9px !important;
+                font-size: 11px !important;
                 font-weight: 900 !important;
             }
             body.print-schedule-only th, 
             body.print-schedule-only td {
                 border: 1px solid #333333 !important;
-                padding: 2px 1px !important;
+                padding: 3px 2px !important;
             }
             body.print-schedule-only .name-col {
                 position: static !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
-                min-width: 125px !important;
-                max-width: 125px !important;
-                width: 125px !important;
+                min-width: 130px !important;
+                max-width: 130px !important;
+                width: 130px !important;
                 white-space: normal !important;
-                font-size: 7.5px !important;
+                font-size: 9.5px !important; /* Jól látható nevek nyomtatásban is */
             }
             body.print-schedule-only tr td:last-child,
             body.print-schedule-only th:last-child {
-                min-width: 35px !important;
-                max-width: 40px !important;
-                width: 38px !important;
+                min-width: 40px !important;
+                max-width: 45px !important;
+                width: 42px !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
                 font-weight: 900 !important;
@@ -606,7 +606,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:125px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.8rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:130px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.85rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
