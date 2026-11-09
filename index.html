@@ -325,7 +325,6 @@
             animation: blinkLed 0.5s infinite;
             box-shadow: 0 0 10px #ff3b30;
         }
-        /* Citromsárga LED többlet jelzéshez */
         .led-warning {
             display: inline-block;
             width: 8px;
@@ -386,7 +385,7 @@
         </div>
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
-            <button class="btn-pdf" onclick="exportDirectPdf()">📥 PDF Vezetőségi Jelentés</button>
+            <button class="btn-pdf" onclick="openPdfPreview()">📥 PDF Mentés</button>
         </div>
     </div>
     <div class="palette">
@@ -430,8 +429,8 @@
         </div>
     </div>
 
-    <!-- Rejtett konténer a tiszta PDF exportért -->
-    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:15px; width:1120px;"></div>
+    <!-- Rejtett konténer a PDF generáláshoz -->
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:10px; width:1120px;"></div>
 
     <script>
         const defaultGuards = [
@@ -810,7 +809,7 @@
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
                         let cellKey = cell.dataset.key;
                         let dKey = cell.dataset.date;
                         if(cellKey && !cell.classList.contains('cell-locked')) {
@@ -834,7 +833,7 @@
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
-        function exportDirectPdf() {
+        function openPdfPreview() {
             let tableHtml = document.querySelector('.table-container').innerHTML;
             let vacationHtml = document.getElementById('vacationReport').innerHTML;
             let auditHtml = document.getElementById('auditReport').innerHTML;
@@ -856,13 +855,13 @@
 
             exportContainer.innerHTML = `
                 <div style="font-family: sans-serif; background: #fff; color: #000; padding: 10px; width: 1100px;">
-                    <h1 style="text-align: center; font-size: 14px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
-                    <div style="text-align: center; font-size: 9px; margin-bottom: 8px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
+                    <h1 style="text-align: center; font-size: 14px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Jelentés</h1>
+                    <div style="text-align: center; font-size: 9px; margin-bottom: 8px; color: #555;">Havi vezénylési mátrix és szabadságkezelő</div>
                     
                     <div style="font-size: 11px; font-weight: bold; margin-top: 8px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
                     <div>${cleanTableHtml}</div>
                     
-                    <div style="font-size: 11px; font-weight: bold; margin-top: 15px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div style="font-size: 11px; font-weight: bold; margin-top: 15px; margin-bottom: 4px; border-bottom: 2px solid #1f6feb; padding-bottom: 2px; color: #1f6feb;">2. Éves Szabadságkezelő & Keretek</div>
                     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 8px;">
                         ${vacationHtml}
                     </div>
@@ -903,7 +902,7 @@
 
             let opt = {
                 margin:       5,
-                filename:     'Matrix_Labor_Vezetosegi_Jelentes.pdf',
+                filename:     'Matrix_Labor_Jelentes.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { scale: 2, useCORS: true },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
