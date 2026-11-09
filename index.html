@@ -135,7 +135,7 @@
             z-index: 4;
         }
         
-        /* NÉV OSZLOP: TÖBBSOROS, TÖRHETŐ CELLÁK */
+        /* NÉV OSZLOP: VALÓDI TÖBBSOROS TEXTAREA TÖRHETŐ SZÖVEGGEL */
         .name-col {
             text-align: left;
             font-weight: 900;
@@ -146,12 +146,23 @@
             width: 100px;
             min-width: 100px;
             max-width: 100px;
+            padding: 2px 3px !important;
+            vertical-align: middle;
+        }
+        .guard-name-input {
+            width: 92px;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-weight: 900;
             font-size: 0.8rem;
-            white-space: normal !important;
-            word-break: break-word !important;
-            line-height: 1.15;
-            padding: 3px 4px !important;
-            overflow: visible !important;
+            resize: none;
+            overflow: hidden;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.1;
+            font-family: inherit;
+            display: block;
         }
         th.name-col {
             background-color: #30363d !important;
@@ -340,7 +351,7 @@
 
         @page {
             size: A4 landscape;
-            margin: 2mm;
+            margin: 3mm;
         }
         body.print-schedule-only .controls,
         body.print-schedule-only .palette,
@@ -621,7 +632,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:92px; background:transparent; border:none; color:inherit; font-weight:900; font-size:0.8rem; word-break:break-word;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><textarea id="guard-name-${gIndex}" class="guard-name-input" rows="2" placeholder="Őr ${gIndex+1}" oninput="autoSave()">${guardName}</textarea></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -667,7 +678,7 @@
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
-            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; font-weight: 900; font-size: 0.8rem; white-space:normal !important; word-break:break-word !important;">Havi Összesítő</td>`;
+            tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff; font-weight: 900; font-size: 0.8rem; white-space:normal !important; word-break:break-word !important; padding:4px;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
@@ -712,9 +723,13 @@
                 return;
             }
             let prevCell = activeCell.previousElementSibling;
-            if(type === 'np' && prevCell && prevCell.dataset && prevCell.dataset.type === 'ep') {
-                alert('⚠️ Biztonsági figyelmeztetés: Nappal nem lehet közvetlenül Éjjel után!');
-                return;
+            if(prevCell && prevCell.dataset) {
+                let prevType = prevCell.dataset.type;
+                // SZIGORÚ SZABÁLY: Éjjel (ep) VAGY 24h (nep) után TILOS Nappalt (np) tenni!
+                if(type === 'np' && (prevType === 'ep' || prevType === 'nep')) {
+                    alert('⚠️ Biztonsági figyelmeztetés: Éjszakai vagy 24 órás szolgálat után nem lehet közvetlenül Nappal!');
+                    return;
+                }
             }
             let hasSeparator = activeCell.classList.contains('week-separator') ? 'week-separator' : '';
             activeCell.className = className + ' ' + hasSeparator + ' selected-cell';
@@ -993,6 +1008,15 @@
                             font-weight: 900 !important;
                             text-align: left !important;
                             padding: 2px 3px !important;
+                        }
+                        .guard-name-input {
+                            background: transparent !important;
+                            border: none !important;
+                            color: #000 !important;
+                            font-weight: 900 !important;
+                            font-size: 7.5px !important;
+                            width: 100% !important;
+                            resize: none;
                         }
                         td.cell-default, td[class*="pos-"], td:not(.name-col) {
                             font-size: 8.5px !important;
