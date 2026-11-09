@@ -6,16 +6,16 @@
     <title>Mátrix Labor — Vezénylési Rendszer</title>
     <style>
         :root {
-            --bg-color: #1f242d;
-            --panel-bg: #2a313c;
+            --bg-color: #222831;
+            --panel-bg: #2d3440;
             --text-color: #f0f6fc;
-            --border-color: #3b4351;
-            --green: #238636;
-            --red: #da3633;
+            --border-color: #404b5c;
+            --green: #2ea043;
+            --red: #f85149;
             --yellow-led: #ffd700;
             --purple: #8957e5;
-            --yellow: #9e6a03;
-            --blue: #1f6feb;
+            --yellow: #d29922;
+            --blue: #388bfd;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -49,7 +49,7 @@
             align-items: center;
         }
         select, input, button {
-            background: #363e4c;
+            background: #394251;
             color: var(--text-color);
             border: 1px solid var(--border-color);
             padding: 4px 8px;
@@ -61,14 +61,14 @@
             cursor: pointer;
             font-weight: bold;
         }
-        button:hover { background: #388bfd; }
+        button:hover { background: #58a6ff; }
         .btn-save {
             background: var(--green) !important;
             color: white !important;
         }
-        .btn-save:hover { background: #2ea043 !important; }
+        .btn-save:hover { background: #3fb950 !important; }
         .btn-pdf {
-            background: #8957e5 !important;
+            background: var(--purple) !important;
             color: white !important;
         }
         .btn-pdf:hover { background: #9c6ffe !important; }
@@ -91,7 +91,7 @@
         .btn-nep { background: var(--purple); color: white; }
         .btn-szb { background: var(--yellow); color: white; }
         .btn-szab { background: var(--blue); color: white; }
-        .btn-clear { background: #363e4c; color: #c9d1d9; border: 1px solid var(--border-color); }
+        .btn-clear { background: #394251; color: #c9d1d9; border: 1px solid var(--border-color); }
         .table-container {
             overflow: auto;
             background: var(--panel-bg);
@@ -108,7 +108,7 @@
         }
         th, td {
             border: 1px solid var(--border-color);
-            padding: 4px 3px;
+            padding: 5px 4px;
             white-space: nowrap;
         }
         
@@ -118,40 +118,43 @@
         }
         .week-row th {
             top: 0;
-            background-color: #2a313c !important;
+            background-color: #2d3440 !important;
             color: #58a6ff;
             font-weight: bold;
             z-index: 4;
         }
         .req-row th {
-            top: 21px;
-            background-color: #1f242d !important;
+            top: 22px;
+            background-color: #222831 !important;
             z-index: 4;
         }
         .day-row th {
-            top: 42px;
+            top: 44px;
             z-index: 4;
         }
+        /* Név oszlop javítva, hogy semmi se lógjon le */
         .name-col {
             text-align: left;
             font-weight: bold;
             position: sticky;
             left: 0;
-            background-color: #2a313c !important;
+            background-color: #2d3440 !important;
             z-index: 3;
-            min-width: 125px;
-            padding-left: 8px !important;
-            font-size: 0.75rem;
+            min-width: 145px;
+            padding-left: 12px !important;
+            font-size: 0.8rem;
         }
         th.name-col {
-            background-color: #363e4c !important;
+            background-color: #394251 !important;
             z-index: 5 !important;
-            padding-left: 8px !important;
+            padding-left: 12px !important;
         }
+        /* Utolsó sor (Havi Összesítő) felnagyítva */
         .total-row td {
-            background-color: #262d38 !important;
-            color: #58a6ff !important;
-            font-weight: bold;
+            background-color: #313b4c !important;
+            color: #79c0ff !important;
+            font-weight: bold !important;
+            font-size: 0.9rem !important;
         }
         .week-separator {
             border-left: 2px solid #58a6ff !important;
@@ -174,11 +177,11 @@
             font-weight: bold;
             font-size: 0.9rem !important;
         }
-        .pos-np { background-color: #238636 !important; color: white !important; cursor: pointer; }
-        .pos-ep { background-color: #da3633 !important; color: white !important; cursor: pointer; }
+        .pos-np { background-color: #2ea043 !important; color: white !important; cursor: pointer; }
+        .pos-ep { background-color: #f85149 !important; color: white !important; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; cursor: pointer; }
-        .pos-szb { background-color: #9e6a03 !important; color: white !important; cursor: pointer; }
-        .pos-szab { background-color: #1f6feb !important; color: white !important; cursor: pointer; }
+        .pos-szb { background-color: #d29922 !important; color: white !important; cursor: pointer; }
+        .pos-szab { background-color: #388bfd !important; color: white !important; cursor: pointer; }
         
         td.selected-cell {
             outline: 2px solid #ff7b72;
@@ -231,7 +234,7 @@
             .vacation-grid { grid-template-columns: repeat(2, 1fr); }
         }
         .vacation-card {
-            background: #1f242d;
+            background: #222831;
             border: 1px solid var(--border-color);
             border-radius: 5px;
             padding: 6px 8px;
@@ -285,11 +288,11 @@
             display: inline-block;
             width: 8px;
             height: 8px;
-            background-color: #ff3b30;
+            background-color: #f85149;
             border-radius: 50%;
             margin-left: 3px;
             animation: blinkLed 0.5s infinite;
-            box-shadow: 0 0 10px #ff3b30;
+            box-shadow: 0 0 10px #f85149;
         }
         .led-warning {
             display: inline-block;
@@ -302,21 +305,21 @@
             box-shadow: 0 0 10px #ffd700;
         }
         .day-saturday-header {
-            background-color: #1f4f29 !important;
+            background-color: #1b4728 !important;
             color: #56d364 !important;
             border-bottom: 2px solid var(--green) !important;
         }
         .day-sunday-holiday-header {
-            background-color: #672528 !important;
+            background-color: #5c2226 !important;
             color: #ff8182 !important;
             border-bottom: 2px solid var(--red) !important;
         }
         .day-normal-header {
-            background-color: #363e4c !important;
+            background-color: #394251 !important;
             color: #f0f6fc !important;
         }
 
-        /* Tökéletesen méretezett nyomtatási protokoll */
+        /* Nyomtatási protokoll */
         @media print {
             @page {
                 size: A4 landscape;
@@ -518,10 +521,10 @@
                 weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
                 
                 if (item.isExtra) {
-                    reqRowHtml += `<th class="${sepClass}" style="background:#1f6feb;">-</th>`;
+                    reqRowHtml += `<th class="${sepClass}" style="background:#388bfd;">-</th>`;
                 } else {
                     let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
-                    reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#2a313c; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
+                    reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#2d3440; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
                 }
                 let headerClass = "day-normal-header";
                 if (isHoliday(d)) {
@@ -532,13 +535,13 @@
                 } else if (dayIndex === 0) {
                     headerClass = "day-sunday-holiday-header";
                 }
-                let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#1f6feb; color:white;' : '';
+                let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#388bfd; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${headerClass}" style="${extraHeaderStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
-            weekRowHtml += '<th class="name-col">Óra</th></tr>';
-            reqRowHtml += '<th class="name-col">Cél</th></tr>';
-            dayRowHtml += '<th class="name-col">Keret</th></tr>';
+            weekRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Óra</th></tr>';
+            reqRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Cél</th></tr>';
+            dayRowHtml += '<th class="name-col" style="font-size:0.85rem; color:#79c0ff;">Keret</th></tr>';
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
             document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
@@ -547,7 +550,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:115px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:130px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.8rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -589,19 +592,20 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
+                // Utolsó oszlop (óra keretek) felnagyítva
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #79c0ff; font-size: 0.9rem;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
-            tbodyHtml += `<td class="name-col" style="background:#262d38 !important; color:#58a6ff;">Havi Összesítő</td>`;
+            tbodyHtml += `<td class="name-col" style="background:#313b4c !important; color:#79c0ff; font-size:0.9rem;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
                 let isMonday = (dayIndex === 1);
                 let prevWeekCheck = (isMonday && dIndex > 0) ? 'week-separator' : '';
-                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}">0h</td>`;
+                tbodyHtml += `<td id="col-total-${dIndex}" class="${prevWeekCheck}" style="font-size:0.85rem; font-weight:bold;">0h</td>`;
             });
-            tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
+            tbodyHtml += `<td id="grand-total-hours" style="color:#79c0ff; font-size:1rem; font-weight:bold;">0h</td>`;
             tbodyHtml += `</tr>`;
             document.getElementById('tableBody').innerHTML = tbodyHtml;
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
@@ -758,7 +762,7 @@
                     <div class="vacation-card">
                         <div class="vacation-card-header">${guardName}</div>
                         <div class="vacation-card-body">
-                            <span>Alap: <input type="number" value="${baseVal}" min="0" max="100" style="width:36px; text-align:center; background:#1f242d; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;" onchange="updateVacationBase(${gIndex}, this)"></span>
+                            <span>Alap: <input type="number" value="${baseVal}" min="0" max="100" style="width:36px; text-align:center; background:#222831; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.75rem;" onchange="updateVacationBase(${gIndex}, this)"></span>
                             <span>Felhasznált: <b style="color:var(--yellow);">${totalUsedUntilNow}</b></span>
                             <span>Maradék: <b style="color:var(--blue);">${remaining}</b></span>
                         </div>
