@@ -109,7 +109,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.95rem; /* ITT LETT FELNAGYÍTVA A TÁBLÁZAT ALAPBETŰMÉRETE IS */
         }
         th, td {
             border: 1px solid var(--border-color);
@@ -117,7 +117,6 @@
             white-space: nowrap;
         }
         
-        /* ITT HÚZTUK ÖSSZE KICSIT A VÉGÉN AZ ÓRÁK / KERET OSZLUPOT */
         #scheduleTable th:last-child,
         #scheduleTable td:last-child {
             min-width: 44px;
@@ -128,32 +127,32 @@
         th {
             position: sticky;
             z-index: 2;
+            font-weight: 900; /* Fejlécek is jó vastagok */
         }
         .week-row th {
             top: 0;
             background-color: #21262d !important;
             color: #58a6ff;
-            font-weight: bold;
             z-index: 4;
         }
         .req-row th {
-            top: 21px;
+            top: 25px;
             background-color: #161b22 !important;
             z-index: 4;
         }
         .day-row th {
-            top: 42px;
+            top: 50px;
             z-index: 4;
         }
         .name-col {
             text-align: left;
-            font-weight: bold;
+            font-weight: 900;
             position: sticky;
             left: 0;
             background-color: #21262d !important;
             z-index: 3;
             min-width: 110px;
-            font-size: 0.75rem;
+            font-size: 0.9rem;
         }
         th.name-col {
             background-color: #30363d !important;
@@ -162,15 +161,16 @@
         .total-row td {
             background-color: #1f2937 !important;
             color: #58a6ff !important;
-            font-weight: bold;
+            font-weight: 900;
         }
         .week-separator {
             border-left: 2px solid #58a6ff !important;
         }
-        /* ITT A LÉNYEG: CSAK A CELLÁKBELI KARAKTEREK NAGYOBBAK ÉS VASTAGABBAK */
-        td.cell-default, td[class*="pos-"] {
-            font-size: 0.95rem !important;
-            font-weight: bold !important;
+        
+        /* ÖSSZES CELLA ÉS KARAKTER NAGYOBB ÉS VASTAGABB A DOBOZON BELÜL */
+        td.cell-default, td[class*="pos-"], td:not(.name-col) {
+            font-size: 1rem !important;
+            font-weight: 900 !important;
         }
         td.cell-default {
             background-color: #ffffff;
@@ -183,8 +183,8 @@
             color: white !important;
             cursor: not-allowed !important;
             pointer-events: none !important;
-            font-weight: bold;
-            font-size: 0.9rem !important;
+            font-weight: 900 !important;
+            font-size: 0.95rem !important;
         }
         .pos-np { background-color: #238636 !important; color: white !important; cursor: pointer; }
         .pos-ep { background-color: #da3633 !important; color: white !important; cursor: pointer; }
@@ -365,12 +365,12 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                font-size: 7px !important;
+                font-size: 9px !important;
             }
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
-                font-size: 10px !important;
-                font-weight: bold !important;
+                font-size: 11px !important;
+                font-weight: 900 !important;
             }
             body.print-schedule-only th, 
             body.print-schedule-only td {
@@ -381,7 +381,7 @@
                 position: static !important;
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
-                font-weight: bold !important;
+                font-weight: 900 !important;
                 min-width: 85px !important;
             }
             body.print-schedule-only .total-row td {
@@ -399,12 +399,12 @@
             body.print-schedule-only .day-saturday-header {
                 background-color: #d1fae5 !important;
                 color: #065f46 !important;
-                font-weight: bold !important;
+                font-weight: 900 !important;
             }
             body.print-schedule-only .day-sunday-holiday-header {
                 background-color: #fee2e2 !important;
                 color: #991b1b !important;
-                font-weight: bold !important;
+                font-weight: 900 !important;
             }
             body.print-schedule-only td.cell-locked {
                 background-color: #bfdbfe !important;
@@ -413,7 +413,7 @@
             body.print-schedule-only tr td:last-child {
                 background-color: #f0f4f8 !important;
                 color: #000000 !important;
-                font-weight: bold !important;
+                font-weight: 900 !important;
             }
         }
     </style>
@@ -597,7 +597,7 @@
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
-                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.75rem;" oninput="autoSave()"></td>`;
+                tbodyHtml += `<td class="name-col"><input type="text" id="guard-name-${gIndex}" value="${guardName}" placeholder="Őr ${gIndex+1}" style="width:100px; background:transparent; border:none; color:inherit; font-weight:bold; font-size:0.85rem;" oninput="autoSave()"></td>`;
                 
                 days.forEach((item, dIndex) => {
                     let d = item.date;
@@ -639,7 +639,7 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
+                tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: 900; color: #58a6ff;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
             tbodyHtml += `<tr class="total-row">`;
@@ -932,9 +932,9 @@
                         }
                         h1 { text-align: center; font-size: 15px; margin: 2px 0; color: #1f6feb; }
                         .subtitle { text-align: center; font-size: 10px; margin-bottom: 15px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 8.5px; }
+                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 10px; }
                         th, td { border: 1px solid #333; padding: 4px 2px; }
-                        th { background: #e2e8f0 !important; color: #000 !important; }
+                        th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
                         .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
                         
                         .page-break {
@@ -944,22 +944,22 @@
                         .total-row td {
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
-                            font-weight: bold;
+                            font-weight: 900;
                         }
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 10px !important; font-weight: bold !important; }
+                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 11px !important; font-weight: 900 !important; }
                         
-                        td.cell-default, td[class*="pos-"] {
-                            font-size: 10px !important;
-                            font-weight: bold !important;
+                        td.cell-default, td[class*="pos-"], td:not(.name-col) {
+                            font-size: 11px !important;
+                            font-weight: 900 !important;
                         }
-                        .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
-                        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
-                        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
-                        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
-                        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
+                        .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
+                        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
+                        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
+                        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
+                        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
                         .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
                         .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px 8px; font-size: 9px; background: #f9fafb !important; }
                         .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; color: #111; }
