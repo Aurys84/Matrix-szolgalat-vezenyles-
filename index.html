@@ -586,7 +586,6 @@
             let prevCell = activeCell.previousElementSibling;
             if(prevCell && prevCell.dataset) {
                 let prevType = prevCell.dataset.type;
-                // Szigorú szűrő: éjszakai (ep) vagy 24 órás (nep) után TILOS nappalt (np) beírni!
                 if(type === 'np' && (prevType === 'ep' || prevType === 'nep')) {
                     alert('⚠️ Biztonsági szabályzat: Éjszakai vagy 24 órás szolgálat után nem lehet közvetlenül Nappal!');
                     return;
@@ -795,111 +794,8 @@
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
         function exportFullPdfReport() {
-            let printWindow = window.open('', '_blank');
-            let tableHtml = document.querySelector('.table-container').innerHTML;
-            let vacationHtml = document.getElementById('vacationReport').innerHTML;
-            let auditHtml = document.getElementById('auditReport').innerHTML;
-            let holidayHtml = document.getElementById('holidayReport').innerHTML;
-            let htmlContent = `
-                <!DOCTYPE html>
-                <html lang="hu">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Mátrix Labor — Mentés / Jelentés</title>
-                    <style>
-                        @page {
-                            size: A4 landscape;
-                            margin: 10mm;
-                        }
-                        * {
-                            -webkit-print-color-adjust: exact !important;
-                            print-color-adjust: exact !important;
-                        }
-                        body { 
-                            font-family: sans-serif; 
-                            background: #fff; 
-                            color: #000; 
-                            margin: 0; 
-                            padding: 10px; 
-                            font-size: 9px; 
-                        }
-                        h1 { text-align: center; font-size: 15px; margin: 2px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 10px; margin-bottom: 15px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 15px; font-size: 8.5px; }
-                        th, td { border: 1px solid #333; padding: 4px 2px; }
-                        th { background: #e2e8f0 !important; color: #000 !important; }
-                        .section-title { font-size: 12px; font-weight: bold; margin-top: 15px; margin-bottom: 8px; border-bottom: 2px solid #1f6feb; padding-bottom: 3px; color: #1f6feb; }
-                        .page-break {
-                            page-break-before: always;
-                            break-before: page;
-                        }
-                        .total-row td {
-                            background-color: #e2e8f0 !important;
-                            color: #000 !important;
-                            font-weight: bold;
-                        }
-                        .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
-                        .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
-                        .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 10px !important; font-weight: bold !important; }
-                        td.cell-default, td[class*="pos-"] {
-                            font-size: 10px !important;
-                            font-weight: bold !important;
-                        }
-                        .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
-                        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
-                        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
-                        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
-                        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px 8px; font-size: 9px; background: #f9fafb !important; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; color: #111; }
-                        .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
-                        .summary-row {
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 10mm;
-                            margin-top: 10px;
-                        }
-                        .summary-box {
-                            border: 1px solid #333;
-                            border-radius: 4px;
-                            padding: 8px;
-                            font-size: 10px;
-                            background: #f9fafb !important;
-                        }
-                        .summary-box h3 { margin: 0 0 5px 0; font-size: 11px; color: #1f6feb; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Mátrix Labor — Hivatalos Jelentés</h1>
-                    <div class="subtitle">Tartalmazza a havi vezénylési táblázatot és a szabadságkezelőt</div>
-                    
-                    <div class="section-title">1. Havi Vezénylési Táblázat</div>
-                    <div>${tableHtml}</div>
-                    <div class="page-break"></div>
-                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
-                    <div class="vacation-grid">
-                        ${vacationHtml}
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-box">
-                            <h3>🔍 Létszám Figyelőmotor Összesítés</h3>
-                            <div>${auditHtml}</div>
-                        </div>
-                        <div class="summary-box">
-                            <h3>🎉 Havi Ünnepnapok Számláló</h3>
-                            <div>${holidayHtml}</div>
-                        </div>
-                    </div>
-                    <script>
-                        window.onload = function() { window.print(); }
-                    <\/script>
-                </body>
-                </html>
-            `;
-            printWindow.document.write(htmlContent);
-            printWindow.document.close();
+            autoSave();
+            alert('💾 A Mátrix Labor adatai sikeresen rögzítve!');
         }
         window.onload = function() {
             generateCalendar();
