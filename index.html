@@ -62,25 +62,21 @@
             font-weight: bold;
         }
         button:hover { background: #388bfd; }
-
         .btn-save {
             background: var(--green) !important;
             color: white !important;
         }
         .btn-save:hover { background: #2ea043 !important; }
-
         .btn-print {
             background: #1f6feb !important;
             color: white !important;
         }
         .btn-print:hover { background: #388bfd !important; }
-
         .btn-pdf {
             background: #8957e5 !important;
             color: white !important;
         }
         .btn-pdf:hover { background: #9c6ffe !important; }
-
         .palette {
             display: flex;
             gap: 5px;
@@ -101,7 +97,6 @@
         .btn-szb { background: var(--yellow); color: white; }
         .btn-szab { background: var(--blue); color: white; }
         .btn-clear { background: #30363d; color: #c9d1d9; border: 1px solid var(--border-color); }
-
         .table-container {
             overflow: auto;
             background: var(--panel-bg);
@@ -122,6 +117,14 @@
             white-space: nowrap;
         }
         
+        /* ITT HÚZTUK ÖSSZE KICSIT A VÉGÉN AZ ÓRÁK / KERET OSZLUPOT */
+        #scheduleTable th:last-child,
+        #scheduleTable td:last-child {
+            min-width: 44px;
+            max-width: 50px;
+            width: 46px;
+        }
+
         th {
             position: sticky;
             z-index: 2;
@@ -156,30 +159,25 @@
             background-color: #30363d !important;
             z-index: 5 !important;
         }
-
         .total-row td {
             background-color: #1f2937 !important;
             color: #58a6ff !important;
             font-weight: bold;
         }
-
         .week-separator {
             border-left: 2px solid #58a6ff !important;
         }
-
         /* ITT A LÉNYEG: CSAK A CELLÁKBELI KARAKTEREK NAGYOBBAK ÉS VASTAGABBAK */
         td.cell-default, td[class*="pos-"] {
             font-size: 0.95rem !important;
             font-weight: bold !important;
         }
-
         td.cell-default {
             background-color: #ffffff;
             color: #24292e;
             cursor: pointer;
             min-width: 28px;
         }
-
         td.cell-locked {
             background-color: #1f6feb !important;
             color: white !important;
@@ -188,7 +186,6 @@
             font-weight: bold;
             font-size: 0.9rem !important;
         }
-
         .pos-np { background-color: #238636 !important; color: white !important; cursor: pointer; }
         .pos-ep { background-color: #da3633 !important; color: white !important; cursor: pointer; }
         .pos-nep { background-color: #8957e5 !important; color: white !important; cursor: pointer; }
@@ -199,7 +196,6 @@
             outline: 2px solid #ff7b72;
             outline-offset: -2px;
         }
-
         .panels-wrapper {
             display: flex;
             flex-direction: column;
@@ -213,7 +209,6 @@
         @media (max-width: 900px) {
             .top-panels-row { grid-template-columns: 1fr; }
         }
-
         .audit-panel, .holiday-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -221,7 +216,6 @@
             padding: 8px;
             font-size: 0.8rem;
         }
-
         .vacation-panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -275,7 +269,6 @@
             color: #8b949e;
             font-size: 0.7rem;
         }
-
         .alert-badge {
             display: inline-block;
             padding: 2px 5px;
@@ -286,7 +279,6 @@
         .alert-ok { background: var(--green); color: white; }
         .alert-error { background: var(--red); color: white; }
         .alert-warning { background: var(--orange); color: white; }
-
         @keyframes blinkLed {
             0% { opacity: 1; transform: scale(1); filter: brightness(1); }
             50% { opacity: 0.15; transform: scale(1.5); filter: brightness(2); }
@@ -321,7 +313,6 @@
             animation: blinkLed 0.5s infinite;
             box-shadow: 0 0 10px #ff9500;
         }
-
         .day-saturday-header {
             background-color: #1f4f29 !important;
             color: #56d364 !important;
@@ -336,12 +327,10 @@
             background-color: #30363d !important;
             color: #f0f6fc !important;
         }
-
         @page {
             size: A4 landscape;
             margin: 4mm;
         }
-
         body.print-schedule-only .controls,
         body.print-schedule-only .palette,
         body.print-schedule-only .panels-wrapper,
@@ -349,7 +338,6 @@
         body.print-schedule-only .subtitle {
             display: none !important;
         }
-
         @media print {
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -379,7 +367,6 @@
                 width: 100% !important;
                 font-size: 7px !important;
             }
-            /* Nyomtatáskor is nagyobb és vastagabb a cellatartalom */
             body.print-schedule-only td.cell-default, 
             body.print-schedule-only td[class*="pos-"] {
                 font-size: 10px !important;
@@ -432,10 +419,8 @@
     </style>
 </head>
 <body id="mainBody">
-
     <h1>Mátrix Labor — Vezénylési Rendszer</h1>
     <div class="subtitle">Nagyobb Cellakarakterek & Hétfői Hétkezdés</div>
-
     <div class="controls">
         <div style="display: flex; gap: 8px; align-items: center;">
             <div>
@@ -472,42 +457,35 @@
             <button class="btn-pdf" onclick="exportFullPdfReport()">📥 PDF Jelentés (Vezetőségnek)</button>
         </div>
     </div>
-
     <div class="palette">
         <span>Gyorskitöltés:</span>
         <button class="p-btn btn-np" onclick="applyServiceWithPos('Np', 'pos-np', 'np')">Nappal:</button>
         <select id="npNum" style="padding: 1px 3px; font-size:0.7rem;">
             <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
         </select>
-
         <button class="p-btn btn-ep" onclick="applyServiceWithPos('Ép', 'pos-ep', 'ep')">Éjjel:</button>
         <select id="epNum" style="padding: 1px 3px; font-size:0.7rem;">
             <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
         </select>
-
         <button class="p-btn btn-nep" onclick="applyServiceWithPos('NÉp', 'pos-nep', 'nep')">24h:</button>
         <select id="nepNum" style="padding: 1px 3px; font-size:0.7rem;">
             <script>for(let i=1; i<=20; i++) document.write(`<option value="${i}">${i}</option>`);</script>
         </select>
-
         <button class="p-btn btn-szb" onclick="applyService('SZB', 'pos-szb', 'szb')">Szabadság (SZB)</button>
         <button class="p-btn btn-szab" onclick="applyService('SZ', 'pos-szab', 'szab')">Szabadnap (SZ)</button>
         <button class="p-btn btn-clear" onclick="applyService('', 'cell-default', 'clear')">Törlés</button>
     </div>
-
     <div class="table-container">
         <table id="scheduleTable">
             <thead id="tableHeader"></thead>
             <tbody id="tableBody"></tbody>
         </table>
     </div>
-
     <div class="panels-wrapper">
         <div class="vacation-panel">
             <h3>🌴 Éves Göngyölített Szabadságkezelő (Alapkeretek szabadon szerkeszthetők)</h3>
             <div id="vacationReport" class="vacation-grid">Szabadságok számítása...</div>
         </div>
-
         <div class="top-panels-row">
             <div class="audit-panel">
                 <h3>🔍 Létszám Figyelőmotor</h3>
@@ -519,17 +497,14 @@
             </div>
         </div>
     </div>
-
     <script>
         const defaultGuards = [
             "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
             "Szabó Gábor", "Varga Dávid", "Vigh Szabina", "Cziemler Márk", "Németh Andor",
             "Őr 11", "Őr 12", "Őr 13", "Őr 14", "Őr 15", "Őr 16", "Őr 17", "Őr 18", "Őr 19", "Őr 20"
         ];
-
         const dayNames = ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'];
         let activeCell = null;
-
         function isHoliday(date) {
             let m = date.getMonth() + 1;
             let d = date.getDate();
@@ -538,7 +513,6 @@
             ];
             return fixedHolidays.includes(`${m}-${d}`);
         }
-
         function getISOWeekNumber(d) {
             let date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
             let dayNum = date.getUTCDay() || 7;
@@ -546,22 +520,18 @@
             let yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
             return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
         }
-
         function getDateKey(d) {
             let y = d.getFullYear();
             let m = String(d.getMonth() + 1).padStart(2, '0');
             let day = String(d.getDate()).padStart(2, '0');
             return `${y}-${m}-${day}`;
         }
-
         function generateCalendar() {
             const yearSelect = document.getElementById('yearSelect');
             const monthSelect = document.getElementById('monthSelect');
             if(!yearSelect || !monthSelect) return;
-
             const year = parseInt(yearSelect.value);
             const month = parseInt(monthSelect.value);
-
             let days = [];
             let pYear = year;
             let pMonth = month - 1;
@@ -570,26 +540,21 @@
                 pYear = year - 1;
             }
             let prevMonthLastDate = new Date(pYear, pMonth + 1, 0).getDate();
-
             for(let i = 2; i >= 0; i--) {
                 let dayNum = prevMonthLastDate - i;
                 let d = new Date(pYear, pMonth, dayNum);
                 days.push({ date: d, isExtra: true });
             }
-
             let currentMonthDays = new Date(year, month + 1, 0).getDate();
             for(let i = 1; i <= currentMonthDays; i++) {
                 let d = new Date(year, month, i);
                 days.push({ date: d, isExtra: false });
             }
-
             let weekRowHtml = '<tr class="week-row"><th class="name-col">Hét száma</th>';
             let reqRowHtml = '<tr class="req-row"><th class="name-col">Elvárt Létszám</th>';
             let dayRowHtml = '<tr class="day-row"><th class="name-col">Név / Dátum</th>';
-
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             let holidayCount = 0;
-
             days.forEach((item, index) => {
                 let d = item.date;
                 let dayIndex = d.getDay();
@@ -600,7 +565,6 @@
                 
                 let isMonday = (dayIndex === 1);
                 let sepClass = (isMonday && index > 0) ? 'week-separator' : '';
-
                 weekRowHtml += `<th class="${sepClass}">${weekNum}.hét</th>`;
                 
                 if (item.isExtra) {
@@ -609,7 +573,6 @@
                     let reqVal = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                     reqRowHtml += `<th class="${sepClass}"><input type="number" min="0" max="20" value="${reqVal}" data-date="${dKey}" onchange="updateRequired(this)" style="width:24px; text-align:center; background:#21262d; color:#58a6ff; border:1px solid var(--border-color); border-radius:3px; font-weight:bold; font-size:0.7rem;"></th>`;
                 }
-
                 let headerClass = "day-normal-header";
                 if (isHoliday(d)) {
                     headerClass = "day-sunday-holiday-header";
@@ -619,23 +582,18 @@
                 } else if (dayIndex === 0) {
                     headerClass = "day-sunday-holiday-header";
                 }
-
                 let extraHeaderStyle = item.isExtra && headerClass === "day-normal-header" ? 'background:#1f6feb; color:white;' : '';
                 let ledHtml = item.isExtra ? '' : `<span id="led-${dKey}"><span class="led-ok" title="Létszám rendben"></span></span>`;
                 dayRowHtml += `<th id="th-day-${dKey}" class="${sepClass} ${headerClass}" style="${extraHeaderStyle}">${dateStr}<br><small style="font-size:0.7rem; font-weight:bold;">${dayLetter}</small>${ledHtml}</th>`;
             });
-
             weekRowHtml += '<th class="name-col">Óra</th></tr>';
             reqRowHtml += '<th class="name-col">Cél</th></tr>';
             dayRowHtml += '<th class="name-col">Keret</th></tr>';
-
             document.getElementById('tableHeader').innerHTML = weekRowHtml + reqRowHtml + dayRowHtml;
             document.getElementById('holidayReport').innerHTML = `<b>Ebben a hónapban:</b> <span style="color:#ff8182; font-weight:bold; font-size:0.85rem;">${holidayCount} db</span> hivatalos ünnepnap esik.`;
-
             let savedGuards = JSON.parse(localStorage.getItem(`matrix_guards_${year}_${month}`)) || defaultGuards;
             let prevMonthSchedule = JSON.parse(localStorage.getItem(`matrix_schedule_${pYear}_${pMonth}`)) || {};
             let savedData = JSON.parse(localStorage.getItem(`matrix_schedule_${year}_${month}`)) || {};
-
             let tbodyHtml = '';
             savedGuards.forEach((guardName, gIndex) => {
                 tbodyHtml += `<tr>`;
@@ -654,7 +612,6 @@
                         let prevDKey = getDateKey(prevD);
                         let prevGlobalKey = `global_cell_${prevDKey}_g_${gIndex}`;
                         let prevCellData = JSON.parse(localStorage.getItem(prevGlobalKey));
-
                         if (prevCellData && prevCellData.text) {
                             cellInfo = { text: prevCellData.text, className: prevCellData.className, type: prevCellData.type };
                         } else {
@@ -682,11 +639,9 @@
                         tbodyHtml += `<td class="${cellInfo.className} ${prevWeekCheck}" onclick="selectCell(this)" data-type="${cellInfo.type}" data-key="${cellKey}" data-date="${dKey}" data-guard="${gIndex}">${cellInfo.text}</td>`;
                     }
                 });
-
                 tbodyHtml += `<td id="total-hours-${gIndex}" style="font-weight: bold; color: #58a6ff;">0h</td>`;
                 tbodyHtml += `</tr>`;
             });
-
             tbodyHtml += `<tr class="total-row">`;
             tbodyHtml += `<td class="name-col" style="background:#1f2937 !important; color:#58a6ff;">Havi Összesítő</td>`;
             days.forEach((item, dIndex) => {
@@ -698,19 +653,14 @@
             });
             tbodyHtml += `<td id="grand-total-hours" style="color:#58a6ff;">0h</td>`;
             tbodyHtml += `</tr>`;
-
             document.getElementById('tableBody').innerHTML = tbodyHtml;
-
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
                 calculateRowHours(row);
             });
-
             calculateColumnTotals(days);
-
             runAuditEngine(days, year, month);
             runVacationEngine(year, month);
         }
-
         function updateRequired(input) {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
@@ -719,47 +669,39 @@
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             savedRequired[dKey] = parseInt(input.value) || 0;
             localStorage.setItem(`matrix_required_${year}_${month}`, JSON.stringify(savedRequired));
-
             generateCalendar();
         }
-
         function selectCell(cell) {
             if(cell.classList.contains('cell-locked') && cell.innerText.trim() !== '') return;
             if(activeCell) activeCell.classList.remove('selected-cell');
             activeCell = cell;
             activeCell.classList.add('selected-cell');
         }
-
         function applyServiceWithPos(prefix, className, type) {
             let numId = type === 'np' ? 'npNum' : (type === 'ep' ? 'epNum' : 'nepNum');
             let numVal = document.getElementById(numId).value;
             applyService(prefix + numVal, className, type);
         }
-
         function applyService(text, className, type) {
             if(!activeCell || activeCell.classList.contains('cell-locked')) {
                 alert('⚠️ Először kattints rá egy szerkeszthető cellára a tárgyhónapban!');
                 return;
             }
-
             let prevCell = activeCell.previousElementSibling;
             if(type === 'np' && prevCell && prevCell.dataset && prevCell.dataset.type === 'ep') {
                 alert('⚠️ Biztonsági figyelmeztetés: Nappal nem lehet közvetlenül Éjjel után!');
                 return;
             }
-
             let hasSeparator = activeCell.classList.contains('week-separator') ? 'week-separator' : '';
             activeCell.className = className + ' ' + hasSeparator + ' selected-cell';
             activeCell.innerText = text;
             activeCell.dataset.type = type;
-
             let dKey = activeCell.dataset.date;
             let gIndex = activeCell.dataset.guard;
             if(dKey && gIndex !== undefined) {
                 let cellDataToSave = { text: text, className: className, type: type };
                 localStorage.setItem(`global_cell_${dKey}_g_${gIndex}`, JSON.stringify(cellDataToSave));
             }
-
             const year = parseInt(document.getElementById('yearSelect').value);
             const month = parseInt(document.getElementById('monthSelect').value);
             let days = [];
@@ -767,21 +709,17 @@
             for(let i = 1; i <= currentMonthDays; i++) {
                 days.push({ date: new Date(year, month, i) });
             }
-
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach(row => {
                 calculateRowHours(row);
             });
             calculateColumnTotals(days);
-
             autoSave();
             runAuditEngine(days, year, month);
             runVacationEngine(year, month);
         }
-
         function calculateRowHours(row) {
             let cells = row.querySelectorAll('td');
             let totalHours = 0;
-
             for(let i = 1; i < cells.length - 1; i++) {
                 let type = cells[i].dataset.type;
                 if(type === 'np' || type === 'ep' || type === 'szb') {
@@ -790,16 +728,13 @@
                     totalHours += 24;
                 }
             }
-
             let hoursCell = cells[cells.length - 1];
             hoursCell.innerHTML = `<b>${totalHours}h</b>`;
         }
-
         function calculateColumnTotals(days) {
             let colCount = days.length;
             let colTotals = new Array(colCount).fill(0);
             let grandTotal = 0;
-
             let rows = document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)');
             rows.forEach(row => {
                 let cells = row.querySelectorAll('td');
@@ -812,27 +747,23 @@
                     colTotals[i - 1] += h;
                 }
             });
-
             for(let i = 0; i < colCount; i++) {
                 let colCell = document.getElementById(`col-total-${i}`);
                 if(colCell) {
                     colCell.innerText = colTotals[i] > 0 ? colTotals[i] + 'h' : '0h';
                 }
             }
-
             rows.forEach(row => {
                 let cells = row.querySelectorAll('td');
                 let lastCell = cells[cells.length - 1];
                 let val = parseInt(lastCell.innerText) || 0;
                 grandTotal += val;
             });
-
             let grandCell = document.getElementById('grand-total-hours');
             if(grandCell) {
                 grandCell.innerHTML = `<b>${grandTotal}h</b>`;
             }
         }
-
         function updateVacationBase(gIndex, input) {
             let val = parseInt(input.value) || 0;
             localStorage.setItem(`vacation_base_${gIndex}`, val);
@@ -840,14 +771,12 @@
             const month = parseInt(document.getElementById('monthSelect').value);
             runVacationEngine(year, month);
         }
-
         function runVacationEngine(year, month) {
             let currentGuards = [];
             for(let i = 0; i < 20; i++) {
                 let nameInput = document.getElementById(`guard-name-${i}`);
                 currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
             }
-
             let gridHtml = '';
             
             currentGuards.forEach((guardName, gIndex) => {
@@ -855,7 +784,6 @@
                 
                 let baseKey = `vacation_base_${gIndex}`;
                 let baseVal = localStorage.getItem(baseKey) !== null ? parseInt(localStorage.getItem(baseKey)) : 30;
-
                 let totalUsedUntilNow = 0;
                 for(let m = 0; m <= month; m++) {
                     let mDays = new Date(year, m + 1, 0).getDate();
@@ -872,9 +800,7 @@
                         }
                     }
                 }
-
                 let remaining = baseVal - totalUsedUntilNow;
-
                 gridHtml += `
                     <div class="vacation-card">
                         <div class="vacation-card-header">${guardName}</div>
@@ -886,23 +812,18 @@
                     </div>
                 `;
             });
-
             document.getElementById('vacationReport').innerHTML = gridHtml;
         }
-
         function runAuditEngine(days, year, month) {
             let savedRequired = JSON.parse(localStorage.getItem(`matrix_required_${year}_${month}`)) || {};
             let issues = [];
-
             let currentGuards = [];
             for(let i = 0; i < 20; i++) {
                 let nameInput = document.getElementById(`guard-name-${i}`);
                 currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
             }
-
             days.forEach(item => {
                 if (item.isExtra) return;
-
                 let dKey = getDateKey(item.date);
                 let requiredCount = savedRequired[dKey] !== undefined ? savedRequired[dKey] : 2;
                 
@@ -913,7 +834,6 @@
                         actualCount++;
                     }
                 });
-
                 let ledSpan = document.getElementById(`led-${dKey}`);
                 if (ledSpan) {
                     if (actualCount < requiredCount) {
@@ -927,7 +847,6 @@
                     }
                 }
             });
-
             let reportHtml = '';
             if (issues.length === 0) {
                 reportHtml = `<span class="alert-badge alert-ok">MINDEN PONTOS</span> A létszám keret tökéletesen teljesül!`;
@@ -936,10 +855,8 @@
                 let surpluses = issues.filter(i => i.type === 'többlet');
                 reportHtml = `<span class="alert-badge alert-error">${deficits.length} hiány (LED)</span> | <span class="alert-badge alert-warning" style="background:var(--orange);">${surpluses.length} többlet (LED)</span>`;
             }
-
             document.getElementById('auditReport').innerHTML = reportHtml;
         }
-
         function autoSave() {
             const year = document.getElementById('yearSelect').value;
             const month = document.getElementById('monthSelect').value;
@@ -950,7 +867,6 @@
                 currentGuards.push(nameInput ? nameInput.value : `Őr ${i+1}`);
             }
             localStorage.setItem(`matrix_guards_${year}_${month}`, JSON.stringify(currentGuards));
-
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
@@ -971,16 +887,13 @@
                     }
                 });
             });
-
             localStorage.setItem(`matrix_schedule_${year}_${month}`, JSON.stringify(dataToSave));
             runVacationEngine(year, month);
         }
-
         function manualSave() {
             autoSave();
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
-
         function printSchedule() {
             document.getElementById('mainBody').classList.add('print-schedule-only');
             window.print();
@@ -988,14 +901,12 @@
                 document.getElementById('mainBody').classList.remove('print-schedule-only');
             }, 1000);
         }
-
         function exportFullPdfReport() {
             let printWindow = window.open('', '_blank');
             let tableHtml = document.querySelector('.table-container').innerHTML;
             let vacationHtml = document.getElementById('vacationReport').innerHTML;
             let auditHtml = document.getElementById('auditReport').innerHTML;
             let holidayHtml = document.getElementById('holidayReport').innerHTML;
-
             let htmlContent = `
                 <!DOCTYPE html>
                 <html lang="hu">
@@ -1030,35 +941,29 @@
                             page-break-before: always;
                             break-before: page;
                         }
-
                         .total-row td {
                             background-color: #e2e8f0 !important;
                             color: #000 !important;
                             font-weight: bold;
                         }
-
                         .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
                         .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
                         .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
                         .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 10px !important; font-weight: bold !important; }
                         
-                        /* PDF jelentésben is nagyobb és vastagabb a cellatartalom */
                         td.cell-default, td[class*="pos-"] {
                             font-size: 10px !important;
                             font-weight: bold !important;
                         }
-
                         .pos-np { background-color: #238636 !important; color: white !important; font-weight: bold; }
                         .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: bold; }
                         .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: bold; }
                         .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: bold; }
                         .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: bold; }
-
                         .vacation-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
                         .vacation-card { border: 1px solid #333; border-radius: 4px; padding: 6px 8px; font-size: 9px; background: #f9fafb !important; }
                         .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 2px; margin-bottom: 4px; color: #111; }
                         .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
-
                         .summary-row {
                             display: grid;
                             grid-template-columns: 1fr 1fr;
@@ -1081,14 +986,11 @@
                     
                     <div class="section-title">1. Havi Vezénylési Táblázat</div>
                     <div>${tableHtml}</div>
-
                     <div class="page-break"></div>
-
                     <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
                     <div class="vacation-grid">
                         ${vacationHtml}
                     </div>
-
                     <div class="summary-row">
                         <div class="summary-box">
                             <h3>🔍 Létszám Figyelőmotor Összesítés</h3>
@@ -1099,7 +1001,6 @@
                             <div>${holidayHtml}</div>
                         </div>
                     </div>
-
                     <script>
                         window.onload = function() { window.print(); }
                     <\/script>
@@ -1109,7 +1010,6 @@
             printWindow.document.write(htmlContent);
             printWindow.document.close();
         }
-
         window.onload = function() {
             generateCalendar();
         };
