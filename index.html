@@ -314,11 +314,11 @@
             color: #f0f6fc !important;
         }
 
-        /* Tiszta, kétoldalas hivatalos nyomtatási protokoll */
+        /* Tökéletes szélességre igazított, fix kétoldalas nyomtatási protokoll */
         @media print {
             @page {
                 size: A4 landscape;
-                margin: 8mm;
+                margin: 5mm;
             }
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -329,6 +329,7 @@
                 color: var(--text-color) !important;
                 margin: 0;
                 padding: 0;
+                zoom: 82%; /* Biztosítja, hogy teljes szélességben ráférjen a margóra */
             }
             .controls, .palette, h1, .subtitle {
                 display: none !important;
@@ -341,6 +342,7 @@
                 width: 100% !important;
                 page-break-after: always;
                 break-after: page;
+                margin-bottom: 0 !important;
             }
             table {
                 width: 100% !important;
@@ -352,7 +354,7 @@
                 flex-direction: column !important;
                 gap: 10px !important;
                 background: var(--bg-color) !important;
-                padding-top: 10px;
+                padding-top: 5px;
             }
             .vacation-panel, .audit-panel, .holiday-panel {
                 background: var(--panel-bg) !important;
