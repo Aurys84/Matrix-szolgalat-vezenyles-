@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mátrix Labor — Vezénylési Rendszer</title>
+    <!-- html2pdf.js könyvtár a közvetlen és hibátlan PDF letöltéshez -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --bg-color: #161b22;
@@ -388,7 +390,7 @@
         <div style="display: flex; gap: 6px;">
             <button class="btn-save" onclick="manualSave()">💾 Adatok Mentése</button>
             <button class="btn-print" onclick="printSchedule()">🖨️ Nyomtatás</button>
-            <button class="btn-pdf" onclick="exportFullPdfReport()">📥 PDF Vezetőségi Jelentés</button>
+            <button class="btn-pdf" onclick="exportDirectPdf()">📥 PDF Vezetőségi Jelentés</button>
         </div>
     </div>
     <div class="palette">
@@ -431,6 +433,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Rejtett konténer a közvetlen html2pdf mentéshez -->
+    <div id="pdfExportContainer" style="display:none; background:#ffffff; color:#000000; padding:10px; width:1120px;"></div>
+
     <script>
         const defaultGuards = [
             "Marácz Judit", "Csonka Norbert", "Gergely Richárd", "Horváth Csaba", "Páva Dávid",
@@ -832,14 +838,16 @@
             alert('💾 A Mátrix Labor adatai, a névsor és az egyedi szabadságkeretek sikeresen mentve!');
         }
         function printSchedule() {
-            exportFullPdfReport();
+            window.print();
         }
-        function exportFullPdfReport() {
-            let printWindow = window.open('', '_blank');
+        function exportDirectPdf() {
             let tableHtml = document.querySelector('.table-container').innerHTML;
             let vacationHtml = document.getElementById('vacationReport').innerHTML;
             let auditHtml = document.getElementById('auditReport').innerHTML;
             let holidayHtml = document.getElementById('holidayReport').innerHTML;
+            
+            let exportContainer = document.getElementById('pdfExportContainer');
+            exportContainer.style.display = 'block';
             
             let tempDiv = document.createElement('div');
             tempDiv.innerHTML = tableHtml;
@@ -852,140 +860,65 @@
             });
             let cleanTableHtml = tempDiv.innerHTML;
 
-            let htmlContent = `
-                <!DOCTYPE html>
-                <html lang="hu">
-                <head>
-                    <meta charset="UTF-8">
-                    <title>Mátrix Labor — Hivatalos Vezetőségi Jelentés</title>
-                    <style>
-                        @page {
-                            size: A4 landscape;
-                            margin: 3mm;
-                        }
-                        * {
-                            -webkit-print-color-adjust: exact !important;
-                            print-color-adjust: exact !important;
-                        }
-                        body { 
-                            font-family: sans-serif; 
-                            background: #ffffff; 
-                            color: #000000; 
-                            margin: 0; 
-                            padding: 2px; 
-                            font-size: 7.5px; 
-                        }
-                        h1 { text-align: center; font-size: 10px; margin: 1px 0; color: #1f6feb; }
-                        .subtitle { text-align: center; font-size: 7.5px; margin-bottom: 3px; color: #555; }
-                        table { width: 100%; border-collapse: collapse; text-align: center; margin-bottom: 4px; font-size: 7.5px; table-layout: fixed; }
-                        th, td { border: 1px solid #333; padding: 2px 1px; }
-                        th { background: #e2e8f0 !important; color: #000 !important; font-weight: 900; }
-                        .section-title { font-size: 8.5px; font-weight: bold; margin-top: 4px; margin-bottom: 2px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb; }
-                        
-                        tr {
-                            page-break-inside: avoid;
-                            break-inside: avoid;
-                        }
-                        .page-break {
-                            page-break-before: always;
-                            break-before: page;
-                        }
-                        .total-row td {
-                            background-color: #e2e8f0 !important;
-                            color: #000 !important;
-                            font-weight: 900 !important;
-                            font-size: 8px !important;
-                        }
-                        .day-saturday-header { background-color: #d1fae5 !important; color: #065f46 !important; }
-                        .day-sunday-holiday-header { background-color: #fee2e2 !important; color: #991b1b !important; }
-                        .day-normal-header { background-color: #f0f4f8 !important; color: #000 !important; }
-                        .cell-locked { background-color: #bfdbfe !important; color: #1e40af !important; font-size: 8px !important; font-weight: 900 !important; }
-                        
-                        .name-col {
-                            width: 100px !important;
-                            min-width: 100px !important;
-                            max-width: 100px !important;
-                            white-space: normal !important;
-                            word-break: break-word !important;
-                            background-color: #f0f4f8 !important;
-                            color: #000000 !important;
-                            font-weight: 900 !important;
-                            text-align: left !important;
-                            padding: 2px 3px !important;
-                            height: 32px !important;
-                            vertical-align: middle !important;
-                        }
-                        td.cell-default, td[class*="pos-"], td:not(.name-col) {
-                            font-size: 8.5px !important;
-                            font-weight: 900 !important;
-                        }
-                        tr td:last-child, th:last-child {
-                            font-size: 8.5px !important;
-                            font-weight: 900 !important;
-                            width: 32px !important;
-                            min-width: 32px !important;
-                            max-width: 32px !important;
-                        }
-                        .pos-np { background-color: #238636 !important; color: white !important; font-weight: 900; }
-                        .pos-ep { background-color: #da3633 !important; color: white !important; font-weight: 900; }
-                        .pos-nep { background-color: #8957e5 !important; color: white !important; font-weight: 900; }
-                        .pos-szb { background-color: #9e6a03 !important; color: white !important; font-weight: 900; }
-                        .pos-szab { background-color: #1f6feb !important; color: white !important; font-weight: 900; }
-                        .vacation-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; margin-bottom: 4px; }
-                        .vacation-card { border: 1px solid #333; border-radius: 2px; padding: 2px 4px; font-size: 7px; background: #f9fafb !important; color: #000 !important; }
-                        .vacation-card-header { font-weight: bold; border-bottom: 1px solid #ccc; padding-bottom: 1px; margin-bottom: 1px; color: #111; }
-                        .vacation-card-body { display: flex; justify-content: space-between; color: #333; }
-                        .summary-row {
-                            display: grid;
-                            grid-template-columns: 1fr 1fr;
-                            gap: 3mm;
-                            margin-top: 2px;
-                        }
-                        .summary-box {
-                            border: 1px solid #333;
-                            border-radius: 2px;
-                            padding: 3px;
-                            font-size: 7.5px;
-                            background: #f9fafb !important;
-                            color: #000 !important;
-                        }
-                        .summary-box h3 { margin: 0 0 1px 0; font-size: 8px; color: #1f6feb; }
-                    </style>
-                </head>
-                <body>
-                    <h1>Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
-                    <div class="subtitle">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
+            exportContainer.innerHTML = `
+                <div style="font-family: sans-serif; background: #fff; color: #000; padding: 5px;">
+                    <h1 style="text-align: center; font-size: 12px; margin: 2px 0; color: #1f6feb;">Mátrix Labor — Hivatalos Vezetőségi Jelentés</h1>
+                    <div style="text-align: center; font-size: 8px; margin-bottom: 6px; color: #555;">Tartalmazza a havi vezénylési táblázatot, az éves szabadságkezelőt és a havi összesítőket</div>
                     
-                    <div class="section-title">1. Havi Vezénylési Táblázat</div>
+                    <div style="font-size: 9.5px; font-weight: bold; margin-top: 6px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">1. Havi Vezénylési Táblázat</div>
                     <div>${cleanTableHtml}</div>
                     
-                    <div class="section-title">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
-                    <div class="vacation-grid">
+                    <div style="font-size: 9.5px; font-weight: bold; margin-top: 10px; margin-bottom: 3px; border-bottom: 2px solid #1f6feb; padding-bottom: 1px; color: #1f6feb;">2. Éves Göngyölített Szabadságkezelő & Keretek (Mind a 20 Őr)</div>
+                    <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-bottom: 6px;">
                         ${vacationHtml}
                     </div>
-                    <div class="summary-row">
-                        <div class="summary-box">
-                            <h3>🔍 Létszám Figyelőmotor Összesítés</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; margin-top: 4px;">
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 7.5px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 2px 0; font-size: 8.5px; color: #1f6feb;">🔍 Létszám Figyelőmotor Összesítés</h3>
                             <div>${auditHtml}</div>
                         </div>
-                        <div class="summary-box">
-                            <h3>🎉 Havi Ünnepnapok Számláló</h3>
+                        <div style="border: 1px solid #333; border-radius: 3px; padding: 4px; font-size: 7.5px; background: #f9fafb;">
+                            <h3 style="margin: 0 0 2px 0; font-size: 8.5px; color: #1f6feb;">🎉 Havi Ünnepnapok Számláló</h3>
                             <div>${holidayHtml}</div>
                         </div>
                     </div>
-                    <script>
-                        window.onload = function() { 
-                            window.print(); 
-                            setTimeout(function() {
-                                window.close();
-                            }, 500);
-                        }
-                    <\/script>
-                </body>
-                </html>
+                </div>
             `;
-            printWindow.document.write(htmlContent);
-            printWindow.document.close();
+            
+            let tempTable = exportContainer.querySelector('table');
+            if(tempTable) {
+                tempTable.style.width = '100%';
+                tempTable.style.fontSize = '7.5px';
+                tempTable.style.borderCollapse = 'collapse';
+                tempTable.querySelectorAll('th, td').forEach(cell => {
+                    cell.style.border = '1px solid #333';
+                    cell.style.padding = '2px 1px';
+                });
+                exportContainer.querySelectorAll('.name-col').forEach(el => {
+                    el.style.width = '100px';
+                    el.style.minWidth = '100px';
+                    el.style.maxWidth = '100px';
+                    el.style.whiteSpace = 'normal';
+                    el.style.wordBreak = 'break-word';
+                    el.style.fontSize = '7.5px';
+                    el.style.backgroundColor = '#f0f4f8';
+                    el.style.color = '#000';
+                });
+            }
+
+            let opt = {
+                margin:       2,
+                filename:     'Matrix_Labor_Vezetosegi_Jelentes.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'landscape' }
+            };
+
+            html2pdf().from(exportContainer).set(opt).save().then(() => {
+                exportContainer.style.display = 'none';
+                exportContainer.innerHTML = '';
+            });
         }
         window.addEventListener('DOMContentLoaded', () => {
             generateCalendar();
