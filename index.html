@@ -365,7 +365,7 @@
             }
             body.print-schedule-only table {
                 width: 100% !important;
-                table-layout: fixed !important; /* KÉNYSZERÍTSE A PONTOS KITÖLTÉST ÉS BEFÉRÉST */
+                table-layout: fixed !important;
                 font-size: 8px !important;
             }
             body.print-schedule-only td.cell-default, 
@@ -880,7 +880,7 @@
             let dataToSave = {};
             document.querySelectorAll('#scheduleTable tbody tr:not(.total-row)').forEach((row, gIndex) => {
                 row.querySelectorAll('td').forEach((cell, cIndex) => {
-                    if(cIndex > 0 && cIndex < row.querySelectorAll('td'].length - 1) {
+                    if(cIndex > 0 && cIndex < row.querySelectorAll('td').length - 1) {
                         let cellKey = cell.dataset.key;
                         let dKey = cell.dataset.date;
                         if(cellKey && !cell.classList.contains('cell-locked')) {
@@ -1020,9 +1020,9 @@
             printWindow.document.write(htmlContent);
             printWindow.document.close();
         }
-        window.onload = function() {
+        window.addEventListener('DOMContentLoaded', () => {
             generateCalendar();
-        };
+        });
     </script>
 </body>
 </html>
